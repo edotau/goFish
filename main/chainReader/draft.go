@@ -1,13 +1,11 @@
 package main
 
+/*
 import (
 	"flag"
 	"fmt"
 	"log"
-	//"github.com/edotau/simpleio"
-	"github.com/vertgenlab/gonomics/chain"
-	"github.com/vertgenlab/gonomics/common"
-	"github.com/vertgenlab/gonomics/fileio"
+
 )
 
 func usage() {
@@ -38,4 +36,4 @@ func main() {
 	}
 	//var answer string = fmt.Sprintf("chain %d %s %d %c %d %d %s %d %c %d %d %d\n", ch.Score, ch.TName, ch.TSize, common.StrandToRune(ch.TStrand), ch.TStart, ch.TEnd, ch.QName, ch.QSize, common.StrandToRune(ch.QStrand), ch.QStart, ch.QEnd, ch.Id)
 	writer.Close()
-}
+}*/
