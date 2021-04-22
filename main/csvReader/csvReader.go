@@ -19,9 +19,11 @@ func usage() {
 		"Gvcf to FisherExact test\n")
 	flag.PrintDefaults()
 }
-
+*/
 func main() {
 
+}
+/*
 	var expectedNumArgs int = 1
 	flag.Usage = usage
 	log.SetFlags(log.Ldate | log.Ltime)

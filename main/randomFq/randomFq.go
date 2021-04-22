@@ -18,9 +18,13 @@ func usage() {
 	flag.PrintDefaults()
 
 }
-
+*/
 func main() {
-	var expectedNumArgs int = 1
+
+}
+	/*
+
+    var expectedNumArgs int = 1
 	flag.Usage = usage
 	log.SetFlags(log.Ldate | log.Ltime)
 	var readLength *int = flag.Int("length", 150, "specify a read length.")
