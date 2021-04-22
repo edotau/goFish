@@ -1,6 +1,15 @@
 ### Hi there 👋
 # goFish
 Go (lang) genomic scripts
+
+Quick install of goFish packages run the command:
+```
+go get -v https://github.com/edotau/goFish.git
+```
+For a full golang build, GOROOT, GOPATH, GOBIN set up:
+```
+git clone https://github.com/edotau/goFish.git; ./goFish/setup.sh
+```
 <!--
 **edotau/edotau** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 
