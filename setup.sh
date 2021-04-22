@@ -116,6 +116,10 @@ fi
 
 cd $goFishDir
 # Contingent on passing all go tests, we finally install/build all goFish binary programs
+
+go get -v cloud.google.com/go/storage
+go get -v github.com/biogo/hts/...
+go get -v github.com/vertgenlab/gonomics
 go test ./...
 go install ./...
 ln -s $GOBIN
