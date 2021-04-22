@@ -1,14 +1,13 @@
 package genePred
 
 import (
-	"github.com/goFish/simpleio"
 	"testing"
+
+	"github.com/goFish/simpleio"
 )
 
 var tests []string = []string{
-	"testdata/denovo_final.gp",
-	"testdata/rna-seq_ensembl_psl_FINAL.gp",
-	"testdata/rna-seq.genes.mapped.ensembl.gp",
+	"testdata/rna-seq.genes.mapped.ensembl.gp.gz",
 }
 
 func TestGenePredRead(t *testing.T) {
