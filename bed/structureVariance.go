@@ -2,7 +2,7 @@ package bed
 
 import (
 	"fmt"
-	"github.com/goFish/simpleio"
+	"github.com/edotau/goFish/simpleio"
 	"sort"
 	"strings"
 )

@@ -4,7 +4,7 @@ package bed
 
 import (
 	"bytes"
-	"github.com/goFish/simpleio"
+	"github.com/edotau/goFish/simpleio"
 	"github.com/vertgenlab/gonomics/numbers"
 	"log"
 	"sort"

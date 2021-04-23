@@ -4,8 +4,8 @@ import (
 	"log"
 	"strings"
 
-	"github.com/goFish/reference"
-	"github.com/goFish/simpleio"
+	"github.com/edotau/goFish/reference"
+	"github.com/edotau/goFish/simpleio"
 )
 
 func GenomeKey(div int) map[string][]*GenomeInfo {
