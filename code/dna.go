@@ -1,6 +1,7 @@
 package code
 
 import (
+	"bytes"
 	"log"
 	"strings"
 )
@@ -146,6 +147,15 @@ func ToDna(b []byte) []Dna {
 		answer[i] = ByteToDna(byteValue)
 	}
 	return answer
+}
+
+func ToBytes(bases []Dna) []byte {
+	buffer := bytes.Buffer{}
+	buffer.Grow(len(bases))
+	for _, i := range bases {
+		buffer.WriteByte(DnaToByteNoMask(i))
+	}
+	return buffer.Bytes()
 }
 
 func ToString(bases []Dna) string {
