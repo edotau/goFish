@@ -2,6 +2,7 @@ package fastq
 
 import (
 	"fmt"
+	"github.com/edotau/goFish/code"
 	"github.com/edotau/goFish/simpleio"
 	"github.com/vertgenlab/gonomics/fastq"
 	"testing"
@@ -9,7 +10,7 @@ import (
 
 var toyFq *Fastq = &Fastq{
 	Name: "A00257:502:HWWM3DRXX:1:2101:1000:1031 1:N:0:NCTAGGAG+NGTTGCAA",
-	Seq:  []byte("NCTAGGAG"),
+	Seq:  code.ToDna([]byte("NCTAGGAG")),
 	Qual: []byte("#FFFFFFF"),
 }
 

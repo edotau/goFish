@@ -3,16 +3,16 @@ package fastq
 
 import (
 	"fmt"
+	"github.com/edotau/goFish/code"
+	"github.com/edotau/goFish/simpleio"
 	"log"
 	"strings"
 	"sync"
-
-	"github.com/edotau/goFish/simpleio"
 )
 
 type Fastq struct {
 	Name string
-	Seq  []byte
+	Seq  []code.Dna
 	Qual []byte
 }
 
@@ -38,8 +38,8 @@ func GunzipFastq(reader *simpleio.SimpleReader) (*Fastq, bool) {
 	if done {
 		return nil, true
 	}
-	ans.Seq = make([]byte, len(line.Bytes()))
-	copy(ans.Seq, line.Bytes())
+	ans.Seq = make([]code.Dna, len(line.Bytes()))
+	copy(ans.Seq, code.ToDna(line.Bytes()))
 
 	line, done = simpleio.ReadLine(reader)
 	if line.String() != "+" {
@@ -64,7 +64,7 @@ func ToString(fq *Fastq) string {
 	err = buffer.WriteByte('\n')
 	simpleio.ErrorHandle(err)
 
-	_, err = buffer.Write(fq.Seq)
+	_, err = buffer.Write(code.ToBytes(fq.Seq))
 	simpleio.ErrorHandle(err)
 	err = buffer.WriteByte('\n')
 	simpleio.ErrorHandle(err)
@@ -89,13 +89,25 @@ func Equal(x, y *Fastq) bool {
 	if !SameByteSlice(x.Seq, y.Seq) {
 		return false
 	}
-	if !SameByteSlice(x.Qual, y.Qual) {
+	if !EqualQualSlice(x.Qual, y.Qual) {
 		return false
 	}
 	return true
 }
 
-func SameByteSlice(a, b []byte) bool {
+func SameByteSlice(a, b []code.Dna) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := 0; i < len(a); i++ {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
+}
+
+func EqualQualSlice(a, b []byte) bool {
 	if len(a) != len(b) {
 		return false
 	}
