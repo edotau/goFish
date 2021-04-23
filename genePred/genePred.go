@@ -1,12 +1,15 @@
+// Package genePred contains functions and other data structures for processing gene models and annotations
+// from difference public data bases like ENSEMBL and UCSC
 package genePred
 
 import (
 	"bytes"
 	"fmt"
-	"github.com/goFish/concurrency"
-	"github.com/goFish/simpleio"
 	"log"
 	"strings"
+
+	"github.com/goFish/concurrency"
+	"github.com/goFish/simpleio"
 )
 
 type GenePred struct {
