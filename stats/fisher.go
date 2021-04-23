@@ -2,13 +2,11 @@ package stats
 
 import (
 	"fmt"
-
 	"io"
 	"log"
 	"sort"
 
 	"github.com/goFish/simpleio"
-
 	"github.com/vertgenlab/gonomics/numbers"
 )
 
