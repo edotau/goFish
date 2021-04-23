@@ -1,3 +1,5 @@
+// Package fasta contains data structures for processes and functions that operate on fasta files
+// containing base sequences
 package fasta
 
 import (
