@@ -3,12 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/goFish/bed"
-	"github.com/goFish/simpleio"
-	"github.com/vertgenlab/gonomics/fileio"
 	"log"
 	"strconv"
 	"strings"
+
+	"github.com/goFish/bed"
+	"github.com/goFish/simpleio"
 )
 
 func usage() {
@@ -32,7 +32,7 @@ func main() {
 	rnaSeq := ReadToMap(flag.Arg(0))
 	log.Printf("Reading rna seq file to map...\n")
 	atacSeq := Read(flag.Arg(1))
-	output := fileio.EasyCreate(flag.Arg(2))
+	output := simpleio.NewWriter(flag.Arg(2))
 	var extend int = 50000
 
 	var regions []*bed.Pvalue

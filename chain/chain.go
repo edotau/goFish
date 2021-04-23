@@ -3,10 +3,10 @@ package chain
 import (
 	"bytes"
 	"fmt"
-	"github.com/goFish/simpleio"
-	"github.com/vertgenlab/gonomics/common"
 	"log"
 	"strings"
+
+	"github.com/goFish/simpleio"
 )
 
 //Chain alignment fields.
@@ -38,19 +38,19 @@ func NewChain(text string, reader *simpleio.SimpleReader) *Chain {
 	data := strings.Split(text, " ")
 	if len(data) == 13 {
 		return &Chain{
-			Score:     common.StringToInt(data[1]),
+			Score:     simpleio.StringToInt(data[1]),
 			TName:     data[2],
-			TSize:     common.StringToInt(data[3]),
+			TSize:     simpleio.StringToInt(data[3]),
 			TStrand:   data[4][0],
-			TStart:    common.StringToInt(data[5]),
-			TEnd:      common.StringToInt(data[6]),
+			TStart:    simpleio.StringToInt(data[5]),
+			TEnd:      simpleio.StringToInt(data[6]),
 			QName:     data[7],
-			QSize:     common.StringToInt(data[8]),
+			QSize:     simpleio.StringToInt(data[8]),
 			QStrand:   data[9][0],
-			QStart:    common.StringToInt(data[10]),
-			QEnd:      common.StringToInt(data[11]),
+			QStart:    simpleio.StringToInt(data[10]),
+			QEnd:      simpleio.StringToInt(data[11]),
 			Alignment: chainingHelper(reader),
-			Id:        common.StringToInt(data[12]),
+			Id:        simpleio.StringToInt(data[12]),
 		}
 	} else {
 		log.Fatalf("Error: header line needs to contain 13 data fields\n")
@@ -69,7 +69,7 @@ func chainingHelper(reader *simpleio.SimpleReader) []Bases {
 		data = strings.Split(line.String(), "\t")
 		if len(data) == 1 {
 			curr = Bases{
-				Size:   common.StringToInt(data[0]),
+				Size:   simpleio.StringToInt(data[0]),
 				TBases: 0,
 				QBases: 0,
 			}
@@ -79,9 +79,9 @@ func chainingHelper(reader *simpleio.SimpleReader) []Bases {
 			return answer
 		} else if len(data) == 3 {
 			curr = Bases{
-				Size:   common.StringToInt(data[0]),
-				TBases: common.StringToInt(data[1]),
-				QBases: common.StringToInt(data[2]),
+				Size:   simpleio.StringToInt(data[0]),
+				TBases: simpleio.StringToInt(data[1]),
+				QBases: simpleio.StringToInt(data[2]),
 			}
 			answer = append(answer, curr)
 		} else {

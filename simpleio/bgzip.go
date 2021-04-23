@@ -3,10 +3,11 @@ package simpleio
 import (
 	"bufio"
 	"bytes"
-	"github.com/biogo/hts/bgzf"
 	"io"
 	"log"
 	"os"
+
+	"github.com/biogo/hts/bgzf"
 )
 
 type BgzipReader struct {
