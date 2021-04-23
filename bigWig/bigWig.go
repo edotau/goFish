@@ -6,7 +6,7 @@ import (
 	"encoding/binary"
 	"io"
 
-	"github.com/goFish/simpleio"
+	"github.com/edotau/goFish/simpleio"
 )
 
 const BigWigMagic = 0x888FFC26
