@@ -1,3 +1,5 @@
+// Package simpleio contains core utils that reading in data
+// optimized for both memory allocation, speed, and performance
 package simpleio
 
 import (
