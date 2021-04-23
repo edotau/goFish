@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 	//"github.com/goFish/simpleio"
-	"github.com/goFish/fastq"
+	"github.com/edotau/goFish/fastq"
 )
 
 func usage() {

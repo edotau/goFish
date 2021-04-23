@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/goFish/bed"
+	"github.com/edotau/goFish/bed"
 	"log"
 	//"github.com/vertgenlab/gonomics/"
 )

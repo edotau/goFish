@@ -6,7 +6,7 @@ import (
 	"encoding/csv"
 	"flag"
 	"fmt"
-	"github.com/goFish/simpleio"
+	"github.com/edotau/goFish/simpleio"
 	"github.com/vertgenlab/gonomics/common"
 	"github.com/vertgenlab/gonomics/fileio"
 	"github.com/vertgenlab/gonomics/numbers"

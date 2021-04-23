@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/goFish/bed"
-	"github.com/goFish/simpleio"
+	"github.com/edotau/goFish/bed"
+	"github.com/edotau/goFish/simpleio"
 )
 
 func usage() {

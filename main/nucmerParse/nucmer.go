@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/goFish/simpleio"
+	"github.com/edotau/goFish/simpleio"
 	"github.com/vertgenlab/gonomics/common"
 	"log"
 	"strings"

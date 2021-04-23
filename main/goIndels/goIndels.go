@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/goFish/bam"
+	"github.com/edotau/goFish/bam"
 	"log"
 )
 

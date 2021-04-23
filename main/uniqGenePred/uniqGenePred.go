@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/goFish/genePred"
+	"github.com/edotau/goFish/genePred"
 	"log"
 )
 
