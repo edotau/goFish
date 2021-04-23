@@ -6,13 +6,13 @@ import (
 	"bytes"
 	"strings"
 
-	"github.com/goFish/alphabet"
+	"github.com/goFish/code"
 	"github.com/goFish/simpleio"
 )
 
 type Fasta struct {
 	Name string
-	Seq  []alphabet.Dna
+	Seq  []code.Dna
 }
 
 func FastaReader(reader *simpleio.SimpleReader) (*Fasta, bool) {
@@ -30,12 +30,12 @@ func FastaReader(reader *simpleio.SimpleReader) (*Fasta, bool) {
 	return nil, true
 }
 
-func GetSequence(reader *simpleio.SimpleReader) []alphabet.Dna {
+func GetSequence(reader *simpleio.SimpleReader) []code.Dna {
 	var line *bytes.Buffer
-	var answer []alphabet.Dna
+	var answer []code.Dna
 	for nextBytes, err := reader.Peek(1); len(nextBytes) > 0 && !bytes.HasPrefix(nextBytes, []byte(">")) && err == nil; nextBytes, err = reader.Peek(1) {
 		line, _ = simpleio.ReadLine(reader)
-		answer = append(answer, alphabet.ToDna(line.Bytes())...)
+		answer = append(answer, code.ToDna(line.Bytes())...)
 	}
 	return answer
 }
