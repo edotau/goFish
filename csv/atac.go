@@ -1,5 +1,6 @@
-package main
+package csv
 
+/*
 import (
 	"flag"
 	"fmt"
@@ -54,7 +55,7 @@ func textToSimpleBed(line []string) (*bed.Simple, *bed.Simple) {
 	//rna.End = rna.Start  + )
 	rna.End = rna.Start + 1
 	return &atac, &rna
-}
+}/*
 
 /*
 func textToVcf(data []string) *bed.Simple {

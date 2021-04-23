@@ -1,3 +1,4 @@
+// Package axt contain data structures to operate on pairwise alignment files are produced from Blastz, an alignment tool available from Webb Miller's lab at Penn State University. The axtNet and axtChain alignments are produced by processing the alignment files with additional utilities written by Jim Kent at UCSC.
 package axt
 
 import (

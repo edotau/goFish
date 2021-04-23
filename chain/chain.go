@@ -1,3 +1,4 @@
+// Package chain contains data structures and functions to process genome to genome alignments pairwise alignment that allow gaps in both sequences simultaneously. Chain files alignments starts with a header line, contains one or more alignment data lines, and terminates with a blank line
 package chain
 
 import (

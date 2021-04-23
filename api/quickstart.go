@@ -1,5 +1,5 @@
 // Sample storage-quickstart creates a Google Cloud Storage bucket.
-package main
+package api
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 	"cloud.google.com/go/storage"
 )
 
-func main() {
+func googleapi() {
 	ctx := context.Background()
 
 	// Sets your Google Cloud Platform project ID.
