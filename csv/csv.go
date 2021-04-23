@@ -1,6 +1,6 @@
+// Package csv contains data structures to parse comma separated value takes
+// and perform statical analysis
 package csv
-
-import ()
 
 type FisherExact struct {
 	A int
