@@ -1,10 +1,9 @@
+// Package algorithms contains basic implementations of popular algorithms in computer science
 package algorithms
 
-// Return a deBruijn sequence for a n-words with k letters.
-// Copyright ©2011-2012 The bíogo Authors.
-// Modified and optimized.
+// DeDruijn is a function returns a sequence for a n-words with k letters, modifiied from the Biogo Authors, copyright ©2011-2012
 func DeBruijn(k, n byte) (s []byte) {
-    switch k {
+	switch k {
 	case 0:
 		return []byte{}
 	case 1:
@@ -50,4 +49,3 @@ func Pow(base int, exp byte) (r int) {
 
 	return
 }
-
