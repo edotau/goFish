@@ -1,3 +1,4 @@
+// Package templates contain golang template scripts for quick and easy golang programing
 package main
 
 import (
