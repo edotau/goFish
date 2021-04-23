@@ -2,7 +2,7 @@ package fastq
 
 import (
 	"fmt"
-	"github.com/goFish/simpleio"
+	"github.com/edotau/goFish/simpleio"
 	"github.com/vertgenlab/gonomics/fastq"
 	"testing"
 )

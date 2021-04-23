@@ -7,7 +7,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/goFish/simpleio"
+	"github.com/edotau/goFish/simpleio"
 )
 
 type Fastq struct {

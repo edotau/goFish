@@ -7,7 +7,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/goFish/simpleio"
+	"github.com/edotau/goFish/simpleio"
 )
 
 //Chain alignment fields.
