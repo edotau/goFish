@@ -5,9 +5,9 @@ import (
 	"log"
 	"strings"
 
-	"github.com/goFish/bed"
-	"github.com/goFish/code"
-	"github.com/goFish/simpleio"
+	"github.com/edotau/goFish/bed"
+	"github.com/edotau/goFish/code"
+	"github.com/edotau/goFish/simpleio"
 )
 
 // Axt struct: Naming convention is hard here because UCSC website does not

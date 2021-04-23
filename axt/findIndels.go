@@ -1,9 +1,9 @@
 package axt
 
 import (
-	"github.com/goFish/bed"
-	"github.com/goFish/code"
-	"github.com/goFish/simpleio"
+	"github.com/edotau/goFish/bed"
+	"github.com/edotau/goFish/code"
+	"github.com/edotau/goFish/simpleio"
 )
 
 func AxtToGenomeInfo(axtFile *Axt) []bed.GenomeInfo {
