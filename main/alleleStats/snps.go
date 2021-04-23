@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/goFish/bam"
-	"github.com/goFish/simpleio"
-	"github.com/goFish/vcf"
+	"github.com/edotau/goFish/bam"
+	"github.com/edotau/goFish/simpleio"
+	"github.com/edotau/goFish/vcf"
 	"github.com/vertgenlab/gonomics/dna"
 )
 

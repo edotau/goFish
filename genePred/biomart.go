@@ -1,7 +1,7 @@
 package genePred
 
 import (
-	"github.com/goFish/simpleio"
+	"github.com/edotau/goFish/simpleio"
 	"strings"
 )
 

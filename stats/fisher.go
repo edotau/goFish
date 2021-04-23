@@ -6,7 +6,7 @@ import (
 	"log"
 	"sort"
 
-	"github.com/goFish/simpleio"
+	"github.com/edotau/goFish/simpleio"
 	"github.com/vertgenlab/gonomics/numbers"
 )
 

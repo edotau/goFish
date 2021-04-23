@@ -4,7 +4,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	//"github.com/goFish/"
+	//"github.com/edotau/goFish/"
 )
 
 func usage() {

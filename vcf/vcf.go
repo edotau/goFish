@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/goFish/simpleio"
+	"github.com/edotau/goFish/simpleio"
 )
 
 // Vcf struct is the declaration of data fields.

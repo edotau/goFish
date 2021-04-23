@@ -3,9 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/goFish/simpleio"
-	"github.com/goFish/stats"
-	"github.com/goFish/vcf"
+	"github.com/edotau/goFish/simpleio"
+	"github.com/edotau/goFish/stats"
+	"github.com/edotau/goFish/vcf"
 
 	"log"
 	"strings"

@@ -8,8 +8,8 @@ import (
 	"log"
 	"strings"
 
-	"github.com/goFish/concurrency"
-	"github.com/goFish/simpleio"
+	"github.com/edotau/goFish/concurrency"
+	"github.com/edotau/goFish/simpleio"
 )
 
 type GenePred struct {

@@ -2,8 +2,8 @@ package genePred
 
 import (
 	"fmt"
-	"github.com/goFish/bed"
-	"github.com/goFish/simpleio"
+	"github.com/edotau/goFish/bed"
+	"github.com/edotau/goFish/simpleio"
 	"sort"
 	"strings"
 )

@@ -3,7 +3,7 @@ package genePred
 import (
 	"testing"
 
-	"github.com/goFish/simpleio"
+	"github.com/edotau/goFish/simpleio"
 )
 
 var tests []string = []string{
