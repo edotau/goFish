@@ -1,3 +1,7 @@
+// Package keras implements many functionalities from the popular Keras API
+// which is a deep learning API written in Python, running on top of the
+// machine learning platform TensorFlow. This package was started mainly for
+// fun is still very much under development
 package keras
 
 import (
