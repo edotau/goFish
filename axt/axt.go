@@ -2,11 +2,12 @@
 package axt
 
 import (
-	"github.com/goFish/alphabet"
-	"github.com/goFish/bed"
-	"github.com/goFish/simpleio"
 	"log"
 	"strings"
+
+	"github.com/goFish/bed"
+	"github.com/goFish/code"
+	"github.com/goFish/simpleio"
 )
 
 // Axt struct: Naming convention is hard here because UCSC website does not
@@ -20,8 +21,8 @@ type Axt struct {
 	QEnd       int
 	QStrandPos byte // true is positive strand, false is negative strand
 	Score      int
-	RSeq       []alphabet.Dna
-	QSeq       []alphabet.Dna
+	RSeq       []code.Dna
+	QSeq       []code.Dna
 }
 
 func FindIndels(filename string, output string) {
@@ -61,14 +62,14 @@ func AxtRecord(reader *simpleio.SimpleReader) (*Axt, bool) {
 	}
 	target, tDone := simpleio.ReadLine(reader)
 
-	answer.RSeq = make([]alphabet.Dna, len(target.Bytes()))
-	copy(answer.RSeq, alphabet.ToDna(target.Bytes()))
+	answer.RSeq = make([]code.Dna, len(target.Bytes()))
+	copy(answer.RSeq, code.ToDna(target.Bytes()))
 
 	query, qDone := simpleio.ReadLine(reader)
 
-	answer.QSeq = make([]alphabet.Dna, len(query.Bytes()))
+	answer.QSeq = make([]code.Dna, len(query.Bytes()))
 
-	copy(answer.QSeq, alphabet.ToDna(query.Bytes()))
+	copy(answer.QSeq, code.ToDna(query.Bytes()))
 
 	blank, bDone := simpleio.ReadLine(reader)
 	if blank.String() != "" {

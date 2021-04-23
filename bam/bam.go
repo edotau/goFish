@@ -13,7 +13,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/goFish/alphabet"
+	"github.com/goFish/code"
 	"github.com/goFish/simpleio"
 )
 
@@ -302,7 +302,7 @@ func BamBlockToSam(header *Header, bam *BinaryDecoder) *Sam {
 		MateRef: setRNext(header, bam),
 		MatePos: int(bam.NextPos + 1),
 		TmpLen:  int(bam.TLength),
-		Seq:     alphabet.ToDna([]byte(BamSeq(bam.Seq))),
+		Seq:     code.ToDna([]byte(BamSeq(bam.Seq))),
 		Qual:    formatQual(bam.Qual),
 		Aux:     auxToString(bam.Aux),
 	}

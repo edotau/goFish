@@ -1,4 +1,4 @@
-package alphabet
+package code
 
 import (
 	"log"

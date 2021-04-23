@@ -5,7 +5,8 @@ import (
 	"log"
 	"strconv"
 	"strings"
-	"github.com/goFish/alphabet"
+
+	"github.com/goFish/code"
 	"github.com/goFish/simpleio"
 )
 
@@ -26,7 +27,7 @@ type Sam struct {
 
 type Cigar []ByteCigar
 
-type Sequence []alphabet.Dna
+type Sequence []code.Dna
 
 type PhredQual []byte
 
@@ -140,7 +141,7 @@ func UnmarshalSam(file *SamReader) (*Sam, bool) {
 			MateRef: string(file.line[6]),
 			MatePos: simpleio.StringToInt(file.line[7]),
 			TmpLen:  simpleio.StringToInt(file.line[8]),
-			Seq:     alphabet.ToDna([]byte(file.line[9])),
+			Seq:     code.ToDna([]byte(file.line[9])),
 			Qual:    []byte(file.line[10]),
 			Aux:     file.line[11],
 		}
@@ -192,7 +193,7 @@ func ToString(record *Sam) string {
 	simpleio.ErrorHandle(err)
 	err = str.WriteByte('\t')
 	simpleio.ErrorHandle(err)
-	_, err = str.WriteString(alphabet.ToString(record.Seq))
+	_, err = str.WriteString(code.ToString(record.Seq))
 	simpleio.ErrorHandle(err)
 	err = str.WriteByte('\t')
 	simpleio.ErrorHandle(err)

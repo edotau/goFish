@@ -1,8 +1,8 @@
 package axt
 
 import (
-	"github.com/goFish/alphabet"
 	"github.com/goFish/bed"
+	"github.com/goFish/code"
 	"github.com/goFish/simpleio"
 )
 
@@ -35,7 +35,7 @@ func AxtToGenomeInfo(axtFile *Axt) []bed.GenomeInfo {
 			//curr.Info.WriteString(simpleio.IntToString(qCount))
 			//curr.Info.WriteByte('\t')
 			for j := i; j < len(axtFile.RSeq); j++ {
-				if axtFile.RSeq[j] == alphabet.Gap {
+				if axtFile.RSeq[j] == code.Gap {
 					query.End++
 					qCount++
 				} else {
@@ -64,7 +64,7 @@ func AxtToGenomeInfo(axtFile *Axt) []bed.GenomeInfo {
 
 			//altTmp = dna.BaseToString(dna.ToUpper(axtFile.RSeq[i-1]))
 			for j := i; j < len(axtFile.RSeq); j++ {
-				if axtFile.QSeq[j] == alphabet.Gap {
+				if axtFile.QSeq[j] == code.Gap {
 
 					//altTmp = altTmp +
 					tempRCount++

@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/goFish/alphabet"
+	"github.com/goFish/code"
 )
 
 //readBamTests are the files pairs used to test our binary reader functions
@@ -97,7 +97,7 @@ func IsEqualDebug(a *Sam, b *Sam) bool {
 		return false
 	}
 	if string(a.Seq) != string(b.Seq) {
-		log.Printf("Sequences are different:\n%s\n%s\n", alphabet.ToString(a.Seq), alphabet.ToString(b.Seq))
+		log.Printf("Sequences are different:\n%s\n%s\n", code.ToString(a.Seq), code.ToString(b.Seq))
 		return false
 	}
 	if !bytes.Equal(a.Qual, b.Qual) {

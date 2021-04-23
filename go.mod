@@ -6,6 +6,7 @@ require (
 	cloud.google.com/go/storage v1.15.0 // indirect
 	github.com/biogo/hts v1.2.2 // indirect
 	github.com/matryer/is v1.4.0 // indirect
+	github.com/pbenner/gonetics v1.0.0 // indirect
 	github.com/pkg/browser v0.0.0-20210115035449-ce105d075bb4 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/pkg/sftp v1.13.0 // indirect
