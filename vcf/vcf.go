@@ -1,13 +1,14 @@
-// package vcf declares vcf struct data fields and contains methods and functions that operate on the Vcf struct
+// Package vcf declares vcf struct data fields and contains methods and functions that operate on the Vcf struct
 package vcf
 
 import (
 	"bytes"
 	"fmt"
-	"github.com/goFish/simpleio"
 	"log"
 	"strconv"
 	"strings"
+
+	"github.com/goFish/simpleio"
 )
 
 // Vcf struct is the declaration of data fields.
