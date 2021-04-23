@@ -1,11 +1,13 @@
+// Package fastq contains data structures and functions to process sequencing data coming off the sequencer
 package fastq
 
 import (
 	"fmt"
-	"github.com/goFish/simpleio"
 	"log"
 	"strings"
 	"sync"
+
+	"github.com/goFish/simpleio"
 )
 
 type Fastq struct {
