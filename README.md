@@ -1,5 +1,3 @@
-### Hi there 👋
-# goFish
 Go (lang) genomic scripts
 
 Quick install of goFish packages run the command:
