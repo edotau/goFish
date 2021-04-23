@@ -2,7 +2,7 @@ package bam
 
 import (
 	"fmt"
-	"github.com/goFish/simpleio"
+	"github.com/edotau/goFish/simpleio"
 	"net/http"
 	"strings"
 	"sync"

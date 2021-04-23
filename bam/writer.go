@@ -5,7 +5,7 @@ import (
 	"bytes"
 	"compress/gzip"
 	"encoding/binary"
-	"github.com/goFish/simpleio"
+	"github.com/edotau/goFish/simpleio"
 	"log"
 	"os"
 )

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/goFish/simpleio"
+	"github.com/edotau/goFish/simpleio"
 )
 
 //Bgzip is a struct that contains an embedded gzip.Reader

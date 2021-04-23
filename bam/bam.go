@@ -13,8 +13,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/goFish/code"
-	"github.com/goFish/simpleio"
+	"github.com/edotau/goFish/code"
+	"github.com/edotau/goFish/simpleio"
 )
 
 // BamReader contains data fields used to read and process binary file.

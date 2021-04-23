@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/goFish/code"
-	"github.com/goFish/simpleio"
+	"github.com/edotau/goFish/code"
+	"github.com/edotau/goFish/simpleio"
 )
 
 type Sam struct {

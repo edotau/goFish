@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/goFish/code"
+	"github.com/edotau/goFish/code"
 )
 
 //readBamTests are the files pairs used to test our binary reader functions
