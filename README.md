@@ -8,6 +8,9 @@ For a full golang build, GOROOT, GOPATH, GOBIN set up:
 ```
 git clone https://github.com/edotau/goFish.git; ./goFish/setup.sh
 ```
+
+GoDocs are still under construction, just like my life:
+[goFishDocs](https://pkg.go.dev/github.com/edotau/goFish)
 <!--
 **edotau/edotau** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 
