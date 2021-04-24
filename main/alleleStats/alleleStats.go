@@ -1,8 +1,10 @@
+// main program alleleStats is a tool to investigate heterozygous snp variance and calculate fishers exact to examine the significance of the association (or contingency) between beterozygous alleles
 package main
 
 import (
 	"flag"
 	"fmt"
+
 	"github.com/edotau/goFish/simpleio"
 	"github.com/edotau/goFish/stats"
 	"github.com/edotau/goFish/vcf"
@@ -226,7 +228,3 @@ func writeLine(v *vcf.Vcf, buf *strings.Builder) {
 	buf.WriteString(v.Alt)
 	buf.WriteByte('\t')
 }
-
-//func sampleStats(v *vcf.Vcf, buf *strings.Builder, index int) {
-//buf.WriteString()
-//}

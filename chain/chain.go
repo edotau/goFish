@@ -10,7 +10,7 @@ import (
 	"github.com/edotau/goFish/simpleio"
 )
 
-//Chain alignment fields.
+// Chain alignment fields.
 type Chain struct {
 	Score     int
 	TName     string
@@ -27,14 +27,14 @@ type Chain struct {
 	Id        int
 }
 
-//Bases is a cigar-like info for alignment block: First number is the length/size of bases, then number of target gaps and finally query gaps.
+// Bases is a cigar-like info for alignment block: First number is the length/size of bases, then number of target gaps and finally query gaps.
 type Bases struct {
 	Size   int
 	TBases int
 	QBases int
 }
 
-//NewChain will process text into chain data fields. It will read the first line of the file and assign to header fields and use a reader to read and process the additional lines of the alignment.
+// NewChain will process text into chain data fields. It will read the first line of the file and assign to header fields and use a reader to read and process the additional lines of the alignment.
 func NewChain(text string, reader *simpleio.SimpleReader) *Chain {
 	data := strings.Split(text, " ")
 	if len(data) == 13 {
@@ -59,7 +59,7 @@ func NewChain(text string, reader *simpleio.SimpleReader) *Chain {
 	}
 }
 
-//chainingHelper is the helper function that will process the chain alignment fields and return the alignment stats.
+// chainingHelper is the helper function that will process the chain alignment fields and return the alignment stats.
 func chainingHelper(reader *simpleio.SimpleReader) []Bases {
 	var line *bytes.Buffer
 	var data []string
@@ -107,7 +107,7 @@ func (c *Chain) ChrEnd() int {
 	return c.TEnd
 }
 
-//ReadHeaderComments will process header comments that sometimes appear at the beginning of chain file and returns a struct.
+// ReadHeaderComments will process header comments that sometimes appear at the beginning of chain file and returns a struct.
 func ReadHeaderComments(er *simpleio.SimpleReader) *HeaderComments {
 	var line *bytes.Buffer
 	var commments HeaderComments
@@ -118,11 +118,12 @@ func ReadHeaderComments(er *simpleio.SimpleReader) *HeaderComments {
 	return &commments
 }
 
-//HeaderComments stores the comment lines at the beginning of chain alignments into a struct.
+// HeaderComments stores the comment lines at the beginning of chain alignments into a struct.
 type HeaderComments struct {
 	HashTag []string
 }
 
+// Read is a simple function to read in chain test files and covert into a slice of chain structs
 func Read(filename string) []Chain {
 	reader := simpleio.NewReader(filename)
 	ReadHeaderComments(reader)
@@ -133,6 +134,7 @@ func Read(filename string) []Chain {
 	return ans
 }
 
+// ReadAll is a function that will take a list of file names and append all data into a single slice of chain structs
 func ReadAll(files []string) []Chain {
 	var ans []Chain
 	for _, each := range files {
@@ -141,7 +143,7 @@ func ReadAll(files []string) []Chain {
 	return ans
 }
 
-//NextChain will read lines in file and return one chain record at a time and a true false determining the EOF.
+// NextChain will read lines in file and return one chain record at a time and a true false determining the EOF.
 func ParseChain(reader *simpleio.SimpleReader) (*Chain, bool) {
 	line, done := simpleio.ReadLine(reader)
 	if !done {
@@ -151,6 +153,18 @@ func ParseChain(reader *simpleio.SimpleReader) (*Chain, bool) {
 	}
 }
 
+// ToString will convert a chain struct to original string format.
+func ToString(ch *Chain) string {
+	var answer string = fmt.Sprintf("chain %d %s %d %c %d %d %s %d %c %d %d %d\n", ch.Score, ch.TName, ch.TSize, ch.TStrand, ch.TStart, ch.TEnd, ch.QName, ch.QSize, ch.QStrand, ch.QStart, ch.QEnd, ch.Id)
+	//minus one in the loop because last line contains 2 zeros and we do not want to print those
+	for i := 0; i < len(ch.Alignment)-1; i++ {
+		answer += fmt.Sprintf("%d\t%d\t%d\n", ch.Alignment[i].Size, ch.Alignment[i].TBases, ch.Alignment[i].QBases)
+	}
+	answer = fmt.Sprintf("%s%d\n", answer, ch.Alignment[len(ch.Alignment)-1].Size)
+	return answer
+}
+
+// PrettyFmt will summarize the chain header lines in a more human readable format
 func PrettyFmt(c *Chain) string {
 	return fmt.Sprintf("%s\t%s\t%d\t%d\t%s\t%s\t%d\t%d", c.TName, string(c.TStrand), c.TStart, c.TEnd, c.QName, string(c.QStrand), c.QStart, c.QEnd)
 }
