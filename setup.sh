@@ -107,14 +107,7 @@ fi
 
 # Set directories to install goFish
 goFishDir=${GITHUB}/edotau
-
-
-
-# If goFish repo already exists, we do not perform a git clone
-if ! [ -e "$goFishDir" ] ; then
-    mkdir -p ${goFishDir}/.
-    git clone https://github.com/edotau/goFish.git $goFishDir
-fi
+mv goFish ${goFishDir}/.
 
 cd $goFishDir
 # Contingent on passing all go tests, we finally install/build all goFish binary programs
