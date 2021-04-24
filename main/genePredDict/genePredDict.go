@@ -1,3 +1,4 @@
+// genePredDict is a software tool used to operate (concat, find, query or and colapse dups) on ucsc genePred format
 package main
 
 import (
@@ -11,7 +12,7 @@ import (
 
 func usage() {
 	fmt.Print(
-		"genePredDict - software tools to operate on ucsc genePred format\n  Usage: ./genePredDict target.gp query.gp\n")
+		"genePredDict - software tools to operate on ucsc genePred format\n\t  Usage: ./genePredDict target.gp query.gp\n")
 	flag.PrintDefaults()
 }
 

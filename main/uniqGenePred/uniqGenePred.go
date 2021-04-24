@@ -1,3 +1,4 @@
+// uniqGenePred is used to locate and/or filter the gene prediction with the most number of exons
 package main
 
 import (
@@ -9,7 +10,7 @@ import (
 
 func usage() {
 	fmt.Print(
-		"uniqGenePred - locate and/or filter the gene prediction with the most number of exons.\n  Usage: ./uniqGenePred input.gp > output.gp\n\n")
+		"uniqGenePred - locate and/or filter the gene prediction with the most number of exons.\n  Usage:\n  ./uniqGenePred input.gp > output.gp\n\n")
 	flag.PrintDefaults()
 }
 

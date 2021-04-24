@@ -1,3 +1,4 @@
+// geneSym a small program to switch out prediction id's with known gene symbols
 package main
 
 import (

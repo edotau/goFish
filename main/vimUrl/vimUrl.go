@@ -1,3 +1,4 @@
+// vimUrl can view http url links and print data stream to stdout
 package main
 
 import (
@@ -11,7 +12,7 @@ import (
 
 func usage() {
 	fmt.Print(
-		"vimUrl - view http url links and print data stream to stdout\n  Usage:\n  ./vimUrl link.com/file.txt\noptions:\n")
+		"vimUrl - view http url links and print data stream to stdout\n  Usage:\n  ./vimUrl link.com/file.txt\nOptions:\n\nComing soon!\n")
 	flag.PrintDefaults()
 }
 

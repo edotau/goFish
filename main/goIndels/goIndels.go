@@ -1,3 +1,4 @@
+// goIndels - is a quick script to fild indels in sam/bam alignment
 package main
 
 import (

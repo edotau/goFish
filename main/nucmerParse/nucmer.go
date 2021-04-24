@@ -4,17 +4,25 @@ import (
 	"flag"
 	"fmt"
 	"github.com/edotau/goFish/simpleio"
-	"github.com/vertgenlab/gonomics/common"
 	"log"
 	"strings"
 )
+
+func usage() {
+	fmt.Print(
+		"nucmerParse - a tool that parse and extra interesting genomic regions from nucmer suffix tree alignments\n" +
+			"Usage:\n" +
+			"  ./nucmerParse in.file\n")
+	flag.PrintDefaults()
+	fmt.Print("\n")
+}
 
 func main() {
 	var expectedNumArgs int = 1
 	//flag.Usage = usage
 	log.SetFlags(log.Ldate | log.Ltime)
 	flag.Parse()
-
+	flag.Usage = usage
 	if len(flag.Args()) != expectedNumArgs {
 		flag.Usage()
 		log.Fatalf("Error: expecting %d arguments, but got %d\n", expectedNumArgs, len(flag.Args()))
@@ -40,11 +48,11 @@ func (snp *nucmerSnp) String() string {
 func nucmerLine(b []byte) *nucmerSnp {
 	line := strings.Split(string(b), "\t")
 	return &nucmerSnp{
-		RefName:   line[10],                    //10
-		RefPos:    common.StringToInt(line[0]), //0
-		RefSub:    line[1],                     //1
-		QueryName: line[11],                    //11
-		QueryPos:  common.StringToInt(line[4]), //4
+		RefName:   line[10],                      //10
+		RefPos:    simpleio.StringToInt(line[0]), //0
+		RefSub:    line[1],                       //1
+		QueryName: line[11],                      //11
+		QueryPos:  simpleio.StringToInt(line[4]), //4
 		QuerySub:  line[2],
 	}
 }
