@@ -107,6 +107,7 @@ fi
 
 # Set directories to install goFish
 goFishDir=${GITHUB}/edotau
+mkdir -p $goFishDir
 mv goFish ${goFishDir}/.
 
 cd $goFishDir
