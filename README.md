@@ -2,7 +2,7 @@ Go (lang) genomic scripts
 
 Quick install of goFish packages run the command:
 ```
-go get -v https://github.com/edotau/goFish.git
+go get -v github.com/edotau/goFish
 ```
 For a full golang build, GOROOT, GOPATH, GOBIN set up:
 ```
