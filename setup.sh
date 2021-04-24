@@ -108,7 +108,7 @@ fi
 # Set directories to install goFish
 goFishDir=${GITHUB}/edotau
 mkdir -p $goFishDir
-mv goFish ${goFishDir}
+mv goFish/ ${goFishDir}
 
 cd $goFishDir
 # Contingent on passing all go tests, we finally install/build all goFish binary programs
