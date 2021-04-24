@@ -1,3 +1,4 @@
+// nucmerParse is used parse and extra interesting genomic regions from nucmer suffix tree alignments
 package main
 
 import (

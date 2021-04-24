@@ -1,4 +1,4 @@
-// goToBed - is a simplified version of ucsc overlap section to analyze non/overlapping genomic regions in a dataset and filtering var variants of interests
+// goToBed is a simplified version of ucsc overlap section to analyze non/overlapping genomic regions in a dataset and filtering var variants of interests
 package main
 
 import (
@@ -15,7 +15,7 @@ func usage() {
 		"goToBed - software toolkit to analyze overlapping genomic regions in a dataset\n" +
 			"Usage:\n" +
 			"  ./goToBed [options] in.file out.file\n\n" +
-			"options:\n")
+			"Options:\n")
 	flag.PrintDefaults()
 	fmt.Print("\n")
 }
