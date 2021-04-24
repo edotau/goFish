@@ -1,3 +1,4 @@
+// general tool to example chain alignments between two whole genomes, find inversion, or return a simple print of all chain regions
 package main
 
 import (
