@@ -106,21 +106,19 @@ if ! [ -e "$GOBIN" ] ; then
 fi
 
 # Set directories to install goFish
-goFishDir=${GITHUB}/goFish
+goFishDir=${GITHUB}/edotau
+
 
 
 # If goFish repo already exists, we do not perform a git clone
 if ! [ -e "$goFishDir" ] ; then
+    mkdir -p ${goFishDir}/.
     git clone https://github.com/edotau/goFish.git $goFishDir
 fi
 
 cd $goFishDir
 # Contingent on passing all go tests, we finally install/build all goFish binary programs
-
-go get -v cloud.google.com/go/storage
-go get -v github.com/biogo/hts/...
-go get -v github.com/vertgenlab/gonomics
-go get -v github.com/pkg/errors
+go mod init; go mod tidy
 go test ./...
 go install ./...
 ln -s $GOBIN
