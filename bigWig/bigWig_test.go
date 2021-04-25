@@ -12,5 +12,5 @@ func TestIsBigWig(t *testing.T) {
 }
 
 func TestBigWigReaderSource(t *testing.T) {
-	ImportBigWigReader("testdata/atacseq.bw")
+	ImportBigWigReader("testdata/track.bw")
 }
