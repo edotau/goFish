@@ -18,6 +18,7 @@ const (
 	MaskC Dna = 'c'
 	MaskG Dna = 'g'
 	MaskT Dna = 't'
+	MaskN Dna = 'n'
 	Gap   Dna = '-'
 )
 
@@ -74,6 +75,8 @@ func ByteToDna(b byte) Dna {
 		return MaskG
 	case 't':
 		return MaskT
+	case 'n':
+		return MaskN
 	case '-':
 		return Gap
 	case '*':
@@ -104,6 +107,8 @@ func DnaToByte(b Dna) byte {
 		return 'g'
 	case MaskT:
 		return 't'
+	case MaskN:
+		return 'n'
 	case Gap:
 		return '-'
 	default:
@@ -153,7 +158,7 @@ func ToBytes(bases []Dna) []byte {
 	buffer := bytes.Buffer{}
 	buffer.Grow(len(bases))
 	for _, i := range bases {
-		buffer.WriteByte(DnaToByteNoMask(i))
+		buffer.WriteByte(DnaToByte((i)))
 	}
 	return buffer.Bytes()
 }
@@ -162,7 +167,7 @@ func ToString(bases []Dna) string {
 	buffer := strings.Builder{}
 	buffer.Grow(len(bases))
 	for _, i := range bases {
-		buffer.WriteByte(DnaToByteNoMask(i))
+		buffer.WriteByte(DnaToByte((i)))
 	}
 	return buffer.String()
 }

@@ -1,8 +1,6 @@
 package code
 
-import (
-
-)
+import ()
 
 // The Slice interface reflects the built-in slice type behavior.
 type Slice interface {
