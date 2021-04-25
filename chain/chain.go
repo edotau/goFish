@@ -168,3 +168,12 @@ func ToString(ch *Chain) string {
 func PrettyFmt(c *Chain) string {
 	return fmt.Sprintf("%s\t%s\t%d\t%d\t%s\t%s\t%d\t%d", c.TName, string(c.TStrand), c.TStart, c.TEnd, c.QName, string(c.QStrand), c.QStart, c.QEnd)
 }
+
+func Write(filename string, chains []Chain) {
+	writer := simpleio.NewWriter(filename)
+	for _, c := range chains {
+		writer.WriteString(ToString(&c))
+		writer.WriteByte('\n')
+	}
+	writer.Close()
+}
