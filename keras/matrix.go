@@ -1,18 +1,12 @@
 package keras
 
 import (
-	"fmt"
 	"math/rand"
 )
 
 // Matrix type is a 2D slice of float64 Values.
 type Matrix struct {
 	Matrix [][]float64
-}
-
-//Vector type
-type Vector struct {
-	row []float64
 }
 
 // ColNum returns the number of columns in a matrix.
@@ -26,20 +20,13 @@ func RowNum(m Matrix) int {
 }
 
 //Dimensions returns the number of rows and columns of m.
-func (m Matrix) Dimensions() (int, int) {
+func Dimensions(m Matrix) (int, int) {
 	return RowNum(m), ColNum(m)
 }
 
-//NumberOfElements returns the number of elements.
-func (m Matrix) NumberOfElements() int {
+// NumberOfElements returns the number of elements.
+func NumberOfElements(m Matrix) int {
 	return RowNum(m) * ColNum(m)
-}
-
-// PrintfByRows will print a matrix by rows.
-func PrintfByRows(m Matrix) {
-	for r := 0; r < len(m.Matrix); r++ {
-		fmt.Println(m.Matrix[r])
-	}
 }
 
 // NewMatrix allocates the appropriate memory for an m x n matrix.
@@ -50,25 +37,6 @@ func NewMatrix(m, n int) Matrix {
 		ans.Matrix[each] = make([]float64, m)
 	}
 	return ans
-}
-
-// PrintfMatrix is a helper function that will print a matrix to stdout.
-func PrintfMatrix(m Matrix) {
-	var i, j int
-	for i = 0; i < len(m.Matrix); i++ {
-		for j = 0; j < len(m.Matrix[i])-1; j++ {
-			fmt.Printf("%f, ", m.Matrix[i][j])
-		}
-		fmt.Printf("%f\n", m.Matrix[i][len(m.Matrix[i])-1])
-
-	}
-}
-
-//PrintByRow prints the matrix by row.
-func (m Matrix) PrintByRow() {
-	for r := range m.Matrix {
-		fmt.Println(m.Matrix[r])
-	}
 }
 
 // RandomMatrix will create a new matrix and randomize float64 values.
@@ -95,7 +63,7 @@ func Transpose(m Matrix) Matrix {
 	return ans
 }
 
-//MapFunc applies f to every element
+// MapFunc applies f to every element
 func (m Matrix) MapFunc(f func(x float64) float64) Matrix {
 	for i := 0; i < RowNum(m); i++ {
 		for j := 0; j < ColNum(m); j++ {
@@ -105,8 +73,8 @@ func (m Matrix) MapFunc(f func(x float64) float64) Matrix {
 	return m
 }
 
-//ToArray returns the matrix in array form.
-func (m Matrix) ToArray() []float64 {
+// ToArray returns the matrix in array form.
+func ToArray(m Matrix) []float64 {
 	var arr []float64
 	for i := 0; i < RowNum(m); i++ {
 		for j := 0; j < ColNum(m); j++ {
@@ -158,48 +126,6 @@ func (m Matrix) Multiply(mat Matrix) Matrix {
 		}
 	}
 	return product
-}
-
-// NumberOfElements returns the number of elements.
-func (v Vector) NumberOfElements() int {
-	return len(v.row)
-}
-
-// NewVector returns a vector type
-func NewVector(slice []float64) Vector {
-	return Vector{row: slice}
-}
-
-// RandomVector returns a random valued vector.
-func RandomVector(size int) Vector {
-	slice := make([]float64, size)
-	for i := 0; i < size; i++ {
-		slice = append(slice, rand.Float64()/0.3)
-	}
-	return NewVector(slice)
-}
-
-//Map maps the vector by with the function
-func (v Vector) Map(f func(float64) float64) Vector {
-	for i := range v.row {
-		v.row[i] = f(v.row[i])
-	}
-	return v
-}
-
-// Add returns an elementary operation on two vectors.
-func (v Vector) Add(v2 Vector) Vector {
-	var resultVector Vector
-	for i := 0; i < len(v.row); i++ {
-		resultVector.row[i] = v.row[i] + v2.row[i]
-	}
-	return resultVector
-}
-
-// Slice returns vector.slice.
-// You can perform indexing with this method.
-func (v Vector) Slice() []float64 {
-	return v.row
 }
 
 //ScalarMultiplication multiplies every element with a scalar

@@ -39,8 +39,8 @@ func TestNewMatrix(t *testing.T) {
 func TestTransposeMatrix(t *testing.T) {
 	before := RandomMatrix(3, 2)
 	fmt.Printf("Before: \n")
-	PrintfByRows(before)
+	PrintByRows(before)
 	fmt.Printf("Transpose: \n")
 	after := Transpose(before)
-	PrintfByRows(after)
+	PrintByRows(after)
 }

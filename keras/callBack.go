@@ -60,7 +60,7 @@ func (m *Model) ModelCheckpoint(filepath string, metrics Metrics, saveWeightsOnl
 		return fmt.Errorf("could not create file with path %s:%v", filepath, err)
 	}
 	for _, l := range m.ConvLayers {
-		s := fmt.Sprintf("%f", l.GetWeights().ToArray())
+		s := fmt.Sprintf("%f", ToArray(l.GetWeights()))
 		f.WriteString(s)
 	}
 	if !saveWeightsOnly {

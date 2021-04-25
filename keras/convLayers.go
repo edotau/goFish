@@ -30,6 +30,33 @@ type DenseLayer struct {
 	BiasInit          func(float64) float64
 }
 
+type Conv2D struct {
+	Inputs, Outputs []float64
+	Weights         Weights
+	Biases          Biases
+}
+
+/*
+tf.keras.layers.Conv2D(
+    filters,
+    kernel_size,
+    strides=(1, 1),
+    padding="valid",
+    data_format=None,
+    dilation_rate=(1, 1),
+    groups=1,
+    activation=None,
+    use_bias=True,
+    kernel_initializer="glorot_uniform",
+    bias_initializer="zeros",
+    kernel_regularizer=None,
+    bias_regularizer=None,
+    activity_regularizer=None,
+    kernel_constraint=None,
+    bias_constraint=None,
+    **kwargs
+)*/
+
 //Weights struct with the actual kernels and the kernel initializer function.
 type Weights struct {
 	kernels    Matrix
@@ -93,7 +120,7 @@ func (d DenseLayer) GetBiases() Vector {
 
 //TrainableParameters returns the count of trainable parameters.
 func (d DenseLayer) TrainableParameters() int {
-	return d.weights.kernels.NumberOfElements() + d.biases.bs.NumberOfElements()
+	return NumberOfElements(d.weights.kernels) + d.biases.bs.NumberOfElements()
 }
 
 //SetWeights is used for manually defining the weight
@@ -108,11 +135,11 @@ func (d *DenseLayer) SetBiases(bs Vector) {
 
 //InputLayer layer, much like the keras one.
 type InputLayer struct {
-	inputs, outputs []float64
-	weights         Weights
-	biases          Biases
-	trainable       bool
-	name            string
+	Inputs, outputs []float64
+	Weights         Weights
+	Biases          Biases
+	Trainable       bool
+	Name            string
 }
 
 //Input layer
@@ -120,15 +147,15 @@ func Input(inputs []float64) InputLayer {
 	weights := WeightInit(len(inputs), 1, HeUniform)
 	biases := BiasInit(len(inputs), ZeroInitializer)
 	return InputLayer{
-		inputs:  inputs,
-		weights: weights,
-		biases:  biases,
+		Inputs:  inputs,
+		Weights: weights,
+		Biases:  biases,
 	}
 }
 
 //Call of the input layer
 func (i *InputLayer) Call() []float64 {
-	vec := NewVector(i.inputs).ApplyMatrix(i.weights.kernels).Add(i.biases.bs)
+	vec := NewVector(i.Inputs).ApplyMatrix(i.Weights.kernels).Add(i.Biases.bs)
 	i.outputs = vec.Slice()
 	return vec.Slice()
 }
@@ -255,7 +282,7 @@ func (f *FlattenLayer) Call() []float64 {
 
 // Flatten init.
 func Flatten(m Matrix) FlattenLayer {
-	return FlattenLayer{outputs: m.ToArray()}
+	return FlattenLayer{outputs: ToArray(m)}
 }
 
 // HeUniform stands for He Initialization or the glorot_unifom for kernel_initialization.
