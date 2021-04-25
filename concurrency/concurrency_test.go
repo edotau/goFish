@@ -28,10 +28,6 @@ func TestConcurrency(t *testing.T) {
 			function: testaceCondition,
 		},
 		{
-			scenario: "test run limit with negative concurrency value",
-			function: testaceConditionWithNegativeConcurrencyValue,
-		},
-		{
 			scenario: "test run limit with concurrency value greater than passed functions",
 			function: testaceConditionWithConcurrencyGreaterThanPassedFunctions,
 		},
@@ -69,28 +65,6 @@ outer:
 func testaceCondition(t *testing.T) {
 	var count int
 	err := RaceCondition(2, fn1, fn2)
-outer:
-	for {
-		select {
-		case <-err:
-			count++
-			if count == 2 {
-				break outer
-			}
-		case <-timeout:
-			t.Errorf("parallel.Run() failed, got timeout error")
-			break outer
-		}
-	}
-
-	if count != 2 {
-		t.Errorf("parallel.Run() failed, got '%v', expected '%v'", count, 2)
-	}
-}
-
-func testaceConditionWithNegativeConcurrencyValue(t *testing.T) {
-	var count int
-	err := RaceCondition(-1, fn1, fn2)
 outer:
 	for {
 		select {

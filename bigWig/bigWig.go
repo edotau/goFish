@@ -4,9 +4,11 @@ package bigWig
 
 import (
 	"encoding/binary"
-	"io"
-
+	"fmt"
 	"github.com/edotau/goFish/simpleio"
+	"github.com/pbenner/gonetics"
+	"io"
+	"log"
 )
 
 const BigWigMagic = 0x888FFC26
@@ -16,7 +18,7 @@ type BigWigReader struct {
 	close func() error
 }
 
-func NewBigWigReader(filename string) *BigWigReader {
+func NewReader(filename string) *BigWigReader {
 	file := simpleio.OpenFile(filename)
 	answer := BigWigReader{
 		ReadSeeker: file,
@@ -43,6 +45,26 @@ func MagicBigWig(reader *BigWigReader) bool {
 type BwSize struct {
 	Block []byte
 	Error error
+}
+
+// ImportBigWigReader is a function to query bigwig files written by pbenner/gonetics
+func ImportBigWigReader(filename string) {
+	file, fileError := gonetics.OpenBigWigFile(filename)
+	simpleio.ErrorHandle(fileError)
+
+	// query details
+	seqname := "chr01" // (regular expression)
+	from := 1
+	to := 100000
+	binsize := 100
+
+	reader, readingError := gonetics.NewBigWigReader(file)
+	for record := range reader.Query(seqname, from, to, binsize) {
+		if record.Error != readingError {
+			log.Fatalf("reading bigWig failed: %v", record.Error)
+		}
+		fmt.Println(record)
+	}
 }
 
 /*
