@@ -1,27 +1,22 @@
 package keras
 
-/*
 import (
 	"testing"
 )
 
 func TestNeuralNetworkModel(t *testing.T) {
-	//m := RandomMatrix(100,100)
-	v := RandomVector(10)
+	var input []float64 = SimpleRandomVector(10)
 	model := Sequential([]Layer{
-		//Conv2D(64, 3, 1, Valid),
-		Input(v.row),
-	})
-	//MaxPooling2D(2),
-	//Conv2D(32, 3, 1, DefaultPadding),
-	//MaxPooling2D(2),
-	//Flatten(m),
-	//Dense(128, ReLU),
-	//Dense(32, Tanh),
-	//	Softmax(10)}, "sequential")
+		Conv2D(64, 3, 3, input, Valid), Dense(128, input, ReLU), Dense(32, input, Tanh), Conv2D(32, 3, 1, input, DefaultPadding),
+	}, "sequential")
 
-	//model.Compile(RMSprop, CrossEntropy, Mae)
+	model.Summary()
+}
 
-	//history := model.Train(dataX, dataY, numEpochs)
+/*MaxPooling2D(2),
+Conv2D(32, 3, 1, DefaultPadding),
+MaxPooling2D(2),
+Flatten(),
+,
 
-}*/
+Softmax(10),*/

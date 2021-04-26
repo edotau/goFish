@@ -50,3 +50,12 @@ func RandomVector(size int) Vector {
 	}
 	return NewVector(slice)
 }
+
+// RandomVector returns a random valued vector.
+func SimpleRandomVector(size int) []float64 {
+	slice := make([]float64, size)
+	for i := 0; i < size; i++ {
+		slice = append(slice, rand.Float64()/0.3)
+	}
+	return slice
+}

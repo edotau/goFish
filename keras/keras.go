@@ -90,7 +90,7 @@ func (m *Model) Predict(values []float64) []float64 {
 	return outputs
 }
 
-//Train trains the model given trainX and  trainY data and the number of epochs. It keeps track of the defined metrics and prints it every epoch. It also prints the training duration.
+// Train trains the model given trainX and  trainY data and the number of epochs. It keeps track of the defined metrics and prints it every epoch. It also prints the training duration.
 //It returns a map from strings to floats, where strings represent the metrics name and float the metrics value.
 func (m *Model) Train(trainX, trainY []float64, epochs int) map[string]float64 {
 	startTime := time.Now()

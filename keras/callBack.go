@@ -99,7 +99,7 @@ func (m *Model) History(filepath string) (*CallbackHistory, error) {
 	return &CallbackHistory{file: f}, nil
 }
 
-//ReadToStrings returns history in strings.
+// ReadToStrings returns history in strings.
 func (ch *CallbackHistory) ReadToStrings() ([]string, error) {
 	records, err := csv.NewReader(ch.file).Read()
 	if err != nil {
