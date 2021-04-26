@@ -1,0 +1,10 @@
+PeakID (cmd=annotatePeaks.pl consensus_peaks.mLb.clN.bed rabsTHREEspine.fa -gid -gtf rna-seq.genes.mapped.ensembl.gtf -cpu 6)	Chr	Start	End	Strand	Peak Score	Focus Ratio/Region Size	Annotation	Detailed Annotation	Distance to TSS	Nearest PromoterID	Entrez ID	Nearest Unigene	Nearest Refseq	Nearest Ensembl	Gene Name	Gene Alias	Gene Description	Gene Type
+Interval_1370	chr02	10977992	10978213	+	0	NA	exon (vat1l, exon 9 of 9)	-exon (vat1l, exon 9 of 9)	-3099	CLEC3A	CLEC3A	CLEC3A						NA
+Interval_16305	chr21	8477637	8478074	+	0	NA	intron (RNASEQ.30175.1, intron 1 of 1)	-intron (RNASEQ.30172.1, intron 15 of 16)	12578	RNASEQ.30174.1	RNASEQ.30174	RNASEQ.30174						NA
+Interval_14918	chr19	12393974	12394832	+	0	NA	intron (DNAJA4, intron 1 of 8)	-intron (DNAJA4, intron 1 of 8)	432	DNAJA4	DNAJA4	DNAJA4						NA
+Interval_13076	chr17	1857890	1858237	+	0	NA	TTS (ENSGACT00000004910.1)	-TTS (ENSGACT00000004910.1)	149	ENSGACT00000004923.1	ENSGACT00000004923	ENSGACT00000004923						NA
+Interval_7022	chr09	1944733	1945678	+	0	NA	promoter-TSS (RNASEQ.13203.1)	-promoter-TSS (RNASEQ.13203.1)	-277	RNASEQ.13203.1	RNASEQ.13203	RNASEQ.13203						NA
+Interval_13851	chr18	105174	105822	+	0	NA	TTS (nus1)	-TTS (nus1)	176	slc35f1	slc35f1	slc35f1						NA
+Interval_4221	chr05	13014983	13015480	+	0	NA	promoter-TSS (pgap3)	-promoter-TSS (pgap3)	31	pgap3	pgap3	pgap3						NA
+Interval_5255	chr07	6189492	6189966	+	0	NA	promoter-TSS (b4galt4)	-promoter-TSS (b4galt4)	-37	b4galt4	b4galt4	b4galt4						NA
+Interval_510	chr01	14529688	14530135	+	0	NA	intron (dchs1a, intron 2 of 20)	-intron (dchs1a, intron 2 of 20)	12078	dchs1a	dchs1a	dchs1a						NA
