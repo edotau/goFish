@@ -4,9 +4,11 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
+	"strings"
+
 	"github.com/edotau/goFish/genePred"
 	"github.com/edotau/goFish/simpleio"
-	"log"
 )
 
 func usage() {
@@ -34,11 +36,11 @@ func main() {
 		curr := i
 		gene, ok := geneNames[i.GeneName]
 		if ok {
-			i.GeneName = geneNames[i.GeneName]
-			curr.GeneName = gene
-			writer.WriteLine(genePred.ToString(&curr))
+			i.GeneName = strings.ReplaceAll(geneNames[i.GeneName], " ", "_")
+			curr.GeneName = strings.ReplaceAll(gene, " ", "_")
+			simpleio.WriteLine(writer, genePred.ToString(&curr))
 		} else {
-			writer.WriteLine(genePred.ToString(&i))
+			simpleio.WriteLine(writer, genePred.ToString(&i))
 		}
 
 	}

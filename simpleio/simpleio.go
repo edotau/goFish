@@ -136,6 +136,12 @@ func readMore(reader *SimpleReader) []byte {
 	return reader.line
 }
 
+func WriteLine(writer *SimpleWriter, s string) {
+	writer.Buffer.WriteString(s)
+	writer.Buffer.WriteByte('\n')
+	io.Copy(writer, writer.Buffer)
+}
+
 // BytesToBuffer will parse []byte and return a pointer to the same underlying bytes.Buffer
 func BytesToBuffer(reader *SimpleReader) *bytes.Buffer {
 	_, err := reader.Buffer.Write(reader.line[:len(reader.line)-1])
