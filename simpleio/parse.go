@@ -31,7 +31,6 @@ func StringToUInt16(s string) uint16 {
 	return uint16(n)
 }
 
-
 // StringToInt is a function that converts a string and return a number, type int.
 func StringToUInt32(s string) uint32 {
 	answer, err := strconv.Atoi(s)

@@ -1,10 +1,11 @@
 package bam
 
 import (
-	"github.com/edotau/goFish/simpleio"
 	"log"
 	"strconv"
 	"strings"
+
+	"github.com/edotau/goFish/simpleio"
 )
 
 // ByteCigar struct encodes sequence comparison operations and includes run length info.

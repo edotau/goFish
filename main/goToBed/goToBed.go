@@ -4,10 +4,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/edotau/goFish/bed"
-	"github.com/edotau/goFish/simpleio"
 	"log"
 	"strings"
+
+	"github.com/edotau/goFish/bed"
+	"github.com/edotau/goFish/simpleio"
 )
 
 func usage() {
@@ -15,6 +16,7 @@ func usage() {
 		"goToBed - software toolkit to analyze overlapping genomic regions in a dataset\n" +
 			"Usage:\n" +
 			"  ./goToBed [options] in.file out.file\n\n" +
+			"Default:\n  overlapSelect\n\n" +
 			"Options:\n")
 	flag.PrintDefaults()
 	fmt.Print("\n")

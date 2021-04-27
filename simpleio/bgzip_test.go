@@ -10,7 +10,7 @@ func BenchmarkBgzipReader(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		ReadBgzipFile("testdata/rabsTHREEbepa_chainNets.vcf.gz")
+		ReadBgzipFile("testdata/atacseq_simple_pool.vcf.gz")
 	}
 
 }

@@ -35,15 +35,15 @@ func BenchmarkConcatB(b *testing.B) {
 }
 
 func BenchmarkConcatD(b *testing.B) {
-
 	n := len("START") + len("END")
+
 	for t := 0; t < b.N; t++ {
 		for _, s := range strs {
 			n += len(s) + 1
 		}
 		buf := make([]byte, n)
-
 		n = copy(buf, "START")
+
 		for _, s := range strs {
 			n += copy(buf[n:], s)
 			buf[n] = '-'

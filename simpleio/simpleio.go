@@ -31,10 +31,11 @@ type SimpleReader struct {
 	close  func() error
 }
 
-// Read reads data into p and is a method required to implement the io.Reader interface.
-// It returns the number of bytes read into p.
-func (reader *SimpleReader) Read(b []byte) (n int, err error) {
-	return reader.Read(b)
+type SimpleWriter struct {
+	*bufio.Writer
+	Gzip   *gzip.Writer
+	Buffer *bytes.Buffer
+	close  func() error
 }
 
 // NewSimpleReader will process a given file and performs error handling if an error occurs.
@@ -59,6 +60,35 @@ func NewReader(filename string) *SimpleReader {
 		answer.Reader = bufio.NewReader(file)
 	}
 	return &answer
+}
+
+func NewWriter(filename string) *SimpleWriter {
+	ans := SimpleWriter{}
+	file, err := os.Create(filename)
+	ErrorHandle(err)
+	ans.Writer = bufio.NewWriter(file)
+	ans.Buffer = &bytes.Buffer{}
+	if strings.HasSuffix(filename, ".gz") {
+		ans.Gzip = gzip.NewWriter(ans.Writer)
+	} else {
+		ans.Gzip = nil
+	}
+	ans.close = file.Close
+	return &ans
+}
+
+// Read reads data into p and is a method required to implement the io.Reader interface.
+// It returns the number of bytes read into p.
+func (reader *SimpleReader) Read(b []byte) (n int, err error) {
+	return reader.Read(b)
+}
+
+func (writer *SimpleWriter) Write(p []byte) (n int, err error) {
+	if writer.Gzip != nil {
+		return writer.Gzip.Write(p)
+	} else {
+		return writer.Write(p)
+	}
 }
 
 // ReadLine will return a bytes.Buffer pointing to the internal slice of bytes. Provided this function is called within a loop,
@@ -131,6 +161,43 @@ func (reader *SimpleReader) Close() {
 	}
 }
 
+func (writer *SimpleWriter) Close() {
+
+	if writer.Gzip != nil {
+		writer.Gzip.Close()
+
+	}
+	if writer != nil {
+		writer.Flush()
+	}
+	writer.close()
+
+}
+func Remove(filename string) {
+	err := os.Remove(filename)
+	ErrorHandle(err)
+}
+
+func ReadFromFile(filename string) []string {
+	reader := NewReader(filename)
+	var ans []string
+	for i, err := ReadLine(reader); !err; i, err = ReadLine(reader) {
+		ans = append(ans, i.String())
+	}
+	reader.Close()
+	return ans
+}
+
+func WriteToFile(filename string, data []string) {
+	writer := NewWriter(filename)
+	for i := 0; i < len(data); i++ {
+		writer.Buffer.WriteString(data[i])
+		writer.Buffer.WriteByte('\n')
+		io.Copy(writer, writer.Buffer)
+	}
+	writer.Close()
+}
+
 func GetBuffer(bufferPool sync.Pool) bytes.Buffer {
 	return bufferPool.Get().(bytes.Buffer)
 }
@@ -138,12 +205,6 @@ func GetBuffer(bufferPool sync.Pool) bytes.Buffer {
 func PutBuffer(buf bytes.Buffer, bufferPool sync.Pool) {
 	buf.Reset()
 	bufferPool.Put(buf)
-}
-
-func simpleLogErr(err error) {
-	if err != nil {
-		log.Fatal(err)
-	}
 }
 
 func ErrorHandle(err error) {
@@ -194,7 +255,7 @@ func SimpleBufioPoolTest(filename string) {
 
 func OpenFile(filename string) *os.File {
 	file, err := os.Open(filename)
-	simpleLogErr(err)
+	ErrorHandle(err)
 	return file
 }
 

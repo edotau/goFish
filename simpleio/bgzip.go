@@ -26,7 +26,7 @@ func NewBgzipReader(filename string) *BgzipReader {
 
 	reader, err := bgzf.NewReader(answer.file, 1)
 	answer.Reader = bufio.NewReader(reader)
-	simpleLogErr(err)
+	ErrorHandle(err)
 	return &answer
 }
 
@@ -38,7 +38,7 @@ func ReadLineBgzip(reader *BgzipReader) (*bytes.Buffer, bool) {
 		if reader.line[len(reader.line)-1] == '\n' {
 			reader.Buffer.Reset()
 			_, err = reader.Buffer.Write(reader.line[:len(reader.line)-1])
-			simpleLogErr(err)
+			ErrorHandle(err)
 			return reader.Buffer, false
 		} else {
 			log.Fatalf("Error: end of line did not end with an end of line character...\n")
@@ -52,7 +52,7 @@ func ReadLineBgzip(reader *BgzipReader) (*bytes.Buffer, bool) {
 				//common.ExitIfError(err)
 				reader.line = append(reader.line, readMoreBgzip(reader)...)
 				_, err = reader.Buffer.Write(reader.line[:len(reader.line)-1])
-				simpleLogErr(err)
+				ErrorHandle(err)
 				return reader.Buffer, false
 			}
 		} else {
@@ -66,7 +66,7 @@ func ReadLineBgzip(reader *BgzipReader) (*bytes.Buffer, bool) {
 func (reader *BgzipReader) Close() {
 	if reader != nil {
 		err := reader.file.Close()
-		simpleLogErr(err)
+		ErrorHandle(err)
 	}
 }
 
@@ -74,7 +74,7 @@ func readMoreBgzip(reader *BgzipReader) []byte {
 	var err error
 	reader.line, err = reader.ReadBytes('\n')
 	_, err = reader.Buffer.Write(reader.line[:len(reader.line)-1])
-	simpleLogErr(err)
+	ErrorHandle(err)
 	return reader.Buffer.Bytes()
 }
 
