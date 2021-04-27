@@ -18,6 +18,7 @@ type pipeline struct {
 	executors []Executor
 }
 
+/*
 func New(f func(chan interface{})) Pipeline {
 	inC := make(chan interface{})
 
@@ -28,7 +29,7 @@ func New(f func(chan interface{})) Pipeline {
 		//errC:      make(chan error),
 		executors: []Executor{},
 	}
-}
+}*/
 
 func (p *pipeline) Pipe(executor Executor) Pipeline {
 	p.executors = append(p.executors, executor)
