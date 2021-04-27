@@ -117,7 +117,7 @@ func GenePredLine(reader *simpleio.SimpleReader) (*GenePred, bool) {
 
 func ReadPipe(filename string) {
 	reader := simpleio.NewReader(filename)
-	outC := concurrency.New(func(inC chan interface{}) {
+	outC := concurrency.Work(func(inC chan interface{}) {
 		defer close(inC)
 		//for i, err := GenePredLine(reader); !err; i, err = GenePredLine(reader) {
 
