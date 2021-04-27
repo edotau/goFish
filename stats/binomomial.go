@@ -44,7 +44,7 @@ func BinomCoeff(n, k int64) float64 {
 
 //NegativeBinomial(ρ, r) => number of NextBernoulli(ρ) failures before r successes
 func NextNegativeBinomial(ρ float64, r int64) int64 {
-	k := float64(0.0)
+	k := int64(0)
 	for r >= 0 {
 		i := NextBernoulli(ρ)
 		r -= i
@@ -83,6 +83,7 @@ func LnBinomCoeff(n, k float64) float64 {
 		kk := int64(k)
 		return math.Log(BinomCoeff(nn, kk))
 	}
+
 	// else, use factorial formula
 	return LnFactBig(n) - LnFactBig(k) - LnFactBig(n-k)
 }
