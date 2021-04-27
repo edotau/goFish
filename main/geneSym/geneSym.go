@@ -38,11 +38,13 @@ func main() {
 		if ok {
 			i.GeneName = strings.ReplaceAll(geneNames[i.GeneName], " ", "_")
 			curr.GeneName = strings.ReplaceAll(gene, " ", "_")
-			simpleio.WriteLine(writer, genePred.ToString(&curr))
+			writer.Writer.WriteString(genePred.ToString(&curr))
+			writer.Writer.WriteByte('\n')
 		} else {
-			simpleio.WriteLine(writer, genePred.ToString(&i))
+			writer.Writer.WriteString(genePred.ToString(&i))
+			writer.Writer.WriteByte('\n')
 		}
 
 	}
-
+	writer.Close()
 }
