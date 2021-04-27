@@ -2,9 +2,31 @@ package stats
 
 import (
 	"math"
+	"math/rand"
 )
 
 const lnSqrt2Pi = 0.918938533204672741780329736406 // log(sqrt(2*pi))
+
+func NextBinomial(ρ float64, n int64) (result int64) {
+	for i := int64(0); i <= n; i++ {
+		result += NextBernoulli(ρ)
+	}
+	return
+}
+
+func Binomial(ρ float64, n int64) func() int64 {
+	return func() int64 { return NextBinomial(ρ, n) }
+}
+
+func Bernoulli(ρ float64) func() int64 { return func() int64 { return NextBernoulli(ρ) } }
+
+func NextBernoulli(ρ float64) int64 {
+	if NextUniform() < ρ {
+		return 1
+	}
+	return 0
+}
+
 //var trunc func(float64) float64 = math.Trunc
 //  Binomial coefficient calculates the number of ways k-element subsets (or k-combinations) of an n-element set, disregarding order
 func BinomCoeff(n, k int64) float64 {
@@ -14,14 +36,26 @@ func BinomCoeff(n, k int64) float64 {
 	if n == 0 {
 		return 0
 	}
-	// if n, k are small, use recursive formula
 	if n < 10 && k < 10 {
 		return BinomCoeff(n-1, k-1) + BinomCoeff(n-1, k)
 	}
-
-	// else, use factorial formula
-	//	fmt.Println(LnFactBig(n), LnFactBig(k), LnFactBig(n-k))
 	return Round(math.Exp(LnFactBig(float64(n)) - LnFactBig(float64(k)) - LnFactBig(float64(n-k))))
+}
+
+//NegativeBinomial(ρ, r) => number of NextBernoulli(ρ) failures before r successes
+func NextNegativeBinomial(ρ float64, r int64) int64 {
+	k := float64(0.0)
+	for r >= 0 {
+		i := NextBernoulli(ρ)
+		r -= i
+		k += (1 - i)
+	}
+	return k
+}
+func NegativeBinomial(ρ float64, r int64) func() int64 {
+	return func() int64 {
+		return NextNegativeBinomial(ρ, r)
+	}
 }
 
 // Round to nearest integer
@@ -47,10 +81,8 @@ func LnBinomCoeff(n, k float64) float64 {
 	if n < 10 && k < 10 {
 		nn := int64(n)
 		kk := int64(k)
-
 		return math.Log(BinomCoeff(nn, kk))
 	}
-
 	// else, use factorial formula
 	return LnFactBig(n) - LnFactBig(k) - LnFactBig(n-k)
 }
@@ -72,3 +104,7 @@ func LnGamma(x float64) (res float64) {
 
 	return
 }
+
+var NextUniform func() float64 = rand.Float64
+
+func Uniform() func() float64 { return NextUniform }
