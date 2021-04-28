@@ -3,10 +3,11 @@ package simpleio
 import (
 	"bufio"
 	"bytes"
-	"compress/gzip"
 	"fmt"
 	"net/http"
 	"strings"
+
+	gzip "github.com/klauspost/pgzip"
 )
 
 // HttpReader will fetch data from files uploaded to an internet server and stream data into an io.Reader interface.
@@ -16,6 +17,7 @@ func HttpReader(url string) *SimpleReader {
 	var answer SimpleReader = SimpleReader{
 		Buffer: &bytes.Buffer{},
 		line:   make([]byte, defaultBufSize),
+		close:  resp.Body.Close,
 	}
 	if strings.HasSuffix(url, ".gz") {
 		gzipReader, err := gzip.NewReader(resp.Body)

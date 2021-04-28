@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"strings"
 
@@ -25,6 +26,7 @@ func usage() {
 func main() {
 	var fa *string = flag.String("fetch", "", "``provide a filename to download marine stickleback genome or to stdout")
 	var chrom *bool = flag.Bool("chrom", false, "print marine stickleback chrom size info to stdout")
+	var wget *bool = flag.Bool("wget", false, "download stickleback genome as a fasta to disk")
 	var expectedNumArgs int = 0
 
 	flag.Usage = usage
@@ -37,6 +39,8 @@ func main() {
 	}
 	if strings.Contains(*fa, "stdout") {
 		fetchHttpStdout()
+	} else if *wget {
+		wgetFasta()
 	} else if *chrom {
 		chromTableStdout()
 	} else {
@@ -49,9 +53,18 @@ func main() {
 func fetchHttpStdout() {
 	stream := simpleio.NewReader(stickleback.RabsFasta)
 	for i, err := fasta.FastaReader(stream); !err; i, err = fasta.FastaReader(stream) {
-		fmt.Printf("%s\n", i.ToString())
+		fmt.Printf("%s", i.ToString())
 	}
 	stream.Close()
+}
+
+func wgetFasta() {
+	stream := simpleio.NewReader(stickleback.RabsFasta)
+	defer stream.Close()
+	writer := simpleio.NewWriter("rabsTHREEspine.fa.gz")
+	io.Copy(writer.Gzip, stream)
+
+	writer.Close()
 }
 
 func chromTableStdout() {

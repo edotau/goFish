@@ -68,9 +68,11 @@ func NewWriter(filename string) *SimpleWriter {
 	file, err := os.Create(filename)
 	ErrorHandle(err)
 	ans.Writer = bufio.NewWriter(file)
+
 	ans.Buffer = &bytes.Buffer{}
 	if strings.HasSuffix(filename, ".gz") {
 		ans.Gzip = gzip.NewWriter(ans.Writer)
+		ans.Gzip.SetConcurrency(100000, 10)
 	} else {
 		ans.Gzip = nil
 	}
@@ -88,7 +90,7 @@ func (writer *SimpleWriter) Write(p []byte) (n int, err error) {
 	if writer.Gzip != nil {
 		return writer.Gzip.Write(p)
 	} else {
-		return writer.Write(p)
+		return writer.Writer.Write(p)
 	}
 }
 
@@ -171,13 +173,13 @@ func (reader *SimpleReader) Close() {
 func (writer *SimpleWriter) Close() {
 
 	if writer.Gzip != nil {
-		writer.Gzip.Close()
+		ErrorHandle(writer.Gzip.Close())
 
 	}
 	if writer != nil {
-		writer.Flush()
+		writer.Writer.Flush()
 	}
-	writer.close()
+	ErrorHandle(writer.close())
 
 }
 func Remove(filename string) {
