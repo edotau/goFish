@@ -4,6 +4,7 @@ package fasta
 
 import (
 	"bytes"
+	"log"
 	"strings"
 
 	"github.com/edotau/goFish/code"
@@ -47,4 +48,41 @@ func Read(filename string) []Fasta {
 		ans = append(ans, *i)
 	}
 	return ans
+}
+
+func FetchHttpToMap(link string) map[string][]code.Dna {
+	hash := make(map[string][]code.Dna)
+	stream := simpleio.NewReader(link)
+	for i, err := FastaReader(stream); !err; i, err = FastaReader(stream) {
+		if _, key := hash[i.Name]; !key {
+			hash[i.Name] = i.Seq
+		} else {
+			log.Fatalf("Error: fasta files does not contain unique header names...\n")
+		}
+	}
+	stream.Close()
+	return hash
+}
+
+func (fa *Fasta) ToString() string {
+	buf := &strings.Builder{}
+	buf.WriteByte('>')
+	buf.WriteString(fa.Name)
+	buf.WriteByte('\n')
+	for i := 0; i < len(fa.Seq); i += 50 {
+		if i+50 > len(fa.Seq) {
+			buf.Grow(len(fa.Seq[i:]))
+			for _, i := range fa.Seq[i:] {
+				buf.WriteByte(code.DnaToByte(i))
+			}
+			buf.WriteByte('\n')
+		} else {
+			buf.Grow(50)
+			for _, i := range fa.Seq[i : i+50] {
+				buf.WriteByte(code.DnaToByte(i))
+			}
+			buf.WriteByte('\n')
+		}
+	}
+	return buf.String()
 }

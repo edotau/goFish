@@ -5,10 +5,11 @@ package bigWig
 import (
 	"encoding/binary"
 	"fmt"
-	"github.com/edotau/goFish/simpleio"
-	"github.com/pbenner/gonetics"
 	"io"
 	"log"
+
+	"github.com/edotau/goFish/simpleio"
+	"github.com/pbenner/gonetics"
 )
 
 const BigWigMagic = 0x888FFC26

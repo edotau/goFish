@@ -1,8 +1,9 @@
 package genePred
 
 import (
-	"github.com/edotau/goFish/simpleio"
 	"strings"
+
+	"github.com/edotau/goFish/simpleio"
 )
 
 type GeneSym struct {
@@ -16,8 +17,8 @@ func ReadBioMart(filename string) map[string]string {
 	var work []string
 	hash := make(map[string]string)
 	for i, err := simpleio.ReadLine(reader); !err; i, err = simpleio.ReadLine(reader) {
-		work = strings.Split(i.String(), "\t")
-		hash[work[0]] = work[1]
+		work = strings.SplitN(i.String(), "\t", 2)
+		hash[work[0]] = strings.ReplaceAll(work[1], " ", "_")
 	}
 	return hash
 }

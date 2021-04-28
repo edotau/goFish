@@ -1,6 +1,11 @@
-package reference
+package stickleback
 
-import ()
+import (
+	"fmt"
+	"strings"
+
+	"github.com/edotau/goFish/simpleio"
+)
 
 const (
 	chr01 int = 30751940
@@ -77,4 +82,15 @@ func GetChrom(name string) int {
 		return chrM
 	}
 	return 0
+}
+
+func ChromTableStdout() {
+	buf := &strings.Builder{}
+	for _, i := range Chr {
+		buf.WriteString(i)
+		buf.WriteByte('\t')
+		buf.WriteString(simpleio.IntToString(GetChrom(i)))
+		buf.WriteByte('\n')
+	}
+	fmt.Printf("%s\n", buf.String())
 }
