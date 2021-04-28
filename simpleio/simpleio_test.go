@@ -35,6 +35,7 @@ func BenchmarkSimpleReading(b *testing.B) {
 		for _, done := ReadLine(reader); !done; _, done = ReadLine(reader) {
 			//Nothing to assign, testing pure reading of the file
 		}
+		reader.Close()
 	}
 }
 
@@ -46,5 +47,6 @@ func BenchmarkSimpleReaderGz(b *testing.B) {
 		for _, done := ReadLine(reader); !done; _, done = ReadLine(reader) {
 			//Nothing to assign, testing pure reading of the file
 		}
+		reader.Close()
 	}
 }

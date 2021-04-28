@@ -3,11 +3,13 @@ package bash
 import (
 	"bufio"
 	"bytes"
+
 	"io"
 	"log"
 	"os/exec"
 
 	"github.com/edotau/goFish/simpleio"
+	"github.com/klauspost/pgzip"
 )
 
 const (
@@ -23,6 +25,25 @@ type GunzipReader struct {
 	Cmd    *exec.Cmd
 	line   []byte
 	Buffer *bytes.Buffer
+}
+
+type GzipWriter struct {
+	*bufio.Writer
+	Gzip   *pgzip.Writer
+	Buffer *bytes.Buffer
+	close  func() error
+}
+
+func NewPzip(filename string, data []string) {
+	ans := GzipWriter{}
+	file := simpleio.TouchFile(filename)
+	ans.Writer = bufio.NewWriter(file)
+	ans.Gzip = pgzip.NewWriter(ans.Writer)
+	ans.Gzip.SetConcurrency(100000, 10)
+	for i := 0; i < len(data); i++ {
+		ans.Gzip.Write([]byte(data[i] + "\n"))
+	}
+	file.Close()
 }
 
 func (gz GunzipReader) Read(data []byte) (int, error) {
@@ -88,6 +109,7 @@ func readMore(reader *GunzipReader) []byte {
 	simpleio.ErrorHandle(err)
 	return reader.line
 }
+
 func NewGunzipReader(filename string) *GunzipReader {
 	var answer GunzipReader = GunzipReader{
 		line:   make([]byte, defaultBufSize),

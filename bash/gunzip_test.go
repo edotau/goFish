@@ -1,7 +1,6 @@
 package bash
 
 import (
-	"runtime"
 	"testing"
 
 	"github.com/edotau/goFish/simpleio"
@@ -27,11 +26,11 @@ func BenchmarkGunzipReader(b *testing.B) {
 		for _, err := ReadLine(reader); !err; _, err = ReadLine(reader) {
 
 		}
+
 	}
 }
-
 func BenchmarkSimpleReader(b *testing.B) {
-	runtime.GOMAXPROCS(runtime.NumCPU())
+
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
@@ -41,3 +40,23 @@ func BenchmarkSimpleReader(b *testing.B) {
 		}
 	}
 }
+
+/*
+func BenchmarkPzip(b *testing.B) {
+	b.ReportAllocs()
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		data := simpleio.ReadFromFile("testdata/pgzip.vcf.gz")
+		NewPzip("testdata/output.pgzip.tmp.gz", data)
+	}
+}
+
+func BenchmarkSimpleWriter(b *testing.B) {
+	b.ReportAllocs()
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		data := simpleio.ReadFromFile("testdata/atacseq_simple_pool.vcf.gz")
+		simpleio.WriteToFile("testdata/output.simplewriter.tmp.gz", data)
+	}
+}
+*/

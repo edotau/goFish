@@ -5,6 +5,9 @@ package simpleio
 import (
 	"bufio"
 	"bytes"
+	"os/exec"
+
+	//"compress/gzip"
 	"io"
 	"log"
 	"os"
@@ -27,9 +30,17 @@ const BufferSize = mb
 // and a pointer to os.File for closeure when reading is complete.
 type SimpleReader struct {
 	*bufio.Reader
+	G      *GunzipReader
 	line   []byte
 	Buffer *bytes.Buffer
 	close  func() error
+}
+
+// GunzipReader uncompress the input using the system's gzip. Apparently,
+// the system gzip is much much faster than the go library, so I wrote some benchmarks and tests
+type GunzipReader struct {
+	Unzip io.Reader
+	Cmd   *exec.Cmd
 }
 
 type SimpleWriter struct {
@@ -46,21 +57,35 @@ func NewReader(filename string) *SimpleReader {
 	if strings.HasPrefix(filename, "http") {
 		return HttpReader(filename)
 	}
-	file := OpenFile(filename)
+
 	var answer SimpleReader = SimpleReader{
 		line:   make([]byte, defaultBufSize),
 		Buffer: &bytes.Buffer{},
-		close:  file.Close,
 	}
 	switch true {
 	case strings.HasSuffix(filename, ".gz"):
-		gzipReader, err := gzip.NewReader(file)
+		var err error
+		//gunzip, err := gzip.NewReader(file)
+		answer.G, err = NewGunzipReader(filename)
 		ErrorHandle(err)
-		answer.Reader = bufio.NewReader(gzipReader)
+
+		answer.close = answer.G.Unzip.(io.ReadCloser).Close
+		answer.Reader = bufio.NewReader(answer.G)
 	default:
+		answer.G = nil
+		file := OpenFile(filename)
 		answer.Reader = bufio.NewReader(file)
+		answer.close = file.Close
 	}
 	return &answer
+}
+
+func NewGunzipReader(filename string) (*GunzipReader, error) {
+	cmd := exec.Command("gunzip", "-c", filename)
+	stdout, err := cmd.StdoutPipe()
+	ErrorHandle(err)
+	err = cmd.Start()
+	return &GunzipReader{Unzip: stdout, Cmd: cmd}, err
 }
 
 func NewWriter(filename string) *SimpleWriter {
@@ -83,7 +108,23 @@ func NewWriter(filename string) *SimpleWriter {
 // Read reads data into p and is a method required to implement the io.Reader interface.
 // It returns the number of bytes read into p.
 func (reader *SimpleReader) Read(b []byte) (n int, err error) {
-	return reader.Read(b)
+	if reader.G == nil {
+		return reader.Read(b)
+	} else {
+		return reader.G.Read(b)
+	}
+}
+
+func (gz GunzipReader) Read(data []byte) (int, error) {
+	var err error
+
+	var offset int
+	var read_len int
+
+	for offset = 0; offset < len(data) && err == nil; read_len, err = gz.Unzip.Read(data[offset:]) {
+		offset += read_len
+	}
+	return offset, err
 }
 
 func (writer *SimpleWriter) Write(p []byte) (n int, err error) {
@@ -200,9 +241,9 @@ func ReadFromFile(filename string) []string {
 func WriteToFile(filename string, data []string) {
 	writer := NewWriter(filename)
 	for i := 0; i < len(data); i++ {
-		writer.Buffer.WriteString(data[i])
-		writer.Buffer.WriteByte('\n')
-		io.Copy(writer, writer.Buffer)
+		writer.Write([]byte(data[i] + "\n"))
+		//writer.Buffer.WriteByte('\n')
+		//io.Copy(writer, writer.Buffer)
 	}
 	writer.Close()
 }
@@ -220,6 +261,12 @@ func ErrorHandle(err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func TouchFile(filename string) *os.File {
+	file, err := os.Create(filename)
+	ErrorHandle(err)
+	return file
 }
 
 /*
