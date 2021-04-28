@@ -88,7 +88,7 @@ func main() {
 				}
 				if equalWithin(fishingTest.A, fishingTest.B) && (fishingTest.C > -1 && fishingTest.D > -1) {
 					results = stats.RunFishersExactTest(fishingTest)
-					if results.Pval < 0.0001 {
+					if results.Pval < 0.001 {
 						diff := stats.DiffPeak{
 							Chr:    v.Chr,
 							Start:  v.Pos,
@@ -125,13 +125,13 @@ func equalWithin(a, b int) bool {
 
 func writeDiff(writer *simpleio.SimpleWriter, diff stats.DiffPeak) {
 	writer.WriteString(diff.Chr)
-	writer.WriteByte('\t')
+	writer.WriteByte(',')
 	writer.WriteString(simpleio.IntToString(diff.Start - 1))
-	writer.WriteByte('\t')
+	writer.WriteByte(',')
 	writer.WriteString(simpleio.IntToString(diff.Start))
-	writer.WriteByte('\t')
+	writer.WriteByte(',')
 	writer.WriteString(stats.StringFmt(&diff.Matrix))
-	writer.WriteByte('\t')
+	writer.WriteByte(',')
 	writer.WriteString(fmt.Sprintf("%E\n", diff.Pval))
 
 }
@@ -224,7 +224,7 @@ func writeLine(v *vcf.Vcf, buf *strings.Builder) {
 	buf.WriteString(simpleio.IntToString(v.Pos))
 	buf.WriteByte('\t')
 	buf.WriteString(v.Ref)
-	buf.WriteByte(',')
+	buf.WriteByte('\t')
 	buf.WriteString(v.Alt)
 	buf.WriteByte('\t')
 }

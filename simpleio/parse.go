@@ -86,3 +86,11 @@ func IntSliceToString(nums []int) string {
 func Int16ToString(num int16) string {
 	return strconv.FormatInt(int64(num), 10)
 }
+
+func Float32ToString(num float32) string {
+	return strconv.FormatFloat(float64(num), 'f', 3, 32)
+}
+
+func Float64ToString(num float64) string {
+	return strconv.FormatFloat(num, 'f', 3, 64)
+}
