@@ -45,6 +45,13 @@ func StringToFloat(s string) float32 {
 	return float32(answer)
 }
 
+// StringToFloat is a function that converts a string to a type float64.
+func StringToFloat64(s string) float64 {
+	answer, err := strconv.ParseFloat(s, 64)
+	ErrorHandle(err)
+	return answer
+}
+
 // ScientificNotation will convert a string with scientific notation into a float64
 func ScientificNotation(s string) float64 {
 	num, _, err := big.ParseFloat(s, 10, 0, big.ToNearestEven)

@@ -5,12 +5,13 @@ package simpleio
 import (
 	"bufio"
 	"bytes"
-	"compress/gzip"
 	"io"
 	"log"
 	"os"
 	"strings"
 	"sync"
+
+	gzip "github.com/klauspost/pgzip"
 )
 
 const (

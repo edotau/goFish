@@ -1,6 +1,8 @@
 // Package stats contains functions to perform statistical tests
 package stats
 
+import "math"
+
 const lnSqrt2Pi = 0.918938533204672741780329736406 // log(sqrt(2*pi))
 
 // Sample mean variance estimates for a data vector with Bessel correction or n - 1.
@@ -30,4 +32,28 @@ func RejectionSample(targetDensity func(float64) float64, sourceDensity func(flo
 
 	}
 	return x
+}
+
+// x[i][j] := x[i][j] / |x[i]|
+func Normalize(x [][]float64) {
+	for i := range x {
+		NormalizePoint(x[i])
+	}
+}
+
+// NormalizePoint is the same as Normalize, but it only operates on one singular datapoint, normalizing it's value to unit length.
+func NormalizePoint(x []float64) {
+	var sum float64
+	for i := range x {
+		sum += x[i] * x[i]
+	}
+	mag := math.Sqrt(sum)
+
+	for i := range x {
+		if math.IsInf(x[i]/mag, 0) || math.IsNaN(x[i]/mag) {
+			x[i] = 0
+			continue
+		}
+		x[i] /= mag
+	}
 }

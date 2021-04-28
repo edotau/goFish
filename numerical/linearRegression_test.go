@@ -79,8 +79,10 @@ func init() {
 		noisyX = append(noisyX, []float64{i + (rand.Float64()-0.5)*3})
 		noisyY = append(noisyY, 0.5*i+rand.NormFloat64()*25)
 	}
-	// save the random data to make some nice plots!
+
 	csv.Write("testdata/noisy_linear.csv", noisyX, noisyY, true)
+	xPlot, yPlot := csv.ReadToXY("testdata/noisy_linear.csv")
+	api.ScatterChart("testdata/noisy_linear_xscatter2", xPlot, yPlot)
 }
 
 func TestYEqualsThreeFlatLine(t *testing.T) {
