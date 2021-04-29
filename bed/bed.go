@@ -4,12 +4,13 @@ package bed
 
 import (
 	"bytes"
-	"github.com/edotau/goFish/simpleio"
-	"github.com/vertgenlab/gonomics/numbers"
 	"log"
 	"sort"
 	"strconv"
 	"strings"
+
+	"github.com/edotau/goFish/simpleio"
+	"github.com/vertgenlab/gonomics/numbers"
 )
 
 // Bed interface is a data structure that implements the following methods:
@@ -53,6 +54,7 @@ type GenomeInfo struct {
 	Start int
 	End   int
 	Info  bytes.Buffer
+	Delem byte
 }
 
 // GenomeInfo bed struct implements the bed interface with the Chrom() method which returns the chromosome name.
@@ -383,7 +385,6 @@ func SimpleLine(reader *simpleio.SimpleReader) (*Simple, bool) {
 	} else {
 		return nil, true
 	}
-
 }
 
 func PeakBedReading(reader *simpleio.SimpleReader) (*BedPlus, bool) {

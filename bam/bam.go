@@ -146,12 +146,12 @@ func HttpReaderDev(url string) *Bgzip {
 	return NewBgzipReader(resp.Body)
 }
 
-// NewBamReader is similar to fileio.EasyOpen/fileio.EasyReader
+// NewBamReader is similar to fileio.EasyVim/fileio.EasyReader
 // which will allocate memory for the struct fields
 // and is ready to start processing bam lines after calling this function.
 func NewBamReader(filename string) *BamReader {
 	var bamR *BamReader = &BamReader{}
-	bamR.File = simpleio.OpenFile(filename)
+	bamR.File = simpleio.Vim(filename)
 	bamR.Gunzip = NewBgzipReader(bamR.File)
 	return bamR
 }

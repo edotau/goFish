@@ -1,4 +1,4 @@
-// main program alleleStats is a tool to investigate heterozygous snp variance and calculate fishers exact to examine the significance of the association (or contingency) between beterozygous alleles
+// alleleStats is a tool to investigate heterozygous snp variance and calculate fishers exact to examine the significance of the association (or contingency) between beterozygous alleles
 package main
 
 import (
@@ -125,13 +125,13 @@ func equalWithin(a, b int) bool {
 
 func writeDiff(writer *simpleio.SimpleWriter, diff stats.DiffPeak) {
 	writer.WriteString(diff.Chr)
-	writer.WriteByte(',')
+	writer.WriteByte('\t')
 	writer.WriteString(simpleio.IntToString(diff.Start - 1))
-	writer.WriteByte(',')
+	writer.WriteByte('\t')
 	writer.WriteString(simpleio.IntToString(diff.Start))
-	writer.WriteByte(',')
+	writer.WriteByte('\t')
 	writer.WriteString(stats.StringFmt(&diff.Matrix))
-	writer.WriteByte(',')
+	writer.WriteByte('\t')
 	writer.WriteString(fmt.Sprintf("%E\n", diff.Pval))
 
 }

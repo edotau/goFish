@@ -20,7 +20,7 @@ type Sam struct {
 	MateRef string
 	MatePos int
 	TmpLen  int
-	Seq     Sequence
+	Seq     []code.Dna
 	Qual    PhredQual
 	Aux     string
 }

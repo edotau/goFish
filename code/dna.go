@@ -171,3 +171,22 @@ func ToString(bases []Dna) string {
 	}
 	return buffer.String()
 }
+
+// CountBase returns the number of the designated base present in the input sequence.
+func CountDnaBytes(seq []Dna, b Dna) int {
+	return CountInterval(seq, b, 0, len(seq))
+}
+
+// CountBaseInterval returns the number of the designated base present in the input range of the sequence.
+func CountInterval(seq []Dna, b Dna, start int, end int) int {
+	var answer int
+	if start < 0 || end > len(seq) {
+		return answer
+	}
+	for i := start; i < end; i++ {
+		if seq[i] == b {
+			answer++
+		}
+	}
+	return answer
+}

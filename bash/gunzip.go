@@ -36,7 +36,7 @@ type GzipWriter struct {
 
 func NewPzip(filename string, data []string) {
 	ans := GzipWriter{}
-	file := simpleio.TouchFile(filename)
+	file := simpleio.Touch(filename)
 	ans.Writer = bufio.NewWriter(file)
 	ans.Gzip = pgzip.NewWriter(ans.Writer)
 	ans.Gzip.SetConcurrency(100000, 10)

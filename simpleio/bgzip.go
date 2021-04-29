@@ -19,7 +19,7 @@ type BgzipReader struct {
 
 func NewBgzipReader(filename string) *BgzipReader {
 	var answer BgzipReader = BgzipReader{
-		file:   OpenFile(filename),
+		file:   Vim(filename),
 		line:   make([]byte, defaultBufSize),
 		Buffer: &bytes.Buffer{},
 	}

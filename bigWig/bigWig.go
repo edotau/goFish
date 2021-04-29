@@ -19,8 +19,62 @@ type BigWigReader struct {
 	close func() error
 }
 
+type bwheader struct {
+	magic                uint `bin:"len:4"`
+	version              uint `bin:"len:2"`
+	zoomLevels           uint `bin:"len:2"`
+	chromosomeTreeOffset uint `bin:"len:8"`
+	fullDataOffset       uint `bin:"len:8"`
+	fullIndexOffset      uint `bin:"len:8"`
+	fieldCount           uint `bin:"len:2"`
+	definedFieldCount    uint `bin:"len:2"`
+	autoSqlOffset        uint `bin:"len:8"`
+	totalSummaryOffset   uint `bin:"len:8"`
+	uncompressBufSize    uint `bin:"len:4"`
+}
+
+type zoomHeader struct {
+	reductionLevel uint `bin:"len:4"`
+	dataOffset     uint `bin:"len:8"`
+	indexOffset    uint `bin:"len:8"`
+}
+
+type summary struct {
+	basesCovered uint    `bin:"len:8"`
+	minVal       float64 `bin:"len:8"`
+	maxVal       float64 `bin:"len:8"`
+	sumData      float64 `bin:"len:8"`
+	sumSquares   float64 `bin:"len:8"`
+}
+type indexWig struct {
+	chromId    uint `bin:"len:4"`
+	chromStart uint `bin:"len:4"`
+	chromEnd   uint `bin:"len:4"`
+	itemStep   uint `bin:"len:4"`
+	itemSpan   uint `bin:"len:4"`
+	Type       uint `bin:"len:1"`
+	itemCount  uint `bin:"len:2"`
+}
+
+type bgIndex struct {
+	NumBlocks       uint64
+	BlockSize       uint32
+	Entries         uint64
+	WidSum          uint64
+	ID              uint32
+	Start           uint32
+	End             uint32
+	Span            uint32
+	Step            uint32
+	Type            uint8
+	BufSize         uint32
+	NumNode         uint64
+	Intervals       uint32
+	MaxNumIntervals uint32
+}
+
 func NewReader(filename string) *BigWigReader {
-	file := simpleio.OpenFile(filename)
+	file := simpleio.Vim(filename)
 	answer := BigWigReader{
 		ReadSeeker: file,
 		close:      file.Close,

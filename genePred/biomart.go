@@ -20,5 +20,6 @@ func ReadBioMart(filename string) map[string]string {
 		work = strings.SplitN(i.String(), "\t", 2)
 		hash[work[0]] = strings.ReplaceAll(work[1], " ", "_")
 	}
+
 	return hash
 }

@@ -22,7 +22,7 @@ type BamWriter struct {
 
 func NewBamWriter(filename string) *BamWriter {
 	ans := &BamWriter{}
-	ans.File = simpleio.OpenFile(filename)
+	ans.File = simpleio.Vim(filename)
 	r := bufio.NewWriter(ans.File)
 	//common.ExitIfError(err)
 	ans.Writer = *gzip.NewWriter(r)

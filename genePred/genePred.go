@@ -23,6 +23,7 @@ type GenePred struct {
 	ExonCount int
 	ExonStart []int
 	ExonEnd   []int
+    Ext       string
 }
 
 type GeneModels []GenePred
@@ -57,7 +58,11 @@ func ToString(gp *GenePred) string {
 	str.WriteString(simpleio.IntSliceToString(gp.ExonStart))
 	str.WriteByte('\t')
 	str.WriteString(simpleio.IntSliceToString(gp.ExonEnd))
-	return str.String()
+	if gp.Ext != "" {
+        str.WriteByte('\t')
+        str.WriteString(gp.Ext)
+    }
+    return str.String()
 }
 
 func ToBytes(gp *GenePred) []byte {
@@ -81,7 +86,12 @@ func ToBytes(gp *GenePred) []byte {
 	buf.WriteString(simpleio.IntSliceToString(gp.ExonStart))
 	buf.WriteByte('\t')
 	buf.WriteString(simpleio.IntSliceToString(gp.ExonEnd))
-	buf.WriteByte('\n')
+	if gp.Ext != "" {
+        buf.WriteByte('\t')
+        buf.WriteString(gp.Ext)
+    }
+    buf.WriteByte('\n')
+    
 	return buf.Bytes()
 }
 
@@ -89,8 +99,8 @@ func GenePredLine(reader *simpleio.SimpleReader) (*GenePred, bool) {
 	var err bool
 	reader.Buffer, err = simpleio.ReadLine(reader)
 	if !err {
-		columns := strings.Split(reader.Buffer.String(), "\t")
-		if len(columns) == 10 {
+		columns := strings.SplitN(reader.Buffer.String(), "\t", 11)
+		if len(columns) >= 10 {
 			ans := &GenePred{
 				GeneName:  columns[0],
 				Chr:       columns[1],
@@ -103,13 +113,16 @@ func GenePredLine(reader *simpleio.SimpleReader) (*GenePred, bool) {
 				ExonStart: simpleio.StringToIntSlice(columns[8]),
 				ExonEnd:   simpleio.StringToIntSlice(columns[9]),
 			}
+            if len(columns) == 11 {
+                ans.Ext = columns[10]
+            }
 			if len(ans.ExonStart) == ans.ExonCount && len(ans.ExonEnd) == ans.ExonCount {
 				return ans, false
 			} else {
 				log.Fatalf("Error: ExonCount must equal length of ExonStart and ExonEnd...\n")
-			}
-		} else {
-			log.Fatalf("Error: line must contain at least 10 columns in gene Prediction format...\n")
+		    }
+        } else {
+			log.Fatalf("Error: line must contains %d, must be at least 10 columns in gene Prediction format...\n", len(columns))
 		}
 	}
 	return nil, true

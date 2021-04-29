@@ -30,7 +30,7 @@ const BufferSize = mb
 // and a pointer to os.File for closeure when reading is complete.
 type SimpleReader struct {
 	*bufio.Reader
-	G      *GunzipReader
+	Gunzip *GunzipReader
 	line   []byte
 	Buffer *bytes.Buffer
 	close  func() error
@@ -66,14 +66,14 @@ func NewReader(filename string) *SimpleReader {
 	case strings.HasSuffix(filename, ".gz"):
 		var err error
 		//gunzip, err := gzip.NewReader(file)
-		answer.G, err = NewGunzipReader(filename)
+		answer.Gunzip, err = NewGunzipReader(filename)
 		ErrorHandle(err)
 
-		answer.close = answer.G.Unzip.(io.ReadCloser).Close
-		answer.Reader = bufio.NewReader(answer.G)
+		answer.close = answer.Gunzip.Unzip.(io.ReadCloser).Close
+		answer.Reader = bufio.NewReader(answer.Gunzip)
 	default:
-		answer.G = nil
-		file := OpenFile(filename)
+		answer.Gunzip = nil
+		file := Vim(filename)
 		answer.Reader = bufio.NewReader(file)
 		answer.close = file.Close
 	}
@@ -90,8 +90,8 @@ func NewGunzipReader(filename string) (*GunzipReader, error) {
 
 func NewWriter(filename string) *SimpleWriter {
 	ans := SimpleWriter{}
-	file, err := os.Create(filename)
-	ErrorHandle(err)
+	file := Touch(filename)
+
 	ans.Writer = bufio.NewWriter(file)
 
 	ans.Buffer = &bytes.Buffer{}
@@ -105,13 +105,25 @@ func NewWriter(filename string) *SimpleWriter {
 	return &ans
 }
 
+func Vim(filename string) *os.File {
+	file, err := os.Open(filename)
+	ErrorHandle(err)
+	return file
+}
+
+func Touch(filename string) *os.File {
+	file, err := os.Create(filename)
+	ErrorHandle(err)
+	return file
+}
+
 // Read reads data into p and is a method required to implement the io.Reader interface.
 // It returns the number of bytes read into p.
 func (reader *SimpleReader) Read(b []byte) (n int, err error) {
-	if reader.G == nil {
+	if reader.Gunzip == nil {
 		return reader.Read(b)
 	} else {
-		return reader.G.Read(b)
+		return reader.Gunzip.Read(b)
 	}
 }
 
@@ -248,6 +260,12 @@ func WriteToFile(filename string, data []string) {
 	writer.Close()
 }
 
+func ErrorHandle(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 func GetBuffer(bufferPool sync.Pool) bytes.Buffer {
 	return bufferPool.Get().(bytes.Buffer)
 }
@@ -255,18 +273,6 @@ func GetBuffer(bufferPool sync.Pool) bytes.Buffer {
 func PutBuffer(buf bytes.Buffer, bufferPool sync.Pool) {
 	buf.Reset()
 	bufferPool.Put(buf)
-}
-
-func ErrorHandle(err error) {
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
-func TouchFile(filename string) *os.File {
-	file, err := os.Create(filename)
-	ErrorHandle(err)
-	return file
 }
 
 /*
@@ -308,12 +314,6 @@ func SimpleBufioPoolTest(filename string) {
 	}
 	writer.Close()
 }*/
-
-func OpenFile(filename string) *os.File {
-	file, err := os.Open(filename)
-	ErrorHandle(err)
-	return file
-}
 
 // BufferPool implements a pool of bytes.Buffers in the form of a bounded
 // channel.

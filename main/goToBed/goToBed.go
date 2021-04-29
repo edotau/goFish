@@ -24,6 +24,7 @@ func usage() {
 
 func main() {
 	var nonoverlap *bool = flag.Bool("nonoverlap", false, "find nonoverlapping genomic regions")
+	var concatFiles *bool = flag.Bool("concat", false, "merge input bed files into a unique set that filters out duplicate regions that overlap each other")
 
 	var filterSv *string = flag.String("variant", "", "``filter by a specific structure variant [INS or DEL]")
 	var expectedNumArgs int = 2
@@ -32,38 +33,42 @@ func main() {
 	log.SetFlags(log.Ldate | log.Ltime)
 	flag.Parse()
 
-	if len(flag.Args()) != expectedNumArgs {
+	if *concatFiles {
+		concat(flag.Args())
+		return
+	} else if len(flag.Args()) != expectedNumArgs {
 		flag.Usage()
 		log.Fatalf("Error: expecting %d arguments, but got %d\n", expectedNumArgs, len(flag.Args()))
 	}
+
 	keys, selectRegions := bed.SelectGenomeHash(flag.Arg(0), 10)
 	reader := simpleio.NewReader(flag.Arg(1))
 
 	if *nonoverlap && *filterSv != "" {
 		for i, err := bed.ToGenomeInfo(reader); !err; i, err = bed.ToGenomeInfo(reader) {
-			code := bed.GetHashKey(i, keys)
-			if !bed.OverlapHashFilterSv(code, i, selectRegions, *filterSv) {
+			hashKey := bed.GetHashKey(i, keys)
+			if !bed.OverlapHashFilterSv(hashKey, i, selectRegions, *filterSv) {
 				fmt.Printf("%s\n", bed.GenomeInfoToString(*i))
 			}
 		}
 	} else if *filterSv != "" {
 		for i, err := bed.ToGenomeInfo(reader); !err; i, err = bed.ToGenomeInfo(reader) {
-			code := bed.GetHashKey(i, keys)
-			if bed.OverlapHashFilterSv(code, i, selectRegions, *filterSv) {
+			hashKey := bed.GetHashKey(i, keys)
+			if bed.OverlapHashFilterSv(hashKey, i, selectRegions, *filterSv) {
 				fmt.Printf("%s\n", bed.GenomeInfoToString(*i))
 			}
 		}
 	} else if *nonoverlap {
 		for i, err := bed.ToGenomeInfo(reader); !err; i, err = bed.ToGenomeInfo(reader) {
-			code := bed.GetHashKey(i, keys)
-			if !bed.CheckOverlapHash(code, i, selectRegions) {
+			hashKey := bed.GetHashKey(i, keys)
+			if !bed.CheckOverlapHash(hashKey, i, selectRegions) {
 				fmt.Printf("%s\n", bed.GenomeInfoToString(*i))
 			}
 		}
 	} else {
 		for i, err := bed.ToGenomeInfo(reader); !err; i, err = bed.ToGenomeInfo(reader) {
-			code := bed.GetHashKey(i, keys)
-			if bed.CheckOverlapHash(code, i, selectRegions) {
+			hashKey := bed.GetHashKey(i, keys)
+			if bed.CheckOverlapHash(hashKey, i, selectRegions) {
 				fmt.Printf("%s\n", bed.GenomeInfoToString(*i))
 			}
 		}
@@ -100,6 +105,26 @@ func reading(variance string, filename string) {
 				fmt.Printf("%s\n", i.String())
 				break
 			}
+		}
+	}
+}
+
+func concat(input []string) {
+	if len(input) < 1 {
+		log.Fatalf("Error: must provide more than 1 bed file to use concat feature...\n")
+	}
+
+	keys, selectRegions := bed.SelectGenomeHash(input[0], 10)
+	for file := 1; file < len(input); file++ {
+		reader := simpleio.NewReader(input[file])
+		for i, err := bed.ToGenomeInfo(reader); !err; i, err = bed.ToGenomeInfo(reader) {
+			hashKey := bed.GetHashKey(i, keys)
+			if bed.CheckOverlapHash(hashKey, i, selectRegions) {
+				if !bed.CheckOverlapHash(hashKey, i, selectRegions) {
+					fmt.Printf("%s\n", bed.GenomeInfoToString(*i))
+				}
+			}
+			reader.Close()
 		}
 	}
 }

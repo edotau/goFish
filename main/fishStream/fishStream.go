@@ -6,7 +6,7 @@ import (
 	"io"
 	"log"
 	"strings"
-
+    "github.com/edotau/goFish/genePred"
 	"github.com/edotau/goFish/fasta"
 	"github.com/edotau/goFish/reference/stickleback"
 	"github.com/edotau/goFish/simpleio"
@@ -24,26 +24,41 @@ func usage() {
 }
 
 func main() {
-	var fa *string = flag.String("fetch", "", "``provide a filename to download marine stickleback genome or to stdout")
+	var fa *bool = flag.Bool("genome", false, "fetch marine fasta reference genome to stdout")
 	var chrom *bool = flag.Bool("chrom", false, "print marine stickleback chrom size info to stdout")
 	var wget *bool = flag.Bool("wget", false, "download stickleback genome as a fasta to disk")
-	var expectedNumArgs int = 0
-
+    var genes *bool = flag.Bool("gene-info", false, "fetch gene-prediction models to stdout")
 	flag.Usage = usage
 	log.SetFlags(log.Ldate | log.Ltime)
 	flag.Parse()
-
-	if len(flag.Args()) != expectedNumArgs {
-		flag.Usage()
-		log.Fatalf("Error: expecting %d arguments, but got %d\n", expectedNumArgs, len(flag.Args()))
-	}
-	if strings.Contains(*fa, "stdout") {
+    if *wget {
+        if *fa {
+            fetchHttpStdout()
+        }
+        if *chrom {
+            writer := simpleio.NewWriter("rabsTHREEspine.chromSize.gz")
+            writer.Write([]byte(chromTableStdout()))
+            writer.Close()
+        }
+        if *genes {
+            stream := simpleio.NewReader(stickleback.GENE_MODEL_RNASEQ)
+            defer stream.Close()
+            writer := simpleio.NewWriter("rabsTHREEspine.rna-seq.genes.mapped.ensembl.gp.gz")
+            io.Copy(writer.Gzip, stream)
+            
+            writer.Close()
+        }
+        return
+    }
+	if *fa {
 		fetchHttpStdout()
 	} else if *wget {
 		wgetFasta()
 	} else if *chrom {
-		chromTableStdout()
-	} else {
+		fmt.Printf("%s\n", chromTableStdout())
+	} else if *genes {
+        geneModels()
+    }  else {
 		flag.Usage()
 		log.Fatalf("Error: expecting arguments...\n")
 	}
@@ -67,14 +82,24 @@ func wgetFasta() {
 	writer.Close()
 }
 
-func chromTableStdout() {
+func chromTableStdout() string {
 	buf := &strings.Builder{}
-	buf.WriteByte('\n')
 	for _, i := range stickleback.Chr {
 		buf.WriteString(i)
 		buf.WriteByte('\t')
 		buf.WriteString(simpleio.IntToString(stickleback.GetChrom(i)))
 		buf.WriteByte('\n')
 	}
-	fmt.Printf("%s\n", buf.String())
+	return  buf.String()
+}
+
+func geneModels() {
+    stream := simpleio.NewReader(stickleback.GENE_MODEL_RNASEQ)
+    for gene, done := genePred.GenePredLine(stream); !done; gene, done = genePred.GenePredLine(stream) {
+        fmt.Printf("%s\n", genePred.ToString(gene))
+
+    }
+    stream.Close()
+
+
 }

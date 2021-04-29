@@ -4,15 +4,15 @@ import (
 	"log"
 	"strings"
 
-	"github.com/edotau/goFish/reference"
+	"github.com/edotau/goFish/reference/stickleback"
 	"github.com/edotau/goFish/simpleio"
 )
 
 func GenomeKey(div int) map[string][]*GenomeInfo {
 	var region int
 	genome := make(map[string][]*GenomeInfo)
-	for _, chrom := range reference.Chr {
-		region = reference.GetChrom(chrom) / div
+	for _, chrom := range stickleback.Chr {
+		region = stickleback.GetChrom(chrom) / div
 		genome = divide(chrom, region, genome)
 	}
 	return genome
@@ -31,13 +31,13 @@ func buildreference(coord *GenomeInfo, keys map[string][]*GenomeInfo, genome map
 
 func divide(chrom string, size int, chromHash map[string][]*GenomeInfo) map[string][]*GenomeInfo {
 	var i int
-	for i = 0; i < reference.GetChrom(chrom)-size; i += size {
+	for i = 0; i < stickleback.GetChrom(chrom)-size; i += size {
 		curr := GenomeInfo{Chr: chrom, Start: i, End: i + size}
 		curr.Info.WriteString(curr.Chrom() + simpleio.IntToString(curr.ChrEnd()))
 
 		chromHash[chrom] = append(chromHash[chrom], &curr)
 	}
-	last := GenomeInfo{Chr: chrom, Start: i, End: reference.GetChrom(chrom)}
+	last := GenomeInfo{Chr: chrom, Start: i, End: stickleback.GetChrom(chrom)}
 	last.Info.WriteString(last.Chrom() + simpleio.IntToString(last.ChrEnd()))
 	chromHash[chrom] = append(chromHash[chrom], &last)
 	return chromHash

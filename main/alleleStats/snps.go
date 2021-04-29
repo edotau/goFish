@@ -5,22 +5,22 @@ import (
 	"strings"
 
 	"github.com/edotau/goFish/bam"
+	"github.com/edotau/goFish/code"
 	"github.com/edotau/goFish/simpleio"
 	"github.com/edotau/goFish/vcf"
-	"github.com/vertgenlab/gonomics/dna"
 )
 
-func getVcfSeq(v *vcf.Vcf) [][]dna.Base {
-	ans := make([][]dna.Base, 0)
-	ans = append([][]dna.Base{dna.StringToBases(v.Ref)}, GetAltBases(v.Alt)...)
+func getVcfSeq(v *vcf.Vcf) [][]code.Dna {
+	ans := make([][]code.Dna, 0)
+	ans = append([][]code.Dna{code.ToDna([]byte(v.Ref))}, GetAltBases(v.Alt)...)
 	return ans
 }
 
-func GetAltBases(alt string) [][]dna.Base {
+func GetAltBases(alt string) [][]code.Dna {
 	words := strings.Split(alt, ",")
-	var answer [][]dna.Base = make([][]dna.Base, len(words))
+	var answer [][]code.Dna = make([][]code.Dna, len(words))
 	for i := 0; i < len(words); i++ {
-		answer[i] = dna.StringToBases(words[i])
+		answer[i] = code.ToDna([]byte(words[i]))
 	}
 	return answer
 }
@@ -35,7 +35,7 @@ type family struct {
 	One vcf.Genotype
 	Two vcf.Genotype
 	F1  vcf.Genotype
-	Seq [][]dna.Base
+	Seq [][]code.Dna
 }
 
 func buildGenotypeMap(v *vcf.Vcf, vcfHeader *vcf.Header, famIdx index, mapToVcf map[uint64]family) map[uint64]family {
@@ -87,7 +87,7 @@ func SnpSearch(samfile string, genotypeVcf string, fOne string, parentOne string
 	var i, parentAllele1, parentAllele2 int
 	var target, query, j int
 	var ok bool
-	var code uint64
+	var hashKey uint64
 
 	var gV family
 	//for read, done := bam.UnmarshalSam(samFile); done != true; read, done = bam.UnmarshalSam(samFile) {
@@ -114,27 +114,27 @@ func SnpSearch(samfile string, genotypeVcf string, fOne string, parentOne string
 				//}
 				query += int(read.Cigar[i].RunLen)
 			case 'D':
-				code = vcf.GenomeKeyUint64(int(vcfHeader.Ref[read.RName]), int(target))
-				gV, ok = snpDb[code]
+				hashKey = vcf.GenomeKeyUint64(int(vcfHeader.Ref[read.RName]), int(target))
+				gV, ok = snpDb[hashKey]
 				if ok {
 
-					if dna.CountBase(gV.Seq[gV.One.AlleleOne], dna.Gap) == int(read.Cigar[i].RunLen) && dna.CountBase(gV.Seq[gV.One.AlleleTwo], dna.Gap) == int(read.Cigar[i].RunLen) {
+					if code.CountDnaBytes(gV.Seq[gV.One.AlleleOne], code.Gap) == int(read.Cigar[i].RunLen) && code.CountDnaBytes(gV.Seq[gV.One.AlleleTwo], code.Gap) == int(read.Cigar[i].RunLen) {
 						parentAllele1++
 					}
-					if dna.CountBase(gV.Seq[gV.Two.AlleleOne], dna.Gap) == int(read.Cigar[i].RunLen) && dna.CountBase(gV.Seq[gV.Two.AlleleTwo], dna.Gap) == int(read.Cigar[i].RunLen) {
+					if code.CountDnaBytes(gV.Seq[gV.Two.AlleleOne], code.Gap) == int(read.Cigar[i].RunLen) && code.CountDnaBytes(gV.Seq[gV.Two.AlleleTwo], code.Gap) == int(read.Cigar[i].RunLen) {
 						parentAllele1++
 					}
 				}
 				target += int(read.Cigar[i].RunLen)
 			case 'M':
 				for j = 0; j < int(read.Cigar[i].RunLen); j++ {
-					code = vcf.GenomeKeyUint64(int(vcfHeader.Ref[read.RName]), int(target+j))
-					gV, ok = snpDb[code]
+					hashKey = vcf.GenomeKeyUint64(int(vcfHeader.Ref[read.RName]), int(target+j))
+					gV, ok = snpDb[hashKey]
 					if ok {
-						if string(read.Seq[query+j]) == string(gV.Seq[gV.One.AlleleOne]) && string(read.Seq[query+j]) == string(gV.Seq[gV.One.AlleleTwo]) {
+						if read.Seq[query+j] == gV.Seq[gV.One.AlleleOne][0] && read.Seq[query+j] == gV.Seq[gV.One.AlleleTwo][0] {
 							parentAllele1++
 						}
-						if string(read.Seq[query+j]) != string(gV.Seq[gV.Two.AlleleOne]) && string(read.Seq[query+j]) == string(gV.Seq[gV.Two.AlleleTwo]) {
+						if read.Seq[query+j] != gV.Seq[gV.Two.AlleleOne][0] && read.Seq[query+j] == gV.Seq[gV.Two.AlleleTwo][0] {
 							parentAllele2++
 						}
 					}
