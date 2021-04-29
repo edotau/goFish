@@ -4,13 +4,14 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/edotau/goFish/fastq"
 	"log"
+
+	"github.com/edotau/goFish/fastq"
 )
 
 func usage() {
 	fmt.Print(
-		"vimFastqc - quickly access fastq quality control metrics\nUsage:\n  ./vimFastqc [options] in.fastq[.gz] ... \n\nOptions:\n\tComing soon!\n\n")
+		"statFastQc - quickly access fastq quality control metrics\nUsage:\n  ./vimFastqc [options] in.fastq[.gz] ... \n\nOptions:\n\tComing soon!\n\n")
 	flag.PrintDefaults()
 }
 
