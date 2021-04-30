@@ -11,7 +11,9 @@ import (
 // template
 func TestWorkerPoolStart(t *testing.T) {
 	wp := NewPool(10) // Set the maximum number of threads
+
 	wp.SetTimeout(time.Millisecond)
+
 	for i := 0; i < 20; i++ { // Open 20 requests
 		ii := i
 		wp.Do(func() error {
@@ -24,8 +26,10 @@ func TestWorkerPoolStart(t *testing.T) {
 		})
 	}
 
-	wp.Queue.Wait()
-
+	err := wp.Wait()
+	if err != nil {
+		fmt.Println(err)
+	}
 	fmt.Println("down")
 }
 
@@ -49,8 +53,10 @@ func TestWorkerPoolError(t *testing.T) {
 		})
 	}
 
-	wp.Queue.Wait()
-
+	err := wp.Wait()
+	if err != nil {
+		fmt.Println(err)
+	}
 	fmt.Println("down")
 }
 
@@ -62,7 +68,9 @@ func TestWorkerPoolDoWait(t *testing.T) {
 		wp.DoWait(func() error {
 			for j := 0; j < 5; j++ {
 				fmt.Println(fmt.Sprintf("%v->\t%v", ii, j))
-
+				// if ii == 1 {
+				// 	return errors.New("my test err")
+				// }
 				time.Sleep(1 * time.Millisecond)
 			}
 
@@ -72,7 +80,29 @@ func TestWorkerPoolDoWait(t *testing.T) {
 		})
 	}
 
-	wp.Queue.Wait()
+	err := wp.Wait()
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println("down")
+}
 
+// Determine whether it is complete (non-blocking)
+func TestWorkerPoolIsDone(t *testing.T) {
+	wp := NewPool(5) // Set the maximum number of threads
+	for i := 0; i < 10; i++ {
+		//	ii := i
+		wp.Do(func() error {
+			for j := 0; j < 5; j++ {
+				// fmt.Println(fmt.Sprintf("%v->\t%v", ii, j))
+				time.Sleep(1 * time.Millisecond)
+			}
+			return nil
+		})
+
+		fmt.Println(wp.IsDone())
+	}
+	wp.Wait()
+	fmt.Println(wp.IsDone())
 	fmt.Println("down")
 }

@@ -29,7 +29,7 @@ type Jobs struct {
 
 func NewQueue() *Queue {
 	jobs := &Queue{
-		Stack: New(),
+		Stack: &Jobs{Work: make([]interface{}, minQueueLen)},
 	}
 	jobs.popable = sync.NewCond(&jobs.Mutex)
 	return jobs
@@ -41,18 +41,18 @@ func (q *Queue) Push(v interface{}) {
 	if !q.closed {
 		q.Add(v)
 		atomic.AddInt32(&q.count, 1)
-		//q.Stack.Signal()
+		q.popable.Signal()
 	}
 }
 
 func (q *Queue) Pop() (v interface{}) {
-	//w := q.Stack
+	work := q.popable
 
 	q.Mutex.Lock()
 	defer q.Mutex.Unlock()
 
 	for q.Len() == 0 && !q.closed {
-		q.Wait()
+		work.Wait()
 	}
 
 	if q.closed {
@@ -68,14 +68,14 @@ func (q *Queue) Pop() (v interface{}) {
 }
 
 func (q *Queue) TryPop() (v interface{}, ok bool) {
-	buffer := q.Stack
+	jobs := q.Stack
 
 	q.Mutex.Lock()
 	defer q.Mutex.Unlock()
 
 	if q.Len() > 0 {
-		v = buffer.Peek()
-		buffer.Remove()
+		v = jobs.Peek()
+		jobs.Remove()
 		atomic.AddInt32(&q.count, -1)
 		ok = true
 	} else if q.closed {
@@ -98,7 +98,7 @@ func (q *Queue) TryPopTimeout(tm time.Duration) (v interface{}, ok bool) {
 	case v = <-q.cc:
 	case <-timeout:
 		if !q.closed {
-			//	q.Stack.Signal()
+			q.popable.Signal()
 		}
 		ok = false
 	}
@@ -132,6 +132,15 @@ func (q *Queue) popChan(v *chan interface{}) {
 	return
 }
 
+func (q *Queue) Wait() {
+	for {
+		if q.closed || q.Len() == 0 {
+			break
+		}
+		runtime.Gosched()
+	}
+}
+
 func (q *Queue) Len() int {
 	return (int)(atomic.LoadInt32(&q.count))
 }
@@ -144,7 +153,7 @@ func (q *Queue) Close() {
 	if !q.closed {
 		q.closed = true
 		atomic.StoreInt32(&q.count, 0)
-		//q.Stack.Broadcast()
+		q.popable.Broadcast()
 	}
 }
 
@@ -154,48 +163,38 @@ func (q *Queue) IsClose() bool {
 }
 
 // New constructs and returns a new Queue.
-func New() *Jobs {
+func NewWorkers() *Jobs {
 	return &Jobs{
 		Work: make([]interface{}, minQueueLen),
 	}
 }
 
 // Length returns the number of elements currently stored in the queue.
-func (q *Jobs) Length() int {
-	return q.count
-}
-
-func (q *Queue) Wait() {
-	for {
-		if q.closed || q.Len() == 0 {
-			break
-		}
-		runtime.Gosched()
-	}
+func (q *Queue) Length() int {
+	return q.Stack.count
 }
 
 // resizes the queue to fit exactly twice its current contents
 // this can result in shrinking if the queue is less than half-full
-func (w *Jobs) resize() {
-	jobs := make([]interface{}, w.count<<1)
+func (q *Queue) resize() {
+	newBuf := make([]interface{}, q.count<<1)
 
-	if w.tail > w.head {
-		copy(jobs, w.Work[w.head:w.tail])
+	if len(q.Stack.Work) > q.Stack.head {
+		copy(newBuf, q.Stack.Work[q.Stack.head:q.Stack.tail])
 	} else {
-		n := copy(jobs, w.Work[w.head:])
-		copy(jobs[n:], w.Work[:w.tail])
+		n := copy(newBuf, q.Stack.Work[q.Stack.head:])
+		copy(newBuf[n:], q.Stack.Work[:q.Stack.tail])
 	}
 
-	w.head = 0
-	w.tail = w.count
-	w.Work = jobs
+	q.Stack.head = 0
+	q.Stack.tail = q.Stack.count
+	q.Stack.Work = newBuf
 }
 
-// Add puts an element on the end of the wueue.
+// Add puts an element on the end of the queue.
 func (q *Queue) Add(elem interface{}) {
-
 	if q.Stack.count == len(q.Stack.Work) {
-		q.Stack.resize()
+		q.resize()
 	}
 
 	q.Stack.Work[q.Stack.tail] = elem
@@ -206,43 +205,61 @@ func (q *Queue) Add(elem interface{}) {
 
 // Peek returns the element at the head of the queue. This call panics
 // if the queue is empty.
-func (w *Jobs) Peek() interface{} {
-	if w.count <= 0 {
+func (q *Jobs) Peek() interface{} {
+	if q.count <= 0 {
 		panic("queue: Peek() called on empty queue")
 	}
-	return w.Work[w.head]
+	return q.Work[q.head]
 }
 
 // Get returns the element at index i in the queue. If the index is
 // invalid, the call will panic. This method accepts both positive and
 // negative index values. Index 0 refers to the first element, and
 // index -1 refers to the last.
-func (w *Jobs) Get(i int) interface{} {
+func (q *Queue) Get(i int) interface{} {
 	// If indexing backwards, convert to positive index.
+
 	if i < 0 {
-		i += w.count
+		i += int(q.count)
 	}
-	if i < 0 || i >= w.count {
+	if i < 0 || i >= int(q.count) {
 		panic("queue: Get() called with index out of range")
 	}
 	// bitwise modulus
-	return w.Work[(w.head+i)&(len(w.Work)-1)]
+	return q.Stack.Work[(q.Stack.head+i)&(len(q.Stack.Work)-1)]
 }
 
 // Remove removes and returns the element from the front of the queue. If the
 // queue is empty, the call will panic.
-func (w *Jobs) Remove() interface{} {
-	if w.count <= 0 {
-		panic("Jobs: Remove() called on empty queue")
+func (q *Jobs) Remove() interface{} {
+	if q.count <= 0 {
+		panic("queue: Remove() called on empty queue")
 	}
-	ret := w.Work[w.head]
-	w.Work[w.head] = nil
+	ret := q.Work[q.head]
+	q.Work[q.head] = nil
 	// bitwise modulus
-	w.head = (w.head + 1) & (len(w.Work) - 1)
-	w.count--
+	q.head = (q.head + 1) & (len(q.Work) - 1)
+	q.count--
 	// Resize down if buffer 1/4 full.
-	if len(w.Work) > minQueueLen && (w.count<<2) == len(w.Work) {
-		w.resize()
+	if len(q.Work) > minQueueLen && (q.count<<2) == len(q.Work) {
+		q.resize()
 	}
 	return ret
+}
+
+// resizes the queue to fit exactly twice its current contents
+// this can result in shrinking if the queue is less than half-full
+func (q *Jobs) resize() {
+	newBuf := make([]interface{}, q.count<<1)
+
+	if q.tail > q.head {
+		copy(newBuf, q.Work[q.head:q.tail])
+	} else {
+		n := copy(newBuf, q.Work[q.head:])
+		copy(newBuf[n:], q.Work[:q.tail])
+	}
+
+	q.head = 0
+	q.tail = q.count
+	q.Work = newBuf
 }

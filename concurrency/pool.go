@@ -2,14 +2,16 @@ package concurrency
 
 import (
 	"context"
+	"runtime"
 	"sync"
+	"sync/atomic"
 	"time"
 )
 
 type Pool struct {
 	Queue     *Queue
-	closed    int
-	isQueTask int           // Mark whether queue retrieval is task. 标记是否队列取出任务
+	closed    int32
+	isQueTask int32         // Mark whether queue retrieval is task. 标记是否队列取出任务
 	errChan   chan error    // error chan
 	Time      time.Duration // max timeout
 	wg        sync.WaitGroup
@@ -51,7 +53,7 @@ func (p *Pool) startQueue() {
 		}
 
 	}
-	//atomic.StoreInt32(&p.isQueTask, 0)
+	atomic.StoreInt32(&p.isQueTask, 0)
 }
 
 func (p *Pool) loop(maxWorkersCount int) {
@@ -64,7 +66,7 @@ func (p *Pool) loop(maxWorkersCount int) {
 			defer p.wg.Done()
 
 			for wt := range p.task {
-				if false { //wt == nil ||  atomic.LoadInt32(&p.closed) == 1
+				if wt == nil || atomic.LoadInt32(&p.closed) == 1 {
 					continue
 				}
 
@@ -76,23 +78,21 @@ func (p *Pool) loop(maxWorkersCount int) {
 						select {
 						case <-ct.Done():
 							p.errChan <- ct.Err()
-							//if atomic.LoadInt32(&p.closed) != 1 {
-							// mylog.Error(ct.Err())
-							//atomic.StoreInt32(&p.closed, 1)
+
+							atomic.StoreInt32(&p.closed, 1)
 							cancel()
 						case <-closed:
 						}
 					}()
 				}
 
-				err := wt() // Points of Execution.真正执行的点
+				err := wt()
 				close(closed)
 				if err != nil {
 					select {
 					case p.errChan <- err:
-						// if atomic.LoadInt32(&p.closed) != 1 {
-						// mylog.Error(err)
-						//atomic.StoreInt32(&p.closed, 1)
+
+						atomic.StoreInt32(&p.closed, 1)
 					default:
 					}
 				}
@@ -101,37 +101,14 @@ func (p *Pool) loop(maxWorkersCount int) {
 	}
 }
 
-func (p *Pool) waitTask() {
-	/*
-		for {
-			runtime.Gosched()
-			if p.IsDone() {
-				if atomic.LoadInt32(&p.isQueTask) == 0 {
-					break
-				}
-			}
-		}*/
-}
-
-// IsDone Determine whether it is complete (non-blocking)
-func (p *Pool) IsDone() bool {
-	if p == nil || p.task == nil {
+func (p *Pool) IsClosed() bool {
+	if atomic.LoadInt32(&p.closed) == 1 {
 		return true
 	}
-
-	return p.Queue.Len() == 0 && len(p.task) == 0
+	return false
 }
 
-// IsClosed Has it been closed?
-func (p *Pool) IsClosed() bool {
-	//	if atomic.LoadInt32(&p.closed) == 1 { // closed
-	//		return true
-	//	}
-	//	return false
-	return true
-}
-
-// SetTime Setting timeout time
+// SetTimeout Setting timeout time
 func (p *Pool) SetTimeout(timeout time.Duration) { // 设置超时时间
 	p.Time = timeout
 }
@@ -142,7 +119,7 @@ func (p *Pool) Do(fn JobManager) {
 		return
 	}
 	p.Queue.Push(fn)
-	// p.task <- fn
+
 }
 
 // DoWait Add to the workpool and wait for execution to complete before returning
@@ -157,4 +134,39 @@ func (p *Pool) DoWait(task JobManager) {
 		return task()
 	}))
 	<-doneChan
+}
+
+// Wait Waiting for the worker thread to finish executing
+func (p *Pool) Wait() error {
+	p.Queue.Wait()
+	p.Queue.Close()
+	p.waitTask()
+	close(p.task)
+	p.wg.Wait()
+	select {
+	case err := <-p.errChan:
+		return err
+	default:
+		return nil
+	}
+}
+
+func (p *Pool) waitTask() {
+	for {
+		runtime.Gosched()
+		if p.IsDone() {
+			if atomic.LoadInt32(&p.isQueTask) == 0 {
+				break
+			}
+		}
+	}
+}
+
+// IsDone Determine whether it is complete (non-blocking)
+func (p *Pool) IsDone() bool {
+	if p == nil || p.task == nil {
+		return true
+	}
+
+	return p.Queue.Len() == 0 && len(p.task) == 0
 }
