@@ -3,11 +3,17 @@
 package concurrency
 
 import (
+	"io"
 	"sync"
 )
 
 // Goroutine is a an alias of a function designed to be programed in concurrency
 type Goroutine func() error
+
+type syncWriter struct {
+	io.Writer
+	mtx sync.Mutex
+}
 
 // Run calls the passed functions in a goroutine, returns a chan of errors.
 func RunConcur(functions ...Goroutine) chan error {
@@ -68,4 +74,10 @@ func RaceCondition(concurrency int, tasks ...Goroutine) chan error {
 	}
 
 	return errs
+}
+
+func (w *syncWriter) Write(p []byte) (int, error) {
+	defer func() { w.mtx.Unlock() }()
+	w.mtx.Lock()
+	return w.Writer.Write(p)
 }
