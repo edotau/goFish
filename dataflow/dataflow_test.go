@@ -1,153 +1,103 @@
 package dataflow
 
 import (
-	"errors"
+	"io/ioutil"
+	"log"
+	"runtime"
+	"sync/atomic"
 	"testing"
-	"time"
 
-	"github.com/edotau/goFish/api"
+	"github.com/stretchr/testify/assert"
 )
 
-func TestTimeOut(t *testing.T) {
-	timeout := time.Millisecond * 50
-	opt := &Options{TimeOut: &timeout}
-	c := NewActuator(opt)
-	testTimeout(t, c)
+func init() {
+	println("using MAXPROC")
+	numCPUs := runtime.NumCPU()
+	runtime.GOMAXPROCS(numCPUs)
 }
 
-func TestError(t *testing.T) {
-	timeout := time.Second
-	opt := &Options{TimeOut: &timeout}
-	c := NewActuator(opt)
-	testError(t, c)
-}
+func TestNewWorker(t *testing.T) {
+	pool := make(chan *worker)
+	worker := newWorker(pool)
+	worker.start()
+	assert.NotNil(t, worker)
 
-func TestNormal(t *testing.T) {
-	c := NewActuator()
-	testNormal(t, c)
+	worker = <-pool
+	assert.NotNil(t, worker, "Worker should register itself to the pool")
 
-	timeout := time.Minute
-	opt := &Options{TimeOut: &timeout}
-	c = NewActuator(opt)
-	testNormal(t, c)
-}
+	called := false
+	done := make(chan bool)
 
-func TestEmpty(t *testing.T) {
-	c := NewActuator()
-	testEmpty(t, c)
-}
-
-func TestPanic(t *testing.T) {
-	c := NewActuator()
-	testPanic(t, c)
-}
-
-func TestManyError(t *testing.T) {
-	timeout := time.Second
-	opt := &Options{TimeOut: &timeout}
-	c := NewActuator(opt)
-	testManyError(t, c)
-}
-
-func testTimeout(t *testing.T, c TimedActuator) {
-	st := time.Now().UnixNano()
-	err := c.Exec(getTasks(t)...)
-
-	api.Equal(t, err, ErrorTimeOut)
-	et := time.Now().UnixNano()
-	t.Logf("used time:%dms", (et-st)/1000000)
-	time.Sleep(time.Millisecond * 500)
-}
-
-func testError(t *testing.T, c TimedActuator) {
-	st := time.Now().UnixNano()
-	tasks, te := getErrorTask(t)
-	err := c.Exec(tasks...)
-
-	api.Equal(t, err, te)
-	et := time.Now().UnixNano()
-	t.Logf("used time:%dms", (et-st)/1000000)
-	time.Sleep(time.Millisecond * 500)
-}
-
-func testManyError(t *testing.T, c TimedActuator) {
-	tasks := make([]Task, 0)
-	tmp, te := getErrorTask(t)
-	tasks = append(tasks, tmp...)
-
-	for i := 0; i < 100; i++ {
-		tmp, _ = getErrorTask(t)
-		tasks = append(tasks, tmp...)
+	job := func() {
+		called = true
+		done <- true
 	}
 
-	st := time.Now().UnixNano()
-	err := c.Exec(tasks...)
-
-	api.Equal(t, err, te)
-	et := time.Now().UnixNano()
-	t.Logf("used time:%dms", (et-st)/1000000)
-	time.Sleep(time.Millisecond * 500)
+	worker.jobChannel <- job
+	<-done
+	assert.Equal(t, true, called)
 }
 
-func testNormal(t *testing.T, c TimedActuator) {
-	api.Equal(t, c.Exec(getTasks(t)...), nil)
-}
+func TestNewPool(t *testing.T) {
+	pool := NewPool(1000, 10000)
+	defer pool.Release()
 
-func testPanic(t *testing.T, c TimedActuator) {
-	api.NotEqual(t, c.Exec(getPanicTask(t)), nil)
-}
+	iterations := 1000000
+	pool.WaitCount(iterations)
+	var counter uint64 = 0
 
-func testEmpty(t *testing.T, c TimedActuator) {
-	api.Equal(t, c.Exec(), nil)
-}
+	for i := 0; i < iterations; i++ {
+		arg := uint64(1)
 
-func getTasks(t *testing.T) []Task {
-	return []Task{
-		func() error {
-			t.Logf("%d\n", 1)
-			time.Sleep(time.Millisecond * 100)
-			return nil
-		},
-		func() error {
-			t.Logf("%d\n", 2)
-			return nil
-		},
-		func() error {
-			time.Sleep(time.Millisecond * 200)
-			t.Logf("%d\n", 3)
-			return nil
-		},
+		job := func() {
+			defer pool.JobDone()
+			atomic.AddUint64(&counter, arg)
+			assert.Equal(t, uint64(1), arg)
+		}
+
+		pool.JobQueue <- job
 	}
+
+	pool.WaitAll()
+
+	counterFinal := atomic.LoadUint64(&counter)
+	assert.Equal(t, uint64(iterations), counterFinal)
 }
 
-func getErrorTask(t *testing.T) ([]Task, error) {
-	te := errors.New("TestErr")
+func TestRelease(t *testing.T) {
+	grNum := runtime.NumGoroutine()
+	pool := NewPool(5, 10)
+	defer func() {
+		pool.Release()
 
-	tasks := getTasks(t)
-	tasks = append(tasks,
-		func() error {
-			t.Logf("%d\n", 4)
-			return te
-		},
-		func() error {
-			time.Sleep(time.Millisecond * 300)
-			t.Logf("%d\n", 5)
-			return te
-		},
-		func() error {
-			time.Sleep(time.Second)
-			t.Logf("%d\n", 6)
-			return te
-		})
+		// give some time for all goroutines to quit
+		assert.Equal(t, grNum, runtime.NumGoroutine(), "All goroutines should be released after Release() call")
+	}()
 
-	return tasks, te
+	pool.WaitCount(1000)
+
+	for i := 0; i < 1000; i++ {
+		job := func() {
+			defer pool.JobDone()
+		}
+
+		pool.JobQueue <- job
+	}
+
+	pool.WaitAll()
 }
 
-func getPanicTask(t *testing.T) Task {
-	return func() error {
-		var i *int64
-		num := *i + 1
-		t.Logf("%d\n", num)
-		return nil
+func BenchmarkPool(b *testing.B) {
+	// Testing with just 1 goroutine
+	// to benchmark the non-parallel part of the code
+	pool := NewPool(1, 10)
+	defer pool.Release()
+
+	log.SetOutput(ioutil.Discard)
+
+	for n := 0; n < b.N; n++ {
+		pool.JobQueue <- func() {
+			log.Printf("I am worker! Number %d\n", n)
+		}
 	}
 }

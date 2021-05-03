@@ -23,6 +23,7 @@ import (
 	"unicode/utf8"
 
 	assert "github.com/go-playground/assert/v2"
+	//. "github.com/stretchr/testify/assert"
 )
 
 // TestingT is an interface wrapper around *testing.T
@@ -388,4 +389,8 @@ func Equal(t *testing.T, val1, val2 interface{}) {
 // NotEqual validates that val1 is not equal val2 and throws an error with line number
 func NotEqual(t *testing.T, val1, val2 interface{}) {
 	assert.NotEqualSkip(t, 2, val1, val2)
+}
+
+func NotNil(t *testing.T, w interface{}, s string) {
+	NotNil(t, w, s)
 }

@@ -20,17 +20,23 @@ type BigWigReader struct {
 }
 
 type bwheader struct {
-	magic                uint `bin:"len:4"`
-	version              uint `bin:"len:2"`
-	zoomLevels           uint `bin:"len:2"`
-	chromosomeTreeOffset uint `bin:"len:8"`
-	fullDataOffset       uint `bin:"len:8"`
-	fullIndexOffset      uint `bin:"len:8"`
-	fieldCount           uint `bin:"len:2"`
-	definedFieldCount    uint `bin:"len:2"`
-	autoSqlOffset        uint `bin:"len:8"`
-	totalSummaryOffset   uint `bin:"len:8"`
-	uncompressBufSize    uint `bin:"len:4"`
+	version           uint16
+	nLevels           uint16
+	ctOffset          uint64
+	dataOffset        uint64
+	indexOffset       uint64
+	fieldCount        uint16
+	definedFieldCount uint16
+	sqlOffset         uint64
+	summaryOffset     uint64
+	bufSize           uint32
+	extensionOffset   uint64
+	zoomHders         uint64 //bwZoomHdr_t * 	zoomHdrs
+	nBasesCovered     uint64
+	minVal            float64
+	maxVal            float64
+	sumData           float64
+	sumSquared        float64
 }
 
 type zoomHeader struct {
