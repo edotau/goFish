@@ -60,7 +60,7 @@ func (q *Queue) Pop() (v interface{}) {
 	}
 	if q.Len() > 0 {
 		work := q.Stack
-		v = work.Peek()
+		//v = work.Peek()
 		work.Remove()
 		atomic.AddInt32(&q.count, -1)
 	}
@@ -122,10 +122,10 @@ func (q *Queue) popChan(v *chan interface{}) {
 
 	if q.Len() > 0 {
 		werq := q.Stack
-		tmp := werq.Peek()
+		//tmp := werq.Peek()
 		q.Stack.Remove()
 		atomic.AddInt32(&q.count, -1)
-		*v <- tmp
+		*v <- werq
 	} else {
 		*v <- nil
 	}

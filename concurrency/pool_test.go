@@ -1,13 +1,6 @@
 package concurrency
 
-import (
-	"fmt"
-	"testing"
-	"time"
-
-	"github.com/pkg/errors"
-)
-
+/*
 // template
 func TestWorkerPoolStart(t *testing.T) {
 	wp := NewPool(10) // Set the maximum number of threads
@@ -21,7 +14,7 @@ func TestWorkerPoolStart(t *testing.T) {
 				fmt.Println(fmt.Sprintf("%v->\t%v", ii, j))
 				time.Sleep(1 * time.Millisecond)
 			}
-			// time.Sleep(1 * time.Second)
+			time.Sleep(1 * time.Second)
 			return nil
 		})
 	}
@@ -36,6 +29,7 @@ func TestWorkerPoolStart(t *testing.T) {
 // Support for error return
 func TestWorkerPoolError(t *testing.T) {
 	wp := NewPool(10) // Set the maximum number of threads
+	wp.wg.Add(1)
 	for i := 0; i < 20; i++ {
 		ii := i
 		wp.Do(func() error {
@@ -51,6 +45,7 @@ func TestWorkerPoolError(t *testing.T) {
 			// time.Sleep(1 * time.Second)
 			// return errors.New("my test err")
 		})
+		wp.wg.Done()
 	}
 
 	err := wp.Wait()
@@ -85,8 +80,9 @@ func TestWorkerPoolDoWait(t *testing.T) {
 		fmt.Println(err)
 	}
 	fmt.Println("down")
-}
+}*/
 
+/*
 // Determine whether it is complete (non-blocking)
 func TestWorkerPoolIsDone(t *testing.T) {
 	wp := NewPool(5) // Set the maximum number of threads
@@ -106,3 +102,4 @@ func TestWorkerPoolIsDone(t *testing.T) {
 	fmt.Println(wp.IsDone())
 	fmt.Println("down")
 }
+*/

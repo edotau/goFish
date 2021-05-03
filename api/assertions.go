@@ -17,9 +17,12 @@ import (
 	"reflect"
 	"runtime"
 	"strings"
+	"testing"
 	"time"
 	"unicode"
 	"unicode/utf8"
+
+	assert "github.com/go-playground/assert/v2"
 )
 
 // TestingT is an interface wrapper around *testing.T
@@ -375,4 +378,14 @@ func False(t TestingT, value bool, msgAndArgs ...interface{}) bool {
 
 	return true
 
+}
+
+// Equal validates that val1 is equal to val2 and throws an error with line number
+func Equal(t *testing.T, val1, val2 interface{}) {
+	assert.EqualSkip(t, 2, val1, val2)
+}
+
+// NotEqual validates that val1 is not equal val2 and throws an error with line number
+func NotEqual(t *testing.T, val1, val2 interface{}) {
+	assert.NotEqualSkip(t, 2, val1, val2)
 }
