@@ -22,8 +22,8 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	assert "github.com/go-playground/assert/v2"
-	//. "github.com/stretchr/testify/assert"
+	"github.com/go-playground/assert/v2"
+	truth "github.com/stretchr/testify/assert"
 )
 
 // TestingT is an interface wrapper around *testing.T
@@ -392,5 +392,5 @@ func NotEqual(t *testing.T, val1, val2 interface{}) {
 }
 
 func NotNil(t *testing.T, w interface{}, s string) {
-	NotNil(t, w, s)
+	truth.NotNil(t, w, s)
 }
