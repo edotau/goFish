@@ -61,7 +61,6 @@ func TestExec(t *testing.T) {
 	api.Equal(t, Exec(getTasks(t)...), true)
 	tasks, _ := getErrorTask(t)
 	api.Equal(t, Exec(tasks...), false)
-
 	api.Equal(t, Exec(), true)
 	log.SetOutput(ioutil.Discard)
 	api.Equal(t, Exec(getPanicTask()), false)
