@@ -23,7 +23,7 @@ const (
 	SoftClip  byte = 'S'
 	HardClip  byte = 'H'
 	Padded    byte = 'P'
-	Equal     byte = '='
+	EqualByte byte = '='
 	Mismatch  byte = 'X'
 	Unknown   byte = '*'
 )
@@ -47,7 +47,7 @@ func LookUpCigByte(op uint32) byte {
 	case 6:
 		return Padded
 	case 7:
-		return Equal
+		return EqualByte
 	case 8:
 		return Mismatch
 	default:
@@ -73,7 +73,7 @@ func lookUpUint32(op byte) uint32 {
 		return 5
 	case Padded:
 		return 6
-	case Equal:
+	case EqualByte:
 		return 7
 	case Mismatch:
 		return 8
@@ -173,7 +173,7 @@ func QueryRunLen(c []ByteCigar) int {
 	}
 	var ans uint16
 	for _, v := range c {
-		if v.Op == Match || v.Op == Insertion || v.Op == SoftClip || v.Op == Equal || v.Op == Mismatch {
+		if v.Op == Match || v.Op == Insertion || v.Op == SoftClip || v.Op == EqualByte || v.Op == Mismatch {
 			ans = ans + v.RunLen
 		}
 	}
