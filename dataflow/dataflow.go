@@ -4,13 +4,13 @@ package dataflow
 import "sync"
 
 // Gorouting instance which can accept client jobs
-type worker struct {
-	workerPool chan *worker
+type Worker struct {
+	workerPool chan *Worker
 	jobChannel chan Job
 	stop       chan struct{}
 }
 
-func (w *worker) start() {
+func (w *Worker) start() {
 	go func() {
 		var job Job
 		for {
@@ -28,8 +28,8 @@ func (w *worker) start() {
 	}()
 }
 
-func newWorker(pool chan *worker) *worker {
-	return &worker{
+func newWorker(pool chan *Worker) *Worker {
+	return &Worker{
 		workerPool: pool,
 		jobChannel: make(chan Job),
 		stop:       make(chan struct{}),
@@ -38,7 +38,7 @@ func newWorker(pool chan *worker) *worker {
 
 // Accepts jobs from clients, and waits for first free worker to deliver job
 type dispatcher struct {
-	workerPool chan *worker
+	workerPool chan *Worker
 	jobQueue   chan Job
 	stop       chan struct{}
 }
@@ -63,7 +63,7 @@ func (d *dispatcher) dispatch() {
 	}
 }
 
-func newDispatcher(workerPool chan *worker, jobQueue chan Job) *dispatcher {
+func newDispatcher(workerPool chan *Worker, jobQueue chan Job) *dispatcher {
 	d := &dispatcher{
 		workerPool: workerPool,
 		jobQueue:   jobQueue,
@@ -95,7 +95,7 @@ type Pool struct {
 // Returned object contains JobQueue reference, which you can use to send job to pool.
 func NewPool(numWorkers int, jobQueueLen int) *Pool {
 	jobQueue := make(chan Job, jobQueueLen)
-	workerPool := make(chan *worker, numWorkers)
+	workerPool := make(chan *Worker, numWorkers)
 
 	pool := &Pool{
 		JobQueue:   jobQueue,

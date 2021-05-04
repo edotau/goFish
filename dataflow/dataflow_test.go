@@ -11,13 +11,13 @@ import (
 )
 
 func init() {
-	println("using MAXPROC")
+	//println("using MAXPROC")
 	numCPUs := runtime.NumCPU()
 	runtime.GOMAXPROCS(numCPUs)
 }
 
 func TestNewWorker(t *testing.T) {
-	pool := make(chan *worker)
+	pool := make(chan *Worker)
 	worker := newWorker(pool)
 	worker.start()
 	assert.NotNil(t, worker)
@@ -88,16 +88,21 @@ func TestRelease(t *testing.T) {
 }
 
 func BenchmarkPool(b *testing.B) {
+	b.ReportAllocs()
 	// Testing with just 1 goroutine
 	// to benchmark the non-parallel part of the code
-	pool := NewPool(1, 10)
-	defer pool.Release()
 
+	pool := NewPool(2, 10)
+	defer pool.Release()
 	log.SetOutput(ioutil.Discard)
 
+	runtime.GOMAXPROCS(2)
+	//log.Printf("%d\n", runtime.NumCPU())
+	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
 		pool.JobQueue <- func() {
-			log.Printf("I am worker! Number %d\n", n)
+			//b.Logf("%s", s)
 		}
 	}
+
 }
