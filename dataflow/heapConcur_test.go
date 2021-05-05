@@ -21,7 +21,7 @@ func (w loadWorker) Run() interface{} {
 	return w * 2
 }
 
-func Test1(t *testing.T) {
+func TestHeapConcur(t *testing.T) {
 	t.Run("Test with Preset Pool Size", func(t *testing.T) {
 		max := 10
 		inputChan := make(chan WorkFunction)
@@ -51,99 +51,6 @@ func Test1(t *testing.T) {
 			t.Error("Input count does not match output count")
 		}
 		t.Log("Test with Preset Pool Size Completed")
-	})
-}
-
-func Test2(t *testing.T) {
-	t.Run("Test with default Pool Size", func(t *testing.T) {
-		max := 10
-		inputChan := make(chan WorkFunction)
-		wg := &sync.WaitGroup{}
-
-		outChan := HeapProcess(inputChan, &Settings{OutChannelBuffer: 2})
-		counter := 0
-		go func(t *testing.T) {
-			for out := range outChan {
-				if _, ok := out.Value.(loadWorker); !ok {
-					t.Error("Invalid output")
-				} else {
-					counter++
-				}
-				wg.Done()
-			}
-		}(t)
-
-		// Create work and the associated order
-		for work := 0; work < max; work++ {
-			wg.Add(1)
-			inputChan <- loadWorker(work)
-		}
-		close(inputChan)
-		wg.Wait()
-		if counter != max {
-			t.Error("Input count does not match output count")
-		}
-		t.Log("Test with Default Pool Size Completed")
-	})
-}
-
-func Test3(t *testing.T) {
-	t.Run("Test Zero Load", func(t *testing.T) {
-		max := 10
-		inputChan := make(chan WorkFunction)
-		wg := &sync.WaitGroup{}
-
-		outChan := HeapProcess(inputChan, &Settings{OutChannelBuffer: 2})
-		counter := 0
-		go func(t *testing.T) {
-			for out := range outChan {
-				if _, ok := out.Value.(zeroLoadWorker); !ok {
-					t.Error("Invalid output")
-				} else {
-					counter++
-				}
-				wg.Done()
-			}
-		}(t)
-
-		// Create work and the associated order
-		for work := 0; work < max; work++ {
-			wg.Add(1)
-			inputChan <- zeroLoadWorker(work)
-		}
-		close(inputChan)
-		wg.Wait()
-		if counter != max {
-			t.Error("Input count does not match output count")
-		}
-		t.Log("Test with Default Pool Size and Zero Load Completed")
-	})
-
-}
-
-func Test4(t *testing.T) {
-	t.Run("Test without workgroup", func(t *testing.T) {
-		max := 10
-		inputChan := make(chan WorkFunction)
-		output := HeapProcess(inputChan, &Settings{PoolSize: 10, OutChannelBuffer: 10})
-		go func() {
-			for work := 0; work < max; work++ {
-				inputChan <- zeroLoadWorker(work)
-			}
-			close(inputChan)
-		}()
-		counter := 0
-		for out := range output {
-			if _, ok := out.Value.(zeroLoadWorker); !ok {
-				t.Error("Invalid output")
-			} else {
-				counter++
-			}
-		}
-		if counter != max {
-			t.Error("Input count does not match output count")
-		}
-		t.Log("Test without workgroup Completed")
 	})
 }
 
