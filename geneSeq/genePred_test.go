@@ -1,4 +1,4 @@
-package genePred
+package geneSeq
 
 import (
 	"testing"

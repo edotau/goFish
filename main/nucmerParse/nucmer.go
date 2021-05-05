@@ -11,7 +11,7 @@ import (
 
 func usage() {
 	fmt.Print(
-		"nucmerParse - a tool that parse and extra interesting genomic regions from nucmer suffix tree alignments\n" +
+		"nucmerParse - a tool that will parse the output diff file from nucmer and extract SNPs from genomic regions from nucmer suffix tree alignments\n" +
 			"Usage:\n" +
 			"  ./nucmerParse in.file\n")
 	flag.PrintDefaults()

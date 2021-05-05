@@ -3,13 +3,13 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/edotau/goFish/fasta"
+	"github.com/edotau/goFish/geneSeq"
+	"github.com/edotau/goFish/reference/stickleback"
+	"github.com/edotau/goFish/simpleio"
 	"io"
 	"log"
 	"strings"
-    "github.com/edotau/goFish/genePred"
-	"github.com/edotau/goFish/fasta"
-	"github.com/edotau/goFish/reference/stickleback"
-	"github.com/edotau/goFish/simpleio"
 )
 
 func usage() {
@@ -27,29 +27,29 @@ func main() {
 	var fa *bool = flag.Bool("genome", false, "fetch marine fasta reference genome to stdout")
 	var chrom *bool = flag.Bool("chrom", false, "print marine stickleback chrom size info to stdout")
 	var wget *bool = flag.Bool("wget", false, "download stickleback genome as a fasta to disk")
-    var genes *bool = flag.Bool("gene-info", false, "fetch gene-prediction models to stdout")
+	var genes *bool = flag.Bool("gene-info", false, "fetch gene-prediction models to stdout")
 	flag.Usage = usage
 	log.SetFlags(log.Ldate | log.Ltime)
 	flag.Parse()
-    if *wget {
-        if *fa {
-            fetchHttpStdout()
-        }
-        if *chrom {
-            writer := simpleio.NewWriter("rabsTHREEspine.chromSize.gz")
-            writer.Write([]byte(chromTableStdout()))
-            writer.Close()
-        }
-        if *genes {
-            stream := simpleio.NewReader(stickleback.GENE_MODEL_RNASEQ)
-            defer stream.Close()
-            writer := simpleio.NewWriter("rabsTHREEspine.rna-seq.genes.mapped.ensembl.gp.gz")
-            io.Copy(writer.Gzip, stream)
-            
-            writer.Close()
-        }
-        return
-    }
+	if *wget {
+		if *fa {
+			fetchHttpStdout()
+		}
+		if *chrom {
+			writer := simpleio.NewWriter("rabsTHREEspine.chromSize.gz")
+			writer.Write([]byte(chromTableStdout()))
+			writer.Close()
+		}
+		if *genes {
+			stream := simpleio.NewReader(stickleback.GENE_MODEL_RNASEQ)
+			defer stream.Close()
+			writer := simpleio.NewWriter("rabsTHREEspine.rna-seq.genes.mapped.ensembl.gp.gz")
+			io.Copy(writer.Gzip, stream)
+
+			writer.Close()
+		}
+		return
+	}
 	if *fa {
 		fetchHttpStdout()
 	} else if *wget {
@@ -57,8 +57,8 @@ func main() {
 	} else if *chrom {
 		fmt.Printf("%s\n", chromTableStdout())
 	} else if *genes {
-        geneModels()
-    }  else {
+		geneModels()
+	} else {
 		flag.Usage()
 		log.Fatalf("Error: expecting arguments...\n")
 	}
@@ -90,16 +90,15 @@ func chromTableStdout() string {
 		buf.WriteString(simpleio.IntToString(stickleback.GetChrom(i)))
 		buf.WriteByte('\n')
 	}
-	return  buf.String()
+	return buf.String()
 }
 
 func geneModels() {
-    stream := simpleio.NewReader(stickleback.GENE_MODEL_RNASEQ)
-    for gene, done := genePred.GenePredLine(stream); !done; gene, done = genePred.GenePredLine(stream) {
-        fmt.Printf("%s\n", genePred.ToString(gene))
+	stream := simpleio.NewReader(stickleback.GENE_MODEL_RNASEQ)
+	for gene, done := geneSeq.GenePredLine(stream); !done; gene, done = geneSeq.GenePredLine(stream) {
+		fmt.Printf("%s\n", geneSeq.ToString(gene))
 
-    }
-    stream.Close()
-
+	}
+	stream.Close()
 
 }

@@ -1,4 +1,4 @@
-// genePredDict is a software tool used to operate (concat, find, query or and colapse dups) on ucsc genePred format
+// genePredDict is a software tool used to operate (concat, find, query or and colapse dups) on ucsc geneSeq format
 package main
 
 import (
@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/edotau/goFish/bed"
-	"github.com/edotau/goFish/genePred"
+	"github.com/edotau/goFish/geneSeq"
 	"github.com/edotau/goFish/reference/stickleback"
 	"github.com/edotau/goFish/simpleio"
 )
@@ -50,36 +50,36 @@ func main() {
 }
 
 func concat(files []string) {
-	var ans []genePred.GenePred
+	var ans []geneSeq.GenePred
 	for i := 0; i < len(files); i++ {
-		ans = append(ans, genePred.Read(files[i])...)
+		ans = append(ans, geneSeq.Read(files[i])...)
 	}
-	genePred.QuickSort(ans)
-	ans = genePred.RmOverlap(ans)
+	geneSeq.QuickSort(ans)
+	ans = geneSeq.RmOverlap(ans)
 
 	for j := 0; j < len(ans); j++ {
-		fmt.Printf("%s\n", genePred.ToString(&ans[j]))
+		fmt.Printf("%s\n", geneSeq.ToString(&ans[j]))
 	}
 }
 
 func reduceCapacity(filename string) {
-	geneModel := genePred.Read(filename)
-	genePred.QuickSort(geneModel)
-	geneModel = genePred.RmOverlap(geneModel)
+	geneModel := geneSeq.Read(filename)
+	geneSeq.QuickSort(geneModel)
+	geneModel = geneSeq.RmOverlap(geneModel)
 	for _, i := range geneModel {
-		fmt.Printf("%s\n", genePred.ToString(&i))
+		fmt.Printf("%s\n", geneSeq.ToString(&i))
 	}
-	//genePred.WriteGenePred(output, geneModel)
+	//geneSeq.WriteGenePred(output, geneModel)
 }
 
 func findNonOverlap(t string, q string) {
-	target := genePred.ReadToMap(t)
-	var curr []*genePred.GenePred
+	target := geneSeq.ReadToMap(t)
+	var curr []*geneSeq.GenePred
 
 	reader := simpleio.NewReader(q)
 	var i int
 	var nonOverlap bool = false
-	for query, err := genePred.GenePredLine(reader); !err; query, err = genePred.GenePredLine(reader) {
+	for query, err := geneSeq.GenePredLine(reader); !err; query, err = geneSeq.GenePredLine(reader) {
 		curr = target[query.Chr]
 		nonOverlap = false
 		for i = 0; i < len(curr); i++ {
@@ -88,18 +88,18 @@ func findNonOverlap(t string, q string) {
 			}
 		}
 		if !nonOverlap {
-			fmt.Printf("%s\n", genePred.ToString(query))
+			fmt.Printf("%s\n", geneSeq.ToString(query))
 		}
 
 	}
 }
 
 func toGeneNames(input, output string) {
-	gp := genePred.Read(input)
+	gp := geneSeq.Read(input)
 
 	writer := simpleio.NewWriter(output)
 
-	geneNames := genePred.ReadBioMart(stickleback.ENSEMBL_GENE_NAMES)
+	geneNames := geneSeq.ReadBioMart(stickleback.ENSEMBL_GENE_NAMES)
 
 	for _, i := range gp {
 
@@ -108,13 +108,20 @@ func toGeneNames(input, output string) {
 		if ok {
 			i.GeneName = strings.ReplaceAll(geneNames[i.GeneName], " ", "_")
 			curr.GeneName = strings.ReplaceAll(gene, " ", "_")
-			writer.Writer.WriteString(genePred.ToString(&curr))
+			writer.Writer.WriteString(geneSeq.ToString(&curr))
 			writer.Writer.WriteByte('\n')
 		} else {
-			writer.Writer.WriteString(genePred.ToString(&i))
+			writer.Writer.WriteString(geneSeq.ToString(&i))
 			writer.Writer.WriteByte('\n')
 		}
 
 	}
 	writer.Close()
 }
+
+/*
+	geneModels := geneSeq.FilterStrand(geneSeq.UniqueGenes(geneSeq.ReadToUniqueMap(flag.Arg(0))))
+	geneSeq.QuickSort(geneModels)
+	for _, i := range geneModels {
+		fmt.Print(geneSeq.ToString(&i))
+	}*/

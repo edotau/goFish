@@ -1,6 +1,7 @@
-// Package genePred contains functions and other data structures for processing gene models and annotations
+// GeneSeq contains functions and other data structures for processing gene models and annotations
 // from difference public data bases like ENSEMBL and UCSC
-package genePred
+// Currently supports genePred and GTF formats
+package geneSeq
 
 import (
 	"bytes"
