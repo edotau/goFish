@@ -1,0 +1,31 @@
+fixedStep chrom=test1 start=1 step=10 span=10
+0.1
+1.2
+2.3
+3.4
+4.5
+5.6
+6.7
+7.8
+8.9
+9
+fixedStep chrom=test2 start=1 step=10 span=10
+0.1
+1.2
+2.3
+3.4
+4.5
+5.6
+fixedStep chrom=test2 start=81 step=10 span=10
+8.9
+9
+0.1
+1.2
+2.3
+3.4
+4.5
+5.6
+6.7
+7.8
+8.9
+9
