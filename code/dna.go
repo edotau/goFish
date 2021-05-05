@@ -145,7 +145,46 @@ func DnaToByteNoMask(b Dna) byte {
 	}
 }
 
-// ToDna will convert a slice of bytes into a slice of Bases with no lowercase bases.
+// ReverseComplement reverses a sequence of bases and complements each base.
+// Used to switch strands and maintain 5' -> 3' orientation.
+func ReverseComplement(rc []Dna) {
+	for i, j := 0, len(rc)-1; i <= j; i, j = i+1, j-1 {
+		rc[i], rc[j] = ComplementDna(rc[j]), ComplementDna(rc[i])
+	}
+}
+
+// ComplementSingleBase returns the nucleotide complementary to the input base.
+func ComplementDna(b Dna) Dna {
+	switch b {
+	case A:
+		return T
+	case C:
+		return G
+	case G:
+		return C
+	case T:
+		return A
+	case N:
+		return N
+	case MaskA:
+		return MaskT
+	case MaskC:
+		return MaskG
+	case MaskG:
+		return MaskC
+	case MaskT:
+		return MaskA
+	case MaskN:
+		return MaskN
+	case Gap:
+		return Gap
+	default:
+		log.Panicf("unrecognized base %v", b)
+		return N
+	}
+}
+
+// ToDna will convert a slice of bytes into a slice of Bases with no Maskcase bases.
 func ToDna(b []byte) []Dna {
 	var answer []Dna = make([]Dna, len(b))
 	for i, byteValue := range b {

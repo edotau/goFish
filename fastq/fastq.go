@@ -2,6 +2,7 @@
 package fastq
 
 import (
+	"bytes"
 	"fmt"
 	"log"
 	"strings"
@@ -15,6 +16,11 @@ type Fastq struct {
 	Name string
 	Seq  []code.Dna
 	Qual []byte
+}
+
+type PairedEnd struct {
+	ReadOne Fastq
+	ReadTwo Fastq
 }
 
 func Read(filename string) []Fastq {
@@ -81,6 +87,32 @@ func ToString(fq *Fastq) string {
 	simpleio.FatalErr(err)
 
 	return buffer.String()
+}
+
+func ToBytes(fq *Fastq) []byte {
+	var buffer bytes.Buffer
+
+	_, err := buffer.WriteString(fq.Name)
+	simpleio.FatalErr(err)
+	err = buffer.WriteByte('\n')
+	simpleio.FatalErr(err)
+
+	_, err = buffer.Write(code.ToBytes(fq.Seq))
+	simpleio.FatalErr(err)
+	err = buffer.WriteByte('\n')
+	simpleio.FatalErr(err)
+
+	err = buffer.WriteByte('+')
+	simpleio.FatalErr(err)
+	err = buffer.WriteByte('\n')
+	simpleio.FatalErr(err)
+
+	_, err = buffer.Write(fq.Qual)
+	simpleio.FatalErr(err)
+	err = buffer.WriteByte('\n')
+	simpleio.FatalErr(err)
+
+	return buffer.Bytes()
 }
 
 func Equal(x, y *Fastq) bool {
