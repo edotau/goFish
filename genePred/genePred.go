@@ -23,7 +23,7 @@ type GenePred struct {
 	ExonCount int
 	ExonStart []int
 	ExonEnd   []int
-    Ext       string
+	Ext       string
 }
 
 type GeneModels []GenePred
@@ -59,10 +59,10 @@ func ToString(gp *GenePred) string {
 	str.WriteByte('\t')
 	str.WriteString(simpleio.IntSliceToString(gp.ExonEnd))
 	if gp.Ext != "" {
-        str.WriteByte('\t')
-        str.WriteString(gp.Ext)
-    }
-    return str.String()
+		str.WriteByte('\t')
+		str.WriteString(gp.Ext)
+	}
+	return str.String()
 }
 
 func ToBytes(gp *GenePred) []byte {
@@ -87,11 +87,11 @@ func ToBytes(gp *GenePred) []byte {
 	buf.WriteByte('\t')
 	buf.WriteString(simpleio.IntSliceToString(gp.ExonEnd))
 	if gp.Ext != "" {
-        buf.WriteByte('\t')
-        buf.WriteString(gp.Ext)
-    }
-    buf.WriteByte('\n')
-    
+		buf.WriteByte('\t')
+		buf.WriteString(gp.Ext)
+	}
+	buf.WriteByte('\n')
+
 	return buf.Bytes()
 }
 
@@ -113,15 +113,15 @@ func GenePredLine(reader *simpleio.SimpleReader) (*GenePred, bool) {
 				ExonStart: simpleio.StringToIntSlice(columns[8]),
 				ExonEnd:   simpleio.StringToIntSlice(columns[9]),
 			}
-            if len(columns) == 11 {
-                ans.Ext = columns[10]
-            }
+			if len(columns) == 11 {
+				ans.Ext = columns[10]
+			}
 			if len(ans.ExonStart) == ans.ExonCount && len(ans.ExonEnd) == ans.ExonCount {
 				return ans, false
 			} else {
 				log.Fatalf("Error: ExonCount must equal length of ExonStart and ExonEnd...\n")
-		    }
-        } else {
+			}
+		} else {
 			log.Fatalf("Error: line must contains %d, must be at least 10 columns in gene Prediction format...\n", len(columns))
 		}
 	}
@@ -175,7 +175,7 @@ func WriteGenePred(filename string, geneModels []GenePred) {
 	var err error
 	for _, i := range geneModels {
 		_, err = fmt.Fprintf(output, "%s\n", ToString(&i))
-		simpleio.ErrorHandle(err)
+		simpleio.FatalErr(err)
 	}
 	output.Close()
 }

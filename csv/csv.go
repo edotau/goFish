@@ -41,12 +41,12 @@ func Write(filepath string, x [][]float64, y []float64, highPrecision bool) {
 
 	_, err := os.Stat(filepath)
 	if err != nil && !os.IsNotExist(err) {
-		simpleio.ErrorHandle(err)
+		simpleio.FatalErr(err)
 	}
 
 	file, err := os.Create(filepath)
 	if err != nil {
-		simpleio.ErrorHandle(err)
+		simpleio.FatalErr(err)
 	}
 	defer file.Close()
 
@@ -74,7 +74,7 @@ func Write(filepath string, x [][]float64, y []float64, highPrecision bool) {
 	}
 	// now save the record to file
 	err = writer.WriteAll(records)
-	simpleio.ErrorHandle(err)
+	simpleio.FatalErr(err)
 }
 
 type FisherExact struct {
