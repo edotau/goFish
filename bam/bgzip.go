@@ -32,14 +32,14 @@ func OpenBgzipFile(filename string) *Bgzip {
 //NewBgzipReader will take an io.Reader and return a bgzip struct that contains an embedded gzip.Reader
 func NewBgzipReader(r io.Reader) *Bgzip {
 	reader, err := gzip.NewReader(r)
-	simpleio.ErrorHandle(err)
+	simpleio.FatalErr(err)
 	return &Bgzip{Reader: *reader}
 }
 
 //BgzipBuffer will gunzip text, catch any possible errors, and return a slice of bytes.
 func BgzipBuffer(file *Bgzip, data []byte) []byte {
 	_, err := file.Reader.Read(data)
-	simpleio.ErrorHandle(err)
+	simpleio.FatalErr(err)
 	return data
 }
 

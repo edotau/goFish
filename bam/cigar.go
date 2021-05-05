@@ -137,9 +137,9 @@ func ByteCigarToString(cigar []ByteCigar) string {
 	var err error
 	for _, c := range cigar {
 		_, err = str.WriteString(strconv.Itoa(int(c.RunLen)))
-		simpleio.ErrorHandle(err)
+		simpleio.FatalErr(err)
 		err = str.WriteByte(c.Op)
-		simpleio.ErrorHandle(err)
+		simpleio.FatalErr(err)
 	}
 	return str.String()
 }

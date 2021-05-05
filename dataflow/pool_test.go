@@ -78,3 +78,60 @@ func BenchmarkTaskPool(b *testing.B) {
 
 	}
 }
+
+/*
+func BenchmarkPool(b *testing.B) {
+	b.ReportAllocs()
+	// Testing with just 1 goroutine
+	// to benchmark the non-parallel part of the code
+
+	pool := NewPool(2, 10)
+	defer pool.Release()
+	log.SetOutput(ioutil.Discard)
+
+	runtime.GOMAXPROCS(6)
+	//log.Printf("%d\n", runtime.NumCPU())
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		pool.JobQueue <- func() {
+			//b.Logf("%s", s)
+		}
+	}
+
+}
+
+func BenchmarkTaskPool(b *testing.B) {
+	b.ReportAllocs()
+
+	// Testing with just 1 goroutine
+	// to benchmark the non-parallel part of the code
+	pool, _ := ants.NewPool(10)
+
+	defer pool.Release()
+	//log.SetOutput(ioutil.Discard)
+
+	runtime.GOMAXPROCS(6)
+	//log.Printf("%d\n", runtime.NumCPU())
+	b.ResetTimer()
+
+	for n := 0; n < b.N; n++ {
+
+		c := NewPooledActuator(2).WithPool(pool)
+
+		err := c.Exec(
+			func() error {
+				fmt.Println(1)
+				time.Sleep(time.Second * 2)
+				return nil
+			},
+		)
+		if err == nil {
+			c.Release()
+		} else {
+			simpleio.ErrorHandle(err)
+		}
+		//
+
+	}
+}
+*/

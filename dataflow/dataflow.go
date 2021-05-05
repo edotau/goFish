@@ -1,7 +1,9 @@
 // dataflow package is an implementation combining workflow/tasks mananging concpets most popular in data science. this project was most inspired by nextflow and SciPipe a really awesome collection of tools from scientific-workflows, bioinformatics-pipelines, workflow-engines, most importantly is implemented in go!
 package dataflow
 
-import "sync"
+import (
+	"sync"
+)
 
 // Gorouting instance which can accept client jobs
 type Worker struct {
@@ -96,13 +98,10 @@ type Pool struct {
 func NewPool(numWorkers int, jobQueueLen int) *Pool {
 	jobQueue := make(chan Job, jobQueueLen)
 	workerPool := make(chan *Worker, numWorkers)
-
-	pool := &Pool{
+	return &Pool{
 		JobQueue:   jobQueue,
 		dispatcher: newDispatcher(workerPool, jobQueue),
 	}
-
-	return pool
 }
 
 // In case you are using WaitAll fn, you should call this method

@@ -142,7 +142,7 @@ func BamToSam(filename string) (*Header, <-chan Sam) {
 
 func HttpReaderDev(url string) *Bgzip {
 	resp, err := http.Get(url)
-	simpleio.ErrorHandle(err)
+	simpleio.FatalErr(err)
 	return NewBgzipReader(resp.Body)
 }
 
@@ -167,31 +167,31 @@ func ReadHeader(reader *BamReader) *Header {
 		log.Fatalf("Not a BAM file: %s\n", string(reader.data))
 	}
 	reader.error = binary.Read(reader.Gunzip, binary.LittleEndian, &bamHeader.bamDecoder.length)
-	simpleio.ErrorHandle(reader.error)
+	simpleio.FatalErr(reader.error)
 	reader.data = make([]byte, bamHeader.bamDecoder.length)
 	var i, j, k int = 0, 0, 0
 	for i = 0; i < int(bamHeader.bamDecoder.length); {
 		j, reader.error = reader.Gunzip.Read(reader.data[i:])
-		simpleio.ErrorHandle(reader.error)
+		simpleio.FatalErr(reader.error)
 		i += j
 	}
 	bamHeader.Text.Write(reader.data)
 	reader.error = binary.Read(reader.Gunzip, binary.LittleEndian, &bamHeader.bamDecoder.numRef)
-	simpleio.ErrorHandle(reader.error)
+	simpleio.FatalErr(reader.error)
 	reader.data = make([]byte, bamHeader.bamDecoder.numRef)
 	var lengthName, lengthSeq int32
 	for i = 0; i < int(bamHeader.bamDecoder.numRef); i++ {
 		lengthName, lengthSeq = 0, 0
 		reader.error = binary.Read(reader.Gunzip, binary.LittleEndian, &lengthName)
-		simpleio.ErrorHandle(reader.error)
+		simpleio.FatalErr(reader.error)
 		reader.data = make([]byte, lengthName)
 		for j = 0; j < int(lengthName); {
 			k, reader.error = reader.Gunzip.Read(reader.data[j:])
-			simpleio.ErrorHandle(reader.error)
+			simpleio.FatalErr(reader.error)
 			j += k
 		}
 		reader.error = binary.Read(reader.Gunzip, binary.LittleEndian, &lengthSeq)
-		simpleio.ErrorHandle(reader.error)
+		simpleio.FatalErr(reader.error)
 		bamHeader.Chroms = append(bamHeader.Chroms, ChromSize{Name: strings.Trim(string(reader.data), "\n\000"), Size: int(lengthSeq), Order: len(bamHeader.Chroms)})
 	}
 	return bamHeader
@@ -222,40 +222,40 @@ func BamToChannel(reader *BamReader, binaryData chan<- *BinaryDecoder) {
 			close(binaryData)
 			break
 		}
-		simpleio.ErrorHandle(reader.error)
+		simpleio.FatalErr(reader.error)
 		//read block data
 		block.BlockSize = blockSize
 		reader.error = binary.Read(reader.Gunzip, binary.LittleEndian, &block.RefID)
-		simpleio.ErrorHandle(reader.error)
+		simpleio.FatalErr(reader.error)
 
 		reader.error = binary.Read(reader.Gunzip, binary.LittleEndian, &block.Pos)
-		simpleio.ErrorHandle(reader.error)
+		simpleio.FatalErr(reader.error)
 
 		reader.error = binary.Read(reader.Gunzip, binary.LittleEndian, &stats)
-		simpleio.ErrorHandle(reader.error)
+		simpleio.FatalErr(reader.error)
 
 		block.Bai = uint16((stats >> 16) & 0xffff)
 		block.MapQ = uint8((stats >> 8) & 0xff)
 		block.RNLength = uint8((stats >> 0) & 0xff)
 
 		reader.error = binary.Read(reader.Gunzip, binary.LittleEndian, &bitFlag)
-		simpleio.ErrorHandle(reader.error)
+		simpleio.FatalErr(reader.error)
 
 		// get Flag and NCigarOp from bitFlag
 		block.Flag = uint16(bitFlag >> 16)
 		block.NCigarOp = uint16(bitFlag & 0xffff)
 
 		reader.error = binary.Read(reader.Gunzip, binary.LittleEndian, &block.LSeq)
-		simpleio.ErrorHandle(reader.error)
+		simpleio.FatalErr(reader.error)
 
 		reader.error = binary.Read(reader.Gunzip, binary.LittleEndian, &block.NextRefID)
-		simpleio.ErrorHandle(reader.error)
+		simpleio.FatalErr(reader.error)
 
 		reader.error = binary.Read(reader.Gunzip, binary.LittleEndian, &block.NextPos)
-		simpleio.ErrorHandle(reader.error)
+		simpleio.FatalErr(reader.error)
 
 		reader.error = binary.Read(reader.Gunzip, binary.LittleEndian, &block.TLength)
-		simpleio.ErrorHandle(reader.error)
+		simpleio.FatalErr(reader.error)
 
 		// parse the read name
 		block.QName = binaryByteToString(reader, b, buf)
@@ -264,20 +264,20 @@ func BamToChannel(reader *BamReader, binaryData chan<- *BinaryDecoder) {
 		block.Cigar = make([]uint32, block.NCigarOp)
 		for i = 0; i < int(block.NCigarOp) && reader.error == nil; i++ {
 			reader.error = binary.Read(reader.Gunzip, binary.LittleEndian, &block.Cigar[i])
-			simpleio.ErrorHandle(reader.error)
+			simpleio.FatalErr(reader.error)
 
 		}
 		// parse seq
 		block.Seq = make([]byte, (block.LSeq+1)/2)
 		for i = 0; i < int((block.LSeq+1)/2); i++ {
 			reader.error = binary.Read(reader.Gunzip, binary.LittleEndian, &block.Seq[i])
-			simpleio.ErrorHandle(reader.error)
+			simpleio.FatalErr(reader.error)
 
 		}
 		block.Qual = make([]byte, block.LSeq)
 		for i = 0; i < int(block.LSeq); i++ {
 			reader.error = binary.Read(reader.Gunzip, binary.LittleEndian, &block.Qual[i])
-			simpleio.ErrorHandle(reader.error)
+			simpleio.FatalErr(reader.error)
 		}
 		// read auxiliary data
 		j = 8*4 + int(block.RNLength) + 4*int(block.NCigarOp) + int((block.LSeq+1)/2) + int(block.LSeq)
@@ -380,15 +380,15 @@ func decodeAuxiliary(reader *BamReader) *BamAux {
 	reader.bytesRead = 0
 	// read data
 	reader.error = binary.Read(reader.Gunzip, binary.LittleEndian, &aux.Tag[0])
-	simpleio.ErrorHandle(reader.error)
+	simpleio.FatalErr(reader.error)
 
 	reader.bytesRead += 1
 	reader.error = binary.Read(reader.Gunzip, binary.LittleEndian, &aux.Tag[1])
-	simpleio.ErrorHandle(reader.error)
+	simpleio.FatalErr(reader.error)
 
 	reader.bytesRead += 1
 	reader.error = binary.Read(reader.Gunzip, binary.LittleEndian, &aux.Type)
-	simpleio.ErrorHandle(reader.error)
+	simpleio.FatalErr(reader.error)
 
 	// three bytes read so far
 	reader.bytesRead += 1
@@ -398,14 +398,14 @@ func decodeAuxiliary(reader *BamReader) *BamAux {
 	case 'A':
 		value := byte(0)
 		reader.error = binary.Read(reader.Gunzip, binary.LittleEndian, &value)
-		simpleio.ErrorHandle(reader.error)
+		simpleio.FatalErr(reader.error)
 
 		aux.Value = value
 		reader.bytesRead += 1
 	case 'c':
 		value := int8(0)
 		reader.error = binary.Read(reader.Gunzip, binary.LittleEndian, &value)
-		simpleio.ErrorHandle(reader.error)
+		simpleio.FatalErr(reader.error)
 
 		aux.Value = value
 		aux.Type = 'i'
@@ -413,7 +413,7 @@ func decodeAuxiliary(reader *BamReader) *BamAux {
 	case 'C':
 		value := uint8(0)
 		reader.error = binary.Read(reader.Gunzip, binary.LittleEndian, &value)
-		simpleio.ErrorHandle(reader.error)
+		simpleio.FatalErr(reader.error)
 
 		aux.Value = value
 		aux.Type = 'i'
@@ -421,41 +421,41 @@ func decodeAuxiliary(reader *BamReader) *BamAux {
 	case 's':
 		value := int16(0)
 		reader.error = binary.Read(reader.Gunzip, binary.LittleEndian, &value)
-		simpleio.ErrorHandle(reader.error)
+		simpleio.FatalErr(reader.error)
 		aux.Type = 'i'
 		aux.Value = value
 		reader.bytesRead += 2
 	case 'S':
 		value := uint16(0)
 		reader.error = binary.Read(reader.Gunzip, binary.LittleEndian, &value)
-		simpleio.ErrorHandle(reader.error)
+		simpleio.FatalErr(reader.error)
 		aux.Type = 'i'
 		aux.Value = value
 		reader.bytesRead += 2
 	case 'i':
 		value := int32(0)
 		reader.error = binary.Read(reader.Gunzip, binary.LittleEndian, &value)
-		simpleio.ErrorHandle(reader.error)
+		simpleio.FatalErr(reader.error)
 		aux.Type = 'i'
 		aux.Value = value
 		reader.bytesRead += 4
 	case 'I':
 		value := uint32(0)
 		reader.error = binary.Read(reader.Gunzip, binary.LittleEndian, &value)
-		simpleio.ErrorHandle(reader.error)
+		simpleio.FatalErr(reader.error)
 		aux.Value = value
 		reader.bytesRead += 4
 	case 'f':
 		value := float32(0)
 		reader.error = binary.Read(reader.Gunzip, binary.LittleEndian, &value)
-		simpleio.ErrorHandle(reader.error)
+		simpleio.FatalErr(reader.error)
 
 		aux.Value = value
 		reader.bytesRead += 4
 	case 'd':
 		value := float64(0)
 		reader.error = binary.Read(reader.Gunzip, binary.LittleEndian, &value)
-		simpleio.ErrorHandle(reader.error)
+		simpleio.FatalErr(reader.error)
 
 		aux.Value = value
 		reader.bytesRead += 8
@@ -468,7 +468,7 @@ func decodeAuxiliary(reader *BamReader) *BamAux {
 		var buffer bytes.Buffer
 		for {
 			reader.error = binary.Read(reader.Gunzip, binary.LittleEndian, &b)
-			simpleio.ErrorHandle(reader.error)
+			simpleio.FatalErr(reader.error)
 			reader.bytesRead += 1
 			if b == 0 {
 				break
@@ -480,11 +480,11 @@ func decodeAuxiliary(reader *BamReader) *BamAux {
 		var t byte
 		var k int32
 		reader.error = binary.Read(reader.Gunzip, binary.LittleEndian, &t)
-		simpleio.ErrorHandle(reader.error)
+		simpleio.FatalErr(reader.error)
 
 		reader.bytesRead += 1
 		reader.error = binary.Read(reader.Gunzip, binary.LittleEndian, &k)
-		simpleio.ErrorHandle(reader.error)
+		simpleio.FatalErr(reader.error)
 
 		reader.bytesRead += 4
 		switch t {
@@ -493,35 +493,35 @@ func decodeAuxiliary(reader *BamReader) *BamAux {
 			for i, reader.error = 0, binary.Read(reader.Gunzip, binary.LittleEndian, &data[i]); i < int(k) && reader.error == nil; i++ {
 				reader.bytesRead += 1
 			}
-			simpleio.ErrorHandle(reader.error)
+			simpleio.FatalErr(reader.error)
 			aux.Value = data
 		case 'C':
 			data := make([]uint8, k)
 			for i, reader.error = 0, binary.Read(reader.Gunzip, binary.LittleEndian, &data[i]); i < int(k) && reader.error == nil; i++ {
 				reader.bytesRead += 1
 			}
-			simpleio.ErrorHandle(reader.error)
+			simpleio.FatalErr(reader.error)
 			aux.Value = data
 		case 's':
 			data := make([]int16, k)
 			for i, reader.error = 0, binary.Read(reader.Gunzip, binary.LittleEndian, &data[i]); i < int(k) && reader.error == nil; i++ {
 				reader.bytesRead += 2
 			}
-			simpleio.ErrorHandle(reader.error)
+			simpleio.FatalErr(reader.error)
 			aux.Value = data
 		case 'S':
 			data := make([]uint16, k)
 			for i, reader.error = 0, binary.Read(reader.Gunzip, binary.LittleEndian, &data[i]); i < int(k) && reader.error == nil; i++ {
 				reader.bytesRead += 2
 			}
-			simpleio.ErrorHandle(reader.error)
+			simpleio.FatalErr(reader.error)
 			aux.Value = data
 		case 'i':
 			data := make([]int32, k)
 			for i, reader.error = 0, binary.Read(reader.Gunzip, binary.LittleEndian, &data[i]); i < int(k) && reader.error == nil; i++ {
 				reader.bytesRead += 4
 			}
-			simpleio.ErrorHandle(reader.error)
+			simpleio.FatalErr(reader.error)
 			aux.Value = data
 		case 'I':
 			data := make([]uint32, k)
@@ -534,7 +534,7 @@ func decodeAuxiliary(reader *BamReader) *BamAux {
 			for i, reader.error = 0, binary.Read(reader.Gunzip, binary.LittleEndian, &data[i]); i < int(k) && reader.error == nil; i++ {
 				reader.bytesRead += 4
 			}
-			simpleio.ErrorHandle(reader.error)
+			simpleio.FatalErr(reader.error)
 			aux.Value = data
 		default:
 			log.Fatalf("Error: encountered unknown auxiliary array value type %c...\n", t)
@@ -563,7 +563,7 @@ func ParseCigar(bamCigar []uint32) []CigarByte {
 func binaryByteToString(reader *BamReader, b byte, buf *bytes.Buffer) string {
 	for {
 		reader.error = binary.Read(reader.Gunzip, binary.LittleEndian, &b)
-		simpleio.ErrorHandle(reader.error)
+		simpleio.FatalErr(reader.error)
 		reader.bytesRead += 1
 		if b == 0 {
 			return buf.String()

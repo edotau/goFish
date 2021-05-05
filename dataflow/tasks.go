@@ -3,22 +3,21 @@ package dataflow
 import (
 	"context"
 	"fmt"
-	"log"
 	"runtime/debug"
 	"sync"
 	"sync/atomic"
 	"time"
 )
 
-// JobManager is the actuator interface
-type JobManager interface {
+// BaseActuator is the actuator interface
+type BaseActuator interface {
 	Exec(tasks ...Task) error
 	ExecWithContext(ctx context.Context, tasks ...Task) error
 }
 
-// TimeManager is the actuator interface within timeout method
-type TimeManager interface {
-	JobManager
+// TimedActuator is the actuator interface within timeout method
+type TimedActuator interface {
+	BaseActuator
 	GetTimeout() *time.Duration
 	setTimeout(timeout *time.Duration)
 }
@@ -58,35 +57,13 @@ func (c *Actuator) GetTimeout() *time.Duration {
 	return c.timeout
 }
 
-// DurationPtr helps to make a duration ptr
-func DurationPtr(t time.Duration) *time.Duration {
-	return &t
-}
-
-// wrapperTask will wrapper the task in order to notice execution result
-// to the main process
-func wrapperTask(ctx context.Context, task Task,
-	wg *sync.WaitGroup, resChan chan error) func() {
-	return func() {
-		defer func() {
-			if r := recover(); r != nil {
-				err := fmt.Errorf("conexec panic:%v\n%s", r, string(debug.Stack()))
-				resChan <- err
-			}
-
-			wg.Done()
-		}()
-
-		select {
-		case <-ctx.Done():
-			return // fast return
-		case resChan <- task():
-		}
-	}
+// setTimeout sets the timeout
+func (c *Actuator) setTimeout(timeout *time.Duration) {
+	c.timeout = timeout
 }
 
 // wait waits for the notification of execution result
-func wait(ctx context.Context, c TimeManager,
+func wait(ctx context.Context, c TimedActuator,
 	resChan chan error, cancel context.CancelFunc) error {
 	if timeout := c.GetTimeout(); timeout != nil {
 		return waitWithTimeout(ctx, resChan, *timeout, cancel)
@@ -127,7 +104,7 @@ func waitWithTimeout(ctx context.Context, resChan chan error,
 
 // execTasks uses customized function to
 // execute every task, such as using the simplyRun
-func execTasks(parent context.Context, c TimeManager,
+func execTasks(parent context.Context, c TimedActuator,
 	execFunc func(f func()), tasks ...Task) error {
 	size := len(tasks)
 	if size == 0 {
@@ -172,7 +149,7 @@ func Exec(tasks ...Task) bool {
 			defer func() {
 				if r := recover(); r != nil {
 					atomic.StoreInt32(&c, 1)
-					log.Printf("conexec panic:%v\n%s\n", r, string(debug.Stack()))
+					fmt.Printf("conexec panic:%v\n%s\n", r, string(debug.Stack()))
 				}
 
 				wg.Done()
@@ -216,8 +193,35 @@ func ExecWithError(tasks ...Task) error {
 	return err
 }
 
+// DurationPtr helps to make a duration ptr
+func DurationPtr(t time.Duration) *time.Duration {
+	return &t
+}
+
+// wrapperTask will wrapper the task in order to notice execution result
+// to the main process
+func wrapperTask(ctx context.Context, task Task,
+	wg *sync.WaitGroup, resChan chan error) func() {
+	return func() {
+		defer func() {
+			if r := recover(); r != nil {
+				err := fmt.Errorf("conexec panic:%v\n%s", r, string(debug.Stack()))
+				resChan <- err
+			}
+
+			wg.Done()
+		}()
+
+		select {
+		case <-ctx.Done():
+			return // fast return
+		case resChan <- task():
+		}
+	}
+}
+
 // setOptions set the options for actuator
-func setOptions(c TimeManager, options ...*Options) {
+func setOptions(c TimedActuator, options ...*Options) {
 	if options == nil || len(options) == 0 || options[0] == nil {
 		return
 	}
@@ -226,9 +230,4 @@ func setOptions(c TimeManager, options ...*Options) {
 	if opt.TimeOut != nil {
 		c.setTimeout(opt.TimeOut)
 	}
-}
-
-// setTimeout sets the timeout
-func (c *Actuator) setTimeout(timeout *time.Duration) {
-	c.timeout = timeout
 }

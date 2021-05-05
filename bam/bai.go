@@ -4,14 +4,17 @@ package bam
 
 import (
 	"bufio"
+
 	"encoding/binary"
 	"fmt"
+	"github.com/biogo/hts/bgzf"
+	htslib "github.com/biogo/hts/bgzf"
+	"github.com/edotau/goFish/simpleio"
 	"io"
 	"sort"
-
-	"github.com/edotau/goFish/simpleio"
-	"github.com/grailbio/hts/bgzf"
 )
+
+var baiMagic [4]byte = ([4]byte{'B', 'A', 'I', 0x1})
 
 // Bi represents the content of a .bai Bi file (for use with a .bam file).
 type Bai struct {
@@ -23,7 +26,7 @@ type Bai struct {
 // Reference represents the reference data within a .bai file.
 type Reference struct {
 	Bins      []bin
-	Intervals []bgzf.Offset
+	Intervals []htslib.Offset
 	Meta      Metadata
 }
 
@@ -50,11 +53,7 @@ type Metadata struct {
 // IndexReader decompress a binary index of r and returns an Index or nil and an error.
 func IndexReader(filename string) *Bai {
 	file := simpleio.NewReader(filename)
-	//index =
 	return IndexBai(file.Reader)
-	//simpleio.ErrorHandle(err)
-
-	//return index
 }
 
 func toOffset(voffset uint64) bgzf.Offset {
@@ -74,15 +73,15 @@ func IndexBai(reader io.Reader) *Bai {
 	i := &Bai{}
 	var err error
 	if _, err = io.ReadFull(r, i.Magic[0:]); err != nil {
-		simpleio.ErrorHandle(err)
+		simpleio.FatalErr(err)
 	}
 	if i.Magic != [4]byte{'B', 'A', 'I', 0x1} {
-		simpleio.ErrorHandle(fmt.Errorf("bam index invalid magic: %v", i.Magic))
+		simpleio.FatalErr(fmt.Errorf("bam index invalid magic: %v", i.Magic))
 	}
 
 	var refCount int32
 	if err = binary.Read(r, binary.LittleEndian, &refCount); err != nil {
-		simpleio.ErrorHandle(err)
+		simpleio.FatalErr(err)
 	}
 	i.Refs = make([]Reference, refCount)
 
@@ -91,7 +90,7 @@ func IndexBai(reader io.Reader) *Bai {
 		// Read each Bin
 		var binCount int32
 		if err = binary.Read(r, binary.LittleEndian, &binCount); err != nil {
-			simpleio.ErrorHandle(err)
+			simpleio.FatalErr(err)
 		}
 		ref := Reference{
 			Bins: make([]bin, 0, binCount),
@@ -99,11 +98,11 @@ func IndexBai(reader io.Reader) *Bai {
 		for b := 0; int32(b) < binCount; b++ {
 			var binNum uint32
 			if err = binary.Read(r, binary.LittleEndian, &binNum); err != nil {
-				simpleio.ErrorHandle(err)
+				simpleio.FatalErr(err)
 			}
 			var chunkCount int32
 			if err = binary.Read(r, binary.LittleEndian, &chunkCount); err != nil {
-				simpleio.ErrorHandle(err)
+				simpleio.FatalErr(err)
 			}
 
 			bin := bin{
@@ -117,7 +116,7 @@ func IndexBai(reader io.Reader) *Bai {
 			if binNum == 37450 {
 				// If we have a metadata chunk, put it in ref.Meta instead of ref.Bins.
 				if len(bin.Chunks) != 2 {
-					simpleio.ErrorHandle(fmt.Errorf("invalid metadata: chunk has %d chunks, should have 2", len(bin.Chunks)))
+					simpleio.FatalErr(fmt.Errorf("invalid metadata: chunk has %d chunks, should have 2", len(bin.Chunks)))
 				}
 				ref.Meta = Metadata{
 					UnmappedBegin: fromOffset(bin.Chunks[0].Begin),
@@ -133,13 +132,13 @@ func IndexBai(reader io.Reader) *Bai {
 		// Read each Interval.
 		var intervalCount int32
 		if err = binary.Read(r, binary.LittleEndian, &intervalCount); err != nil {
-			simpleio.ErrorHandle(err)
+			simpleio.FatalErr(err)
 		}
 		ref.Intervals = make([]bgzf.Offset, intervalCount)
 		for inv := 0; int32(inv) < intervalCount; inv++ {
 			var ioffset uint64
 			if err = binary.Read(r, binary.LittleEndian, &ioffset); err != nil {
-				simpleio.ErrorHandle(err)
+				simpleio.FatalErr(err)
 			}
 			ref.Intervals[inv] = toOffset(ioffset)
 		}
@@ -150,7 +149,7 @@ func IndexBai(reader io.Reader) *Bai {
 	if err = binary.Read(r, binary.LittleEndian, &unmappedCount); err == nil {
 		i.UnmappedCount = &unmappedCount
 	} else if err != nil && err != io.EOF {
-		simpleio.ErrorHandle(err)
+		simpleio.FatalErr(err)
 	}
 	return i
 }
@@ -161,11 +160,11 @@ func (block bin) getNextChunk(reader io.Reader, chunkCount int32) {
 	for c := 0; int32(c) < chunkCount; c++ {
 		var beginOffset uint64
 		if err = binary.Read(reader, binary.LittleEndian, &beginOffset); err != nil {
-			simpleio.ErrorHandle(err)
+			simpleio.FatalErr(err)
 		}
 		var endOffset uint64
 		if err = binary.Read(reader, binary.LittleEndian, &endOffset); err != nil {
-			simpleio.ErrorHandle(err)
+			simpleio.FatalErr(err)
 		}
 		block.Chunks[c] = Chunk{
 			Begin: toOffset(beginOffset),

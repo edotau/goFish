@@ -10,7 +10,7 @@ import (
 
 func ViewUrl(url string) {
 	resp, err := http.Get(url)
-	simpleio.ErrorHandle(err)
+	simpleio.FatalErr(err)
 	ans := make(chan Sam)
 	if strings.HasSuffix(url, ".bam") {
 		reader := &BamReader{}
