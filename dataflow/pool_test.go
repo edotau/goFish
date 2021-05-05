@@ -12,9 +12,9 @@ func TestPooledTimeOut(t *testing.T) {
 	timeout := time.Millisecond * 50
 	opt := &Options{TimeOut: &timeout}
 
-	c := NewPooledActuator(5, opt)
+	c := NewJobManager(5, opt)
 	testTimeout(t, c)
-	c = NewPooledActuator(-1, opt)
+	c = NewJobManager(-1, opt)
 	testTimeout(t, c)
 }
 
@@ -22,37 +22,37 @@ func TestPooledError(t *testing.T) {
 	timeout := time.Second
 	opt := &Options{TimeOut: &timeout}
 
-	c := NewPooledActuator(5, opt)
+	c := NewJobManager(5, opt)
 	testError(t, c)
 }
 
 func TestPooledNormal(t *testing.T) {
-	c := NewPooledActuator(5)
+	c := NewJobManager(5)
 	testNormal(t, c)
 
 	timeout := time.Minute
 	opt := &Options{TimeOut: &timeout}
-	c = NewPooledActuator(5, opt)
+	c = NewJobManager(5, opt)
 	testNormal(t, c)
 
 	c.Release()
-	c = &PooledActuator{}
+	c = &JobManager{}
 	testNormal(t, c)
 }
 
 func TestPooledEmpty(t *testing.T) {
-	c := NewPooledActuator(5)
+	c := NewJobManager(5)
 	testEmpty(t, c)
 }
 
 func TestPooledPanic(t *testing.T) {
-	c := NewPooledActuator(5)
+	c := NewJobManager(5)
 	testPanic(t, c)
 }
 
 func TestWithPool(t *testing.T) {
 	pool, _ := ants.NewPool(5)
-	c := NewPooledActuator(5).WithPool(pool)
+	c := NewJobManager(5).WithPool(pool)
 	testNormal(t, c)
 	testError(t, c)
 }
@@ -70,10 +70,10 @@ func BenchmarkTaskPool(b *testing.B) {
 	runtime.GOMAXPROCS(2)
 	//log.Printf("%d\n", runtime.NumCPU())
 	b.ResetTimer()
-	c := &PooledActuator{}
+	c := &JobManager{}
 	for n := 0; n < b.N; n++ {
 
-		c = NewPooledActuator(2).WithPool(pool)
+		c = NewJobManager(2).WithPool(pool)
 		c.Release()
 
 	}
@@ -116,7 +116,7 @@ func BenchmarkTaskPool(b *testing.B) {
 
 	for n := 0; n < b.N; n++ {
 
-		c := NewPooledActuator(2).WithPool(pool)
+		c := NewJobManager(2).WithPool(pool)
 
 		err := c.Exec(
 			func() error {

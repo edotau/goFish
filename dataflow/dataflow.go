@@ -81,7 +81,6 @@ func newDispatcher(workerPool chan *Worker, jobQueue chan Job) *dispatcher {
 	return d
 }
 
-// Represents user request, function which should be executed in some worker.
 type Job func()
 
 type Pool struct {
@@ -127,9 +126,4 @@ func (p *Pool) WaitAll() {
 func (p *Pool) Release() {
 	p.dispatcher.stop <- struct{}{}
 	<-p.dispatcher.stop
-}
-
-// simplyRun uses a new goroutine to run the function
-func simplyRun(f func()) {
-	go f()
 }

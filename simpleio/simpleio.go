@@ -279,6 +279,11 @@ func PutBuffer(buf bytes.Buffer, bufferPool sync.Pool) {
 	bufferPool.Put(buf)
 }
 
+// SimplyRun uses a new goroutine to run the function
+func SimplyRun(f func()) {
+	go f()
+}
+
 /*
 func SimpleBufioPoolTest(filename string) {
 	reader := NewSimpleReader(filename)

@@ -42,7 +42,7 @@ func TestBigWigReadAll(t *testing.T) {
 	file, err := os.Open("testdata/track.bw")
 	var magic uint32
 	err = binary.Read(file, binary.LittleEndian, &magic)
-	simpleio.ErrorHandle(err)
+	simpleio.FatalErr(err)
 	if magic != BigWigMagic {
 		t.Errorf("Error: this is not a bigwig file...\n")
 	}

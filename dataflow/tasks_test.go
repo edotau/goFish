@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/edotau/goFish/api"
 	. "github.com/go-playground/assert/v2"
-	"github.com/goFish/api"
 )
 
 func testTimeout(t *testing.T, c TimedActuator) {

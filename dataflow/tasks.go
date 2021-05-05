@@ -52,6 +52,10 @@ func (c *Actuator) ExecWithContext(ctx context.Context, tasks ...Task) error {
 	return execTasks(ctx, c, simplyRun, tasks...)
 }
 
+func simplyRun(f func()) {
+	go f()
+}
+
 // GetTimeout return the timeout set before
 func (c *Actuator) GetTimeout() *time.Duration {
 	return c.timeout
