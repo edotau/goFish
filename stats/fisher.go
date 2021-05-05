@@ -77,12 +77,12 @@ func PeakStatsToString(peak PeakStats) string {
 
 func PeakStatsToFile(out io.Writer, peak PeakStats, pValue float64) {
 	_, err := fmt.Fprintf(out, "%s,%d,%d,%s,%E\n", peak.Chr, peak.Start, peak.End, StringFmt(peak.Matrix), pValue)
-	simpleio.ErrorHandle(err)
+	simpleio.FatalErr(err)
 }
 
 func PeakStatsSummary(out io.Writer, peak PeakStats, pValue float64) {
 	_, err := fmt.Fprintf(out, "%s,%d,%d,%E\n", peak.Chr, peak.Start, peak.End, pValue)
-	simpleio.ErrorHandle(err)
+	simpleio.FatalErr(err)
 }
 
 func WriteDiffPeaks(filename string, peaksDiff []DiffPeak) {
@@ -91,7 +91,7 @@ func WriteDiffPeaks(filename string, peaksDiff []DiffPeak) {
 	var err error
 	for _, peak := range peaksDiff {
 		_, err = fmt.Fprintf(pvaluePeaks, "%s,%d,%d,%E\n", peak.Chr, peak.Start, peak.End, peak.Pval)
-		simpleio.ErrorHandle(err)
+		simpleio.FatalErr(err)
 	}
 	pvaluePeaks.Close()
 }

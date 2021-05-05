@@ -3,16 +3,17 @@ package api
 
 import (
 	"github.com/edotau/goFish/simpleio"
-	"github.com/panjf2000/ants"
+	"github.com/panjf2000/ants/v2"
 	"github.com/pkg/browser"
 )
 
 func OpenDirectory(dir string) {
 	err := browser.OpenFile(dir)
-	simpleio.ErrorHandle(err)
+	simpleio.FatalErr(err)
 }
 
-func NewPool(size int) (*ants.Pool, error) {
-	return ants.NewPool(size)
-
+func NewPool(size int) *ants.Pool {
+	pool, err := ants.NewPool(size)
+	simpleio.FatalErr(err)
+	return pool
 }

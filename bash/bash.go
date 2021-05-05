@@ -27,5 +27,5 @@ func GetColumnCount(line string, delim byte) int {
 func Mkdir(path string, perm os.FileMode) {
 	//0755
 	err := os.MkdirAll("/Users/temp", perm)
-	simpleio.ErrorHandle(err)
+	simpleio.FatalErr(err)
 }

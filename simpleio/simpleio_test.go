@@ -24,7 +24,7 @@ func TestSimpleWriter(t *testing.T) {
 	} else {
 		t.Errorf("Error: number of lines read do not match...\n")
 	}
-	Remove("testdata/simplewriter_test.gz")
+	Rm("testdata/simplewriter_test.gz")
 }
 
 func BenchmarkSimpleReading(b *testing.B) {

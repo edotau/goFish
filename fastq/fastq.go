@@ -3,11 +3,12 @@ package fastq
 
 import (
 	"fmt"
-	"github.com/edotau/goFish/code"
-	"github.com/edotau/goFish/simpleio"
 	"log"
 	"strings"
 	"sync"
+
+	"github.com/edotau/goFish/code"
+	"github.com/edotau/goFish/simpleio"
 )
 
 type Fastq struct {
@@ -60,24 +61,24 @@ func ToString(fq *Fastq) string {
 	var buffer strings.Builder
 
 	_, err := buffer.WriteString(fq.Name)
-	simpleio.ErrorHandle(err)
+	simpleio.FatalErr(err)
 	err = buffer.WriteByte('\n')
-	simpleio.ErrorHandle(err)
+	simpleio.FatalErr(err)
 
 	_, err = buffer.Write(code.ToBytes(fq.Seq))
-	simpleio.ErrorHandle(err)
+	simpleio.FatalErr(err)
 	err = buffer.WriteByte('\n')
-	simpleio.ErrorHandle(err)
+	simpleio.FatalErr(err)
 
 	err = buffer.WriteByte('+')
-	simpleio.ErrorHandle(err)
+	simpleio.FatalErr(err)
 	err = buffer.WriteByte('\n')
-	simpleio.ErrorHandle(err)
+	simpleio.FatalErr(err)
 
 	_, err = buffer.Write(fq.Qual)
-	simpleio.ErrorHandle(err)
+	simpleio.FatalErr(err)
 	err = buffer.WriteByte('\n')
-	simpleio.ErrorHandle(err)
+	simpleio.FatalErr(err)
 
 	return buffer.String()
 }
