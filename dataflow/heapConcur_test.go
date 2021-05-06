@@ -39,7 +39,6 @@ func TestHeapConcur(t *testing.T) {
 				wg.Done()
 			}
 		}(t)
-
 		// Create work and the associated order
 		for work := 0; work < max; work++ {
 			wg.Add(1)

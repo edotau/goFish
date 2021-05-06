@@ -16,7 +16,7 @@ func TestGenePredRead(t *testing.T) {
 		textReader := simpleio.NewReader(i)
 		var index int = 0
 		for each, err := simpleio.ReadLine(textReader); !err; each, err = simpleio.ReadLine(textReader) {
-			if ToString(&ans[index]) == each.String() {
+			if ans[index].ToString() == each.String() {
 				index++
 			} else {
 				t.Errorf("Error: genePred parsing did not match raw text...\n")

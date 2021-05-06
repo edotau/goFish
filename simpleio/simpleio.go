@@ -248,7 +248,9 @@ func ReadFromFile(filename string) []string {
 	reader := NewReader(filename)
 	var ans []string
 	for i, err := ReadLine(reader); !err; i, err = ReadLine(reader) {
-		ans = append(ans, i.String())
+		if !strings.HasPrefix(i.String(), "#") {
+			ans = append(ans, i.String())
+		}
 	}
 	reader.Close()
 	return ans

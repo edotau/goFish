@@ -43,64 +43,6 @@ func Read(filename string) []GenePred {
 	return ans
 }
 
-func ToString(gp *GenePred) string {
-	var str strings.Builder
-	str.WriteString(gp.GeneName)
-	str.WriteByte('\t')
-	str.WriteString(gp.Chr)
-	str.WriteByte('\t')
-	str.WriteByte(gp.Strand)
-	str.WriteByte('\t')
-	str.WriteString(simpleio.IntToString(gp.TxStart))
-	str.WriteByte('\t')
-	str.WriteString(simpleio.IntToString(gp.TxEnd))
-	str.WriteByte('\t')
-	str.WriteString(simpleio.IntToString(gp.CdsStart))
-	str.WriteByte('\t')
-	str.WriteString(simpleio.IntToString(gp.CdsEnd))
-	str.WriteByte('\t')
-	str.WriteString(simpleio.IntToString(gp.ExonCount))
-	str.WriteByte('\t')
-	str.WriteString(simpleio.IntSliceToString(gp.ExonStart))
-	str.WriteByte('\t')
-	str.WriteString(simpleio.IntSliceToString(gp.ExonEnd))
-	if gp.Ext != "" {
-		str.WriteByte('\t')
-		str.WriteString(gp.Ext)
-	}
-	return str.String()
-}
-
-func ToBytes(gp *GenePred) []byte {
-	var buf bytes.Buffer
-	buf.WriteString(gp.GeneName)
-	buf.WriteByte('\t')
-	buf.WriteString(gp.Chr)
-	buf.WriteByte('\t')
-	buf.WriteByte(gp.Strand)
-	buf.WriteByte('\t')
-	buf.WriteString(simpleio.IntToString(gp.TxStart))
-	buf.WriteByte('\t')
-	buf.WriteString(simpleio.IntToString(gp.TxEnd))
-	buf.WriteByte('\t')
-	buf.WriteString(simpleio.IntToString(gp.CdsStart))
-	buf.WriteByte('\t')
-	buf.WriteString(simpleio.IntToString(gp.CdsEnd))
-	buf.WriteByte('\t')
-	buf.WriteString(simpleio.IntToString(gp.ExonCount))
-	buf.WriteByte('\t')
-	buf.WriteString(simpleio.IntSliceToString(gp.ExonStart))
-	buf.WriteByte('\t')
-	buf.WriteString(simpleio.IntSliceToString(gp.ExonEnd))
-	if gp.Ext != "" {
-		buf.WriteByte('\t')
-		buf.WriteString(gp.Ext)
-	}
-	buf.WriteByte('\n')
-
-	return buf.Bytes()
-}
-
 func GenePredLine(reader *simpleio.SimpleReader) (*GenePred, bool) {
 	var err bool
 	reader.Buffer, err = simpleio.ReadLine(reader)
@@ -205,7 +147,7 @@ func WriteGenePred(filename string, geneModels []GenePred) {
 	output := simpleio.NewWriter(filename)
 	var err error
 	for _, i := range geneModels {
-		_, err = fmt.Fprintf(output, "%s\n", ToString(&i))
+		_, err = fmt.Fprintf(output, "%s\n", i.ToString())
 		simpleio.StdError(err)
 	}
 	output.Close()
@@ -218,4 +160,61 @@ func ReadToMap(filename string) map[string][]*GenePred {
 		ans[i.Chr] = append(ans[i.Chr], i)
 	}
 	return ans
+}
+
+func (gp *GenePred) ToString() string {
+	var str strings.Builder
+	str.WriteString(gp.GeneName)
+	str.WriteByte('\t')
+	str.WriteString(gp.Chr)
+	str.WriteByte('\t')
+	str.WriteByte(gp.Strand)
+	str.WriteByte('\t')
+	str.WriteString(simpleio.IntToString(gp.TxStart))
+	str.WriteByte('\t')
+	str.WriteString(simpleio.IntToString(gp.TxEnd))
+	str.WriteByte('\t')
+	str.WriteString(simpleio.IntToString(gp.CdsStart))
+	str.WriteByte('\t')
+	str.WriteString(simpleio.IntToString(gp.CdsEnd))
+	str.WriteByte('\t')
+	str.WriteString(simpleio.IntToString(gp.ExonCount))
+	str.WriteByte('\t')
+	str.WriteString(simpleio.IntSliceToString(gp.ExonStart))
+	str.WriteByte('\t')
+	str.WriteString(simpleio.IntSliceToString(gp.ExonEnd))
+	if gp.Ext != "" {
+		str.WriteByte('\t')
+		str.WriteString(gp.Ext)
+	}
+	return str.String()
+}
+
+func (gp *GenePred) ToBytes() []byte {
+	var buf bytes.Buffer
+	buf.WriteString(gp.GeneName)
+	buf.WriteByte('\t')
+	buf.WriteString(gp.Chr)
+	buf.WriteByte('\t')
+	buf.WriteByte(gp.Strand)
+	buf.WriteByte('\t')
+	buf.WriteString(simpleio.IntToString(gp.TxStart))
+	buf.WriteByte('\t')
+	buf.WriteString(simpleio.IntToString(gp.TxEnd))
+	buf.WriteByte('\t')
+	buf.WriteString(simpleio.IntToString(gp.CdsStart))
+	buf.WriteByte('\t')
+	buf.WriteString(simpleio.IntToString(gp.CdsEnd))
+	buf.WriteByte('\t')
+	buf.WriteString(simpleio.IntToString(gp.ExonCount))
+	buf.WriteByte('\t')
+	buf.WriteString(simpleio.IntSliceToString(gp.ExonStart))
+	buf.WriteByte('\t')
+	buf.WriteString(simpleio.IntSliceToString(gp.ExonEnd))
+	if gp.Ext != "" {
+		buf.WriteByte('\t')
+		buf.WriteString(gp.Ext)
+	}
+	buf.WriteByte('\n')
+	return buf.Bytes()
 }

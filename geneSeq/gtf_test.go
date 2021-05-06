@@ -1,14 +1,33 @@
 package geneSeq
 
 import (
-	"fmt"
+	"log"
+	"strings"
 	"testing"
+
+	"github.com/edotau/goFish/simpleio"
 )
 
+var gtf_tests []string = []string{
+	"testdata/gasAcu_small.BROADS1.104.gtf",
+	"testdata/denovo.reference.transcrtipt.assembly.annotated.gtf",
+	"testdata/geneFeat.gzipTest.gtf.gz",
+}
+
 func TestGtfReading(t *testing.T) {
-	gf := ReadGtf("testdata/denovo.reference.transcrtipt.assembly.annotated.gtf")
-	for i := 0; i < 10; i++ {
-		fmt.Printf("%v\n", (gf[i].ToString()))
+	for _, test := range gtf_tests {
+		ans := simpleio.ReadFromFile(test)
+		gf := ReadGtf(test)
+		if len(ans) != len(gf) {
+			t.Errorf("Error: line numbers between read in functions are different...\n")
+		} else {
+			for i := 0; i < len(gf); i++ {
+				if !strings.HasPrefix(ans[i], "#") && gf[i].ToString() != ans[i] {
+					log.Fatalf("Error: to string method is not producing the same text as the input...\n")
+				}
+			}
+		}
+
 	}
 }
 
@@ -17,11 +36,6 @@ func BenchmarkGtfSimpleReading(b *testing.B) {
 	b.ResetTimer()
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
-
-		ReadGtf("testdata/denovo.reference.transcrtipt.assembly.annotated.gtf")
-
-		//for i := 0; i < 10; i++ {
-		//		fmt.Printf("%v\n", (gf[i].ToString()))
-		//	}
+		ReadGtf("testdata/geneFeat.gzipTest.gtf.gz")
 	}
 }

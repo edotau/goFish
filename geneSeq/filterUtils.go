@@ -2,10 +2,11 @@ package geneSeq
 
 import (
 	"fmt"
-	"github.com/edotau/goFish/bed"
-	"github.com/edotau/goFish/simpleio"
 	"sort"
 	"strings"
+
+	"github.com/edotau/goFish/bed"
+	"github.com/edotau/goFish/simpleio"
 )
 
 func QuickSort(file []GenePred) {
@@ -79,7 +80,7 @@ func ReadFilter(mapFile string, gpFile string) {
 	for _, gp := range Read(gpFile) {
 		curr := gp
 		curr.GeneName = mapOfGenes[gp.GeneName]
-		fmt.Printf("%s\n", ToString(&curr))
+		fmt.Printf("%s\n", curr.ToString())
 	}
 }
 
@@ -88,7 +89,7 @@ func FilterPitx1(filename string) {
 	pitx1 := bed.Simple{Chr: "chr07", Start: 386418, End: 1051237}
 	for _, i := range genes {
 		if bed.Overlap(&pitx1, &i) {
-			fmt.Printf("%s\n", ToString(&i))
+			fmt.Printf("%s\n", i.ToString())
 		}
 	}
 }

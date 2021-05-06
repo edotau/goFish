@@ -20,7 +20,6 @@ type pipeline struct {
 
 func Work(f func(chan interface{})) Pipeline {
 	inC := make(chan interface{})
-
 	go f(inC)
 
 	return &pipeline{
