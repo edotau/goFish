@@ -3,12 +3,10 @@ package geneSeq
 import (
 	"fmt"
 	"log"
-	"os"
 	"runtime"
 	"strings"
 
 	"github.com/edotau/goFish/simpleio"
-	"github.com/shenwei356/breader"
 )
 
 // Version is the GTF version
@@ -35,98 +33,73 @@ type Attribute struct {
 // Threads for bread.NewBufferedReader()
 var Threads = runtime.NumCPU()
 
-// ReadFeatures returns gtf features of a file
-func ParseGtfLine(file string) ([]Gtf, error) {
-	return ReadFilteredFeatures(file, []string{}, []string{}, []string{})
+func ReadGtf(filename string) []Gtf {
+	reader := simpleio.NewReader(filename)
+	var ans []Gtf
+	for i, done := ParseNextGtf(reader); !done; i, done = ParseNextGtf(reader) {
+		ans = append(ans, *i)
+	}
+	return ans
 }
 
-// ReadFilteredFeatures returns gtf features of specific chrs in a file
-func ReadFilteredFeatures(file string, chrs []string, feats []string, attrs []string) ([]Gtf, error) {
-	if _, err := os.Stat(file); os.IsNotExist(err) {
-		return nil, err
+func ParseNextGtf(reader *simpleio.SimpleReader) (*Gtf, bool) {
+	line, done := simpleio.ReadLine(reader)
+	if done {
+		return nil, done
 	}
+	col := strings.Split(line.String(), "\t")
 
-	fn := func(line string) (interface{}, bool, error) {
-		return GetGtfLine(line)
-	}
-	reader, err := breader.NewBufferedReader(file, Threads, 100, fn)
-	if err != nil {
-		return nil, err
-	}
-	features := []Gtf{}
-	for chunk := range reader.Ch {
-		if chunk.Err != nil {
-			return nil, chunk.Err
-		}
-		for _, data := range chunk.Data {
-			features = append(features, data.(Gtf))
-		}
-	}
-	return features, nil
-}
-
-func GetGtfLine(line string) (interface{}, bool, error) {
-	line = strings.TrimRight(line, "\r\n")
-	items := strings.Split(line, "\t")
-	if len(line) == 0 || line[0] == '#' {
-		return nil, false, nil
-	}
-	start := simpleio.StringToInt(items[3])
-
-	end := simpleio.StringToInt(items[4])
-
+	start, end := simpleio.StringToInt(col[3]), simpleio.StringToInt(col[4])
 	if start > end {
-		return nil, false, fmt.Errorf("%s: start (%d) must be < end (%d)", items[0], start, end)
+		simpleio.StdError(fmt.Errorf("%s: start (%d) must be < end (%d)", col[0], start, end))
 	}
 
 	var score *float64
 
-	if items[5] != "." {
-		s := simpleio.StringToFloat64(items[5])
+	if col[5] != "." {
+		s := simpleio.StringToFloat64(col[5])
 		score = &s
 	}
 
 	var strand *byte
-	if items[6][0] != '.' {
-		s := items[6][0]
+	if col[6][0] != '.' {
+		s := col[6][0]
 		if !(s == '+' || s == '-') {
-			log.Fatalf(fmt.Sprintf("%s: illigal strand: %v", items[0], s))
+			log.Fatalf(fmt.Sprintf("%s: illigal strand: %v", col[0], s))
 		}
 		strand = &s
 	}
 	var frame *int
-	if items[7] != "." {
-		f := simpleio.StringToInt(items[7])
-
-		log.Fatalf(fmt.Sprintf("%s: bad frame: %s", items[0], items[7]))
+	if col[7] != "." {
+		f := simpleio.StringToInt(col[7])
+		log.Fatalf(fmt.Sprintf("%s: bad frame: %s", col[0], col[7]))
 
 		if !(f == 0 || f == 1 || f == 2) {
-			simpleio.FatalErr(fmt.Errorf("%s: illigal frame: %d", items[0], f))
+			simpleio.StdError(fmt.Errorf("%s: illigal frame: %d", col[0], f))
 		}
 		frame = &f
 	}
 
-	feature := Gtf{items[0], items[1], items[2], start, end, score, strand, frame, nil}
+	geneFeature := Gtf{col[0], col[1], col[2], start, end, score, strand, frame, nil}
 
-	tagValues := strings.Split(items[8], "; ")
+	tagValues := strings.Split(col[8], "; ")
 	if len(tagValues) > 0 {
-
-		feature.Attributes = []Attribute{}
+		geneFeature.Attributes = []Attribute{}
 		for _, tagValue := range tagValues[0 : len(tagValues)-1] {
-			items2 := strings.SplitN(tagValue, " ", 2)
-			tag := items2[0]
+			col2 := strings.SplitN(tagValue, " ", 2)
+			tag := col2[0]
 
-			value := items2[1]
+			value := col2[1]
 
 			if len(value) > 2 {
 				value = value[1 : len(value)-1]
 			} else {
 				value = ""
 			}
-			feature.Attributes = append(feature.Attributes, Attribute{tag, value})
+			geneFeature.Attributes = append(geneFeature.Attributes, Attribute{tag, value})
 		}
 	}
-	return feature, true, nil
+	return &geneFeature, false
 }
 
 /*
@@ -205,9 +178,9 @@ func ParseAttrib(col string) []Attribute {
 	if len(tagValues) > 0 {
 
 		for _, tagValue := range tagValues[0 : len(tagValues)-1] {
-			items2 := strings.SplitN(tagValue, " ", 2)
-			tag := items2[0]
-			value := items2[1]
+			col2 := strings.SplitN(tagValue, " ", 2)
+			tag := col2[0]
+			value := col2[1]
 			// if value[len(value)-1] == ';' {
 			// 	value = value[0 : len(value)-1]
 			// }

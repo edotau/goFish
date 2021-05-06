@@ -1,14 +1,27 @@
 package geneSeq
 
 import (
-	"log"
+	"fmt"
 	"testing"
 )
 
 func TestGtfReading(t *testing.T) {
-	gf, _ := ParseGtfLine("testdata/denovo.reference.transcrtipt.assembly.annotated.gtf")
+	gf := ReadGtf("testdata/denovo.reference.transcrtipt.assembly.annotated.gtf")
 	for i := 0; i < 10; i++ {
-		log.Printf("%v\n", (gf[i].ToString()))
+		fmt.Printf("%v\n", (gf[i].ToString()))
 	}
+}
 
+func BenchmarkGtfSimpleReading(b *testing.B) {
+	b.ReportAllocs()
+	b.ResetTimer()
+	b.StartTimer()
+	for i := 0; i < b.N; i++ {
+
+		ReadGtf("testdata/denovo.reference.transcrtipt.assembly.annotated.gtf")
+
+		//for i := 0; i < 10; i++ {
+		//		fmt.Printf("%v\n", (gf[i].ToString()))
+		//	}
+	}
 }

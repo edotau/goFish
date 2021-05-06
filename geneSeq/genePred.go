@@ -206,7 +206,7 @@ func WriteGenePred(filename string, geneModels []GenePred) {
 	var err error
 	for _, i := range geneModels {
 		_, err = fmt.Fprintf(output, "%s\n", ToString(&i))
-		simpleio.FatalErr(err)
+		simpleio.StdError(err)
 	}
 	output.Close()
 }
