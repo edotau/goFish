@@ -13,7 +13,7 @@ import (
 // HttpReader will fetch data from files uploaded to an internet server and stream data into an io.Reader interface.
 func HttpReader(url string) *SimpleReader {
 	resp, err := http.Get(url)
-	FatalErr(err)
+	StdError(err)
 	var answer SimpleReader = SimpleReader{
 		Buffer: &bytes.Buffer{},
 		line:   make([]byte, defaultBufSize),
@@ -21,7 +21,7 @@ func HttpReader(url string) *SimpleReader {
 	}
 	if strings.HasSuffix(url, ".gz") {
 		gzipReader, err := gzip.NewReader(resp.Body)
-		FatalErr(err)
+		StdError(err)
 		answer.Reader = bufio.NewReader(gzipReader)
 	} else {
 		answer.Reader = bufio.NewReader(resp.Body)

@@ -5,7 +5,6 @@ package simpleio
 import (
 	"bufio"
 	"bytes"
-	"errors"
 	"io"
 	"log"
 	"os"
@@ -65,7 +64,7 @@ func NewReader(filename string) *SimpleReader {
 		var err error
 		//gunzip, err := gzip.NewReader(file)
 		answer.Gunzip, err = NewGunzipReader(filename)
-		FatalErr(err)
+		StdError(err)
 
 		answer.close = answer.Gunzip.Unzip.(io.ReadCloser).Close
 		answer.Reader = bufio.NewReader(answer.Gunzip)
@@ -81,7 +80,7 @@ func NewReader(filename string) *SimpleReader {
 func NewGunzipReader(filename string) (*GunzipReader, error) {
 	cmd := exec.Command("gunzip", "-c", filename)
 	stdout, err := cmd.StdoutPipe()
-	FatalErr(err)
+	StdError(err)
 	err = cmd.Start()
 	return &GunzipReader{Unzip: stdout, Cmd: cmd}, err
 }
@@ -105,13 +104,13 @@ func NewWriter(filename string) *SimpleWriter {
 
 func Vim(filename string) *os.File {
 	file, err := os.Open(filename)
-	FatalErr(err)
+	StdError(err)
 	return file
 }
 
 func Touch(filename string) *os.File {
 	file, err := os.Create(filename)
-	FatalErr(err)
+	StdError(err)
 	return file
 }
 
@@ -175,18 +174,18 @@ func ReadLine(reader *SimpleReader) (*bytes.Buffer, bool) {
 // only when necessary.
 func readMore(reader *SimpleReader) []byte {
 	_, err := reader.Buffer.Write(reader.line)
-	FatalErr(err)
+	StdError(err)
 	reader.line, err = reader.ReadSlice('\n')
 	if err == nil {
 		return reader.line
 	}
 	if err == bufio.ErrBufferFull {
 		_, err = reader.Buffer.Write(reader.line)
-		FatalErr(err)
+		StdError(err)
 		// recursive call to read next bytes until reaching end of line character
 		return readMore(reader)
 	}
-	FatalErr(err)
+	StdError(err)
 	return reader.line
 }
 
@@ -199,20 +198,15 @@ func WriteLine(writer *SimpleWriter, s string) {
 // BytesToBuffer will parse []byte and return a pointer to the same underlying bytes.Buffer
 func BytesToBuffer(reader *SimpleReader) *bytes.Buffer {
 	_, err := reader.Buffer.Write(reader.line[:len(reader.line)-1])
-	FatalErr(err)
+	StdError(err)
 	return reader.Buffer
 }
 
-// FatalErr will simply print and handle errors returned.
-func FatalErr(err error) {
+// StdError will simply print and handle errors returned.
+func StdError(err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
-}
-
-// FatalErr will simply print and handle errors returned.
-func ErrCatch(msg string) error {
-	return errors.New(msg)
 }
 
 // CatchErrThrowEOF will silently handles and throws the EOF error and will log and exit any other errors.
@@ -220,7 +214,7 @@ func CatchErrThrowEOF(err error) {
 	if err == io.EOF {
 		return
 	} else {
-		FatalErr(err)
+		StdError(err)
 	}
 }
 
@@ -229,25 +223,25 @@ func CatchErrThrowEOF(err error) {
 // Close will return an error if it has already been called.
 func (reader *SimpleReader) Close() {
 	if reader != nil {
-		FatalErr(reader.close())
+		StdError(reader.close())
 	}
 }
 
 func (writer *SimpleWriter) Close() {
 
 	if writer.Gzip != nil {
-		FatalErr(writer.Gzip.Close())
+		StdError(writer.Gzip.Close())
 
 	}
 	if writer != nil {
 		writer.Writer.Flush()
 	}
-	FatalErr(writer.close())
+	StdError(writer.close())
 }
 
 func Rm(filename string) {
 	err := os.Remove(filename)
-	FatalErr(err)
+	StdError(err)
 }
 
 func ReadFromFile(filename string) []string {

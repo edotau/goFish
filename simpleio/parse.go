@@ -11,14 +11,14 @@ import (
 // BytesToInt a function that converts a byte slice and return a number, type int.
 func BytesToInt(b []byte) int {
 	answer, err := strconv.Atoi(string(b))
-	FatalErr(err)
+	StdError(err)
 	return answer
 }
 
 // StringToInt is a function that converts a string and return a number, type int.
 func StringToInt(s string) int {
 	answer, err := strconv.Atoi(s)
-	FatalErr(err)
+	StdError(err)
 	return answer
 }
 
@@ -34,28 +34,28 @@ func StringToUInt16(s string) uint16 {
 // StringToInt is a function that converts a string and return a number, type int.
 func StringToUInt32(s string) uint32 {
 	answer, err := strconv.Atoi(s)
-	FatalErr(err)
+	StdError(err)
 	return uint32(answer)
 }
 
 // StringToFloat is a function that converts a string to a type float64.
 func StringToFloat(s string) float32 {
 	answer, err := strconv.ParseFloat(s, 32)
-	FatalErr(err)
+	StdError(err)
 	return float32(answer)
 }
 
 // StringToFloat is a function that converts a string to a type float64.
 func StringToFloat64(s string) float64 {
 	answer, err := strconv.ParseFloat(s, 64)
-	FatalErr(err)
+	StdError(err)
 	return answer
 }
 
 // ScientificNotation will convert a string with scientific notation into a float64
 func ScientificNotation(s string) float64 {
 	num, _, err := big.ParseFloat(s, 10, 0, big.ToNearestEven)
-	FatalErr(err)
+	StdError(err)
 	ans, _ := num.Float64()
 	return ans
 }

@@ -2,15 +2,16 @@ package bam
 
 import (
 	"fmt"
-	"github.com/edotau/goFish/simpleio"
 	"net/http"
 	"strings"
 	"sync"
+
+	"github.com/edotau/goFish/simpleio"
 )
 
 func ViewUrl(url string) {
 	resp, err := http.Get(url)
-	simpleio.FatalErr(err)
+	simpleio.StdError(err)
 	ans := make(chan Sam)
 	if strings.HasSuffix(url, ".bam") {
 		reader := &BamReader{}

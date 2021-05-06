@@ -9,11 +9,11 @@ import (
 
 func OpenDirectory(dir string) {
 	err := browser.OpenFile(dir)
-	simpleio.FatalErr(err)
+	simpleio.StdError(err)
 }
 
 func NewPool(size int) *ants.Pool {
 	pool, err := ants.NewPool(size)
-	simpleio.FatalErr(err)
+	simpleio.StdError(err)
 	return pool
 }

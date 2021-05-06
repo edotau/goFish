@@ -86,7 +86,7 @@ func ReadLine(reader *GunzipReader) (*bytes.Buffer, bool) {
 // BytesToBuffer will parse []byte and return a pointer to the same underlying bytes.Buffer
 func BytesToBuffer(reader *GunzipReader) *bytes.Buffer {
 	_, err := reader.Buffer.Write(reader.line[:len(reader.line)-1])
-	simpleio.FatalErr(err)
+	simpleio.StdError(err)
 	return reader.Buffer
 }
 
@@ -95,18 +95,18 @@ func BytesToBuffer(reader *GunzipReader) *bytes.Buffer {
 // only when necessary.
 func readMore(reader *GunzipReader) []byte {
 	_, err := reader.Buffer.Write(reader.line)
-	simpleio.FatalErr(err)
+	simpleio.StdError(err)
 	reader.line, err = reader.ReadSlice('\n')
 	if err == nil {
 		return reader.line
 	}
 	if err == bufio.ErrBufferFull {
 		_, err = reader.Buffer.Write(reader.line)
-		simpleio.FatalErr(err)
+		simpleio.StdError(err)
 		// recursive call to read next bytes until reaching end of line character
 		return readMore(reader)
 	}
-	simpleio.FatalErr(err)
+	simpleio.StdError(err)
 	return reader.line
 }
 
@@ -117,9 +117,9 @@ func NewGunzipReader(filename string) *GunzipReader {
 	}
 	cmd := exec.Command("gunzip", "-c", filename)
 	stdout, err := cmd.StdoutPipe()
-	simpleio.FatalErr(err)
+	simpleio.StdError(err)
 	err = cmd.Start()
-	simpleio.FatalErr(err)
+	simpleio.StdError(err)
 	answer.Reader = bufio.NewReader(GunzipReader{Unzip: stdout, Cmd: cmd})
 	return &answer
 }
