@@ -9,6 +9,7 @@ import (
 	"github.com/edotau/goFish/simpleio"
 )
 
+// TODO not a completly finished project
 const BigWigMagic = 0x888FFC26
 
 type BigWigReader struct {
@@ -96,7 +97,7 @@ func (reader *BigWigReader) Close() error {
 func MagicBigWig(reader *BigWigReader) bool {
 	var magic uint32
 	err := binary.Read(reader, binary.LittleEndian, &magic)
-	simpleio.FatalErr(err)
+	simpleio.StdError(err)
 	return magic == BigWigMagic
 }
 

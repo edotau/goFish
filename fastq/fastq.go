@@ -67,24 +67,24 @@ func ToString(fq *Fastq) string {
 	var buffer strings.Builder
 
 	_, err := buffer.WriteString(fq.Name)
-	simpleio.FatalErr(err)
+	simpleio.StdError(err)
 	err = buffer.WriteByte('\n')
-	simpleio.FatalErr(err)
+	simpleio.StdError(err)
 
 	_, err = buffer.Write(code.ToBytes(fq.Seq))
-	simpleio.FatalErr(err)
+	simpleio.StdError(err)
 	err = buffer.WriteByte('\n')
-	simpleio.FatalErr(err)
+	simpleio.StdError(err)
 
 	err = buffer.WriteByte('+')
-	simpleio.FatalErr(err)
+	simpleio.StdError(err)
 	err = buffer.WriteByte('\n')
-	simpleio.FatalErr(err)
+	simpleio.StdError(err)
 
 	_, err = buffer.Write(fq.Qual)
-	simpleio.FatalErr(err)
+	simpleio.StdError(err)
 	err = buffer.WriteByte('\n')
-	simpleio.FatalErr(err)
+	simpleio.StdError(err)
 
 	return buffer.String()
 }
@@ -93,24 +93,24 @@ func ToBytes(fq *Fastq) []byte {
 	var buffer bytes.Buffer
 
 	_, err := buffer.WriteString(fq.Name)
-	simpleio.FatalErr(err)
+	simpleio.StdError(err)
 	err = buffer.WriteByte('\n')
-	simpleio.FatalErr(err)
+	simpleio.StdError(err)
 
 	_, err = buffer.Write(code.ToBytes(fq.Seq))
-	simpleio.FatalErr(err)
+	simpleio.StdError(err)
 	err = buffer.WriteByte('\n')
-	simpleio.FatalErr(err)
+	simpleio.StdError(err)
 
 	err = buffer.WriteByte('+')
-	simpleio.FatalErr(err)
+	simpleio.StdError(err)
 	err = buffer.WriteByte('\n')
-	simpleio.FatalErr(err)
+	simpleio.StdError(err)
 
 	_, err = buffer.Write(fq.Qual)
-	simpleio.FatalErr(err)
+	simpleio.StdError(err)
 	err = buffer.WriteByte('\n')
-	simpleio.FatalErr(err)
+	simpleio.StdError(err)
 
 	return buffer.Bytes()
 }
