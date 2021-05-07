@@ -38,6 +38,14 @@ func ReadGtf(filename string) []Gtf {
 	return ans
 }
 
+/*
+func GeneIDGtfToMap(filename string) map[string]Gtf {
+	reader := simpleio.NewReader(filename)
+	hash := make(map[string]Gtf)
+
+
+}*/
+
 func ParseNextGtf(reader *simpleio.SimpleReader) (*Gtf, bool) {
 	line, done := simpleio.ReadLine(reader)
 	if done {
@@ -55,8 +63,6 @@ func ParseNextGtf(reader *simpleio.SimpleReader) (*Gtf, bool) {
 		simpleio.StdError(fmt.Errorf("%s: start (%d) must be < end (%d)", col[0], start, end))
 	}
 	geneFeature := Gtf{col[0], col[1], col[2], start, end, nil, nil, nil, nil}
-
-	//var score *float64
 
 	if col[5] != "." {
 		score := simpleio.StringToFloat64(col[5])
@@ -129,7 +135,6 @@ func (gf *Gtf) ToString() string {
 	} else {
 		str.WriteString(simpleio.IntToString(*gf.Frame))
 	}
-
 	str.WriteByte('\t')
 	str.WriteString(AttribToString(gf.Attributes))
 	return str.String()
@@ -153,5 +158,4 @@ func AttribToString(atb []Attribute) string {
 	str.WriteByte(';')
 
 	return str.String()
-
 }

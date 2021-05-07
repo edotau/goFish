@@ -25,7 +25,6 @@ func ReadGff3(filename string) []Gff3 {
 	for i, done := ParseGtff3(reader); !done; i, done = ParseGtff3(reader) {
 		ans = append(ans, *i)
 	}
-
 	return ans
 }
 
@@ -59,7 +58,6 @@ func ParseGtff3(reader *simpleio.SimpleReader) (*Gff3, bool) {
 		}
 		featFmtThree.Strand = &strand
 	}
-
 	if col[7] != "." {
 		phase := simpleio.StringToInt(col[7])
 
@@ -68,7 +66,6 @@ func ParseGtff3(reader *simpleio.SimpleReader) (*Gff3, bool) {
 		}
 		featFmtThree.Phase = &phase
 	}
-
 	notes := strings.Split(col[8], ";")
 	if len(notes) > 0 {
 		featFmtThree.Attributes = []Attribute{}
@@ -76,11 +73,11 @@ func ParseGtff3(reader *simpleio.SimpleReader) (*Gff3, bool) {
 		for _, each := range notes {
 			val = strings.Split(each, "=")
 			if len(val) > 1 {
-
 				featFmtThree.Attributes = append(featFmtThree.Attributes, Attribute{val[0], val[1]})
+			} else {
+				log.Printf("Warning: value %s was skipped...", val)
 			}
 		}
-
 	}
 	return &featFmtThree, false
 }

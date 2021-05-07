@@ -58,7 +58,7 @@ func concat(files []string) {
 	ans = geneSeq.RmOverlap(ans)
 
 	for j := 0; j < len(ans); j++ {
-		fmt.Printf("%s\n", geneSeq.ToString(&ans[j]))
+		fmt.Printf("%s\n", ans[j].ToString())
 	}
 }
 
@@ -67,7 +67,7 @@ func reduceCapacity(filename string) {
 	geneSeq.QuickSort(geneModel)
 	geneModel = geneSeq.RmOverlap(geneModel)
 	for _, i := range geneModel {
-		fmt.Printf("%s\n", geneSeq.ToString(&i))
+		fmt.Printf("%s\n", i.ToString())
 	}
 	//geneSeq.WriteGenePred(output, geneModel)
 }
@@ -88,7 +88,7 @@ func findNonOverlap(t string, q string) {
 			}
 		}
 		if !nonOverlap {
-			fmt.Printf("%s\n", geneSeq.ToString(query))
+			fmt.Printf("%s\n", query.ToString())
 		}
 
 	}
@@ -108,10 +108,10 @@ func toGeneNames(input, output string) {
 		if ok {
 			i.GeneName = strings.ReplaceAll(geneNames[i.GeneName], " ", "_")
 			curr.GeneName = strings.ReplaceAll(gene, " ", "_")
-			writer.Writer.WriteString(geneSeq.ToString(&curr))
+			writer.Writer.WriteString(curr.ToString())
 			writer.Writer.WriteByte('\n')
 		} else {
-			writer.Writer.WriteString(geneSeq.ToString(&i))
+			writer.Writer.WriteString(i.ToString())
 			writer.Writer.WriteByte('\n')
 		}
 

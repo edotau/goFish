@@ -14,21 +14,20 @@ type Matrix struct {
 	Data []float64
 }
 
+func (m Matrix) Get(i int, j int) float64 {
+	return m.Data[i*m.Cols+j]
+}
+
+func (m Matrix) Set(i int, j int, x float64) {
+	m.Data[i*m.Cols+j] = x
+}
+
 func NewMatrix(rows, cols int) *Matrix {
 	m := Matrix{}
 	m.Rows = rows
 	m.Cols = cols
 	m.Data = make([]float64, rows*cols)
 	return &m
-}
-
-func (m Matrix) Get(i int, j int) float64 {
-	return m.Data[i*m.Cols+j]
-}
-
-func (m Matrix) Set(i int, j int, x float64) {
-	//	m.A[i+j*m.C] = x
-	m.Data[i*m.Cols+j] = x
 }
 
 func RandomMatrix(rows, cols int) *Matrix {

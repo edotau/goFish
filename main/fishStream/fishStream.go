@@ -96,7 +96,7 @@ func chromTableStdout() string {
 func geneModels() {
 	stream := simpleio.NewReader(stickleback.GENE_MODEL_RNASEQ)
 	for gene, done := geneSeq.GenePredLine(stream); !done; gene, done = geneSeq.GenePredLine(stream) {
-		fmt.Printf("%s\n", geneSeq.ToString(gene))
+		fmt.Printf("%s\n", gene.ToString())
 
 	}
 	stream.Close()

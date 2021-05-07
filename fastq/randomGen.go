@@ -12,15 +12,17 @@ func RandomPairedReads(genome []fasta.Fasta, readLength int, numReads int, inser
 	var randFqs []PairedEnd = make([]PairedEnd, numReads)
 	for i := 0; i < numReads; i++ {
 		randFqs[i] = RandChrSeq(genome, readLength, insertSize)
+		fmt.Printf("%s\n", randFqs[i].ReadOne.ToString())
 	}
+
 	return randFqs
 }
 
 // TODO implement logic to randomize strand
 func RandChrSeq(genome []fasta.Fasta, readLength int, insertSize int) PairedEnd {
 	fq := PairedEnd{
-		ReadOne: NewFastq(readLength),
-		ReadTwo: NewFastq(readLength),
+		ReadOne: Fastq{},
+		ReadTwo: Fastq{},
 	}
 	var chr int = stats.RandIntInRange(0, len(genome))
 	var randPos int = stats.RandIntInRange(0, len(genome[chr].Seq))
@@ -29,27 +31,29 @@ func RandChrSeq(genome []fasta.Fasta, readLength int, insertSize int) PairedEnd 
 	if randPos+insertSize > len(genome[chr].Seq) {
 		start = len(genome[chr].Seq) - insertSize + 1
 		end = len(genome[chr].Seq)
+
 		fq.ReadOne.Name = fmt.Sprintf("%s_%d_%d_%c_R:1", genome[chr].Name, start, end, '+')
-		copy(fq.ReadOne.Seq, genome[chr].Seq[start:end])
+		fq.ReadOne.Seq = append(fq.ReadOne.Seq, genome[chr].Seq[start:end]...)
 
 		start = len(genome[chr].Seq) - readLength
 		end = len(genome[chr].Seq)
 
 		fq.ReadTwo.Name = fmt.Sprintf("%s_%d_%d_%c_R:2", genome[chr].Name, start, end, '-')
-		copy(fq.ReadTwo.Seq, genome[chr].Seq[start:end])
+		fq.ReadTwo.Seq = append(fq.ReadTwo.Seq, genome[chr].Seq[start:end]...)
 
+		fmt.Printf("%s\n", fq.ReadOne.ToString())
 		return fq
 
 	} else {
 		start, end = randPos, randPos+insertSize
 		fq.ReadOne.Name = fmt.Sprintf("%s_%d_%d_%c_R:1", genome[chr].Name, start, end, '+')
-		copy(fq.ReadOne.Seq, genome[chr].Seq[start:end])
+		fq.ReadOne.Seq = append(fq.ReadOne.Seq, genome[chr].Seq[start:end]...)
 
 		start = len(genome[chr].Seq) - readLength
 		end = len(genome[chr].Seq)
 
 		fq.ReadTwo.Name = fmt.Sprintf("%s_%d_%d_%c_R:2", genome[chr].Name, start, end, '-')
-		copy(fq.ReadTwo.Seq, genome[chr].Seq[start:end])
+		fq.ReadTwo.Seq = append(fq.ReadTwo.Seq, genome[chr].Seq[start:end]...)
 		return fq
 	}
 }
