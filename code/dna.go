@@ -22,6 +22,9 @@ const (
 	Gap   Dna = '-'
 )
 
+var DnaArray []Dna = []Dna{A, C, G, T, N, MaskA, MaskC, MaskG, MaskT, MaskN, Gap}
+var NoMaskDnaArray []Dna = []Dna{A, C, G, T, N}
+
 // ByteToDna converts a byte into a dna.Base if it matches one of the acceptable DNA characters.
 // Notes: It will also mask the lower case values and return dna.Base as uppercase bases.
 // Note: '*', used by VCF to denote deleted alleles, becomes a Gap in DNA.

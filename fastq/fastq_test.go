@@ -2,10 +2,11 @@ package fastq
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/edotau/goFish/code"
 	"github.com/edotau/goFish/simpleio"
 	"github.com/vertgenlab/gonomics/fastq"
-	"testing"
 )
 
 var toyFq *Fastq = &Fastq{
@@ -32,7 +33,7 @@ func TestToyFastq(t *testing.T) {
 		t.Errorf("Error: was not able to process any fastq records...\n")
 	}
 	if !Equal(i, toyFq) {
-		t.Errorf("Error: io processing did not match original fastq toy example...\n\n%s\n\n%s\n", ToString(i), ToString(toyFq))
+		t.Errorf("Error: io processing did not match original fastq toy example...\n\n%s\n\n%s\n", i.ToString(), toyFq.ToString())
 	}
 }
 

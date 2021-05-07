@@ -63,7 +63,7 @@ func GunzipFastq(reader *simpleio.SimpleReader) (*Fastq, bool) {
 	return &ans, false
 }
 
-func ToString(fq *Fastq) string {
+func (fq *Fastq) ToString() string {
 	var buffer strings.Builder
 
 	_, err := buffer.WriteString(fq.Name)
