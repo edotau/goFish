@@ -11,6 +11,7 @@ var readWriteTests = []struct {
     {"testdata/axtTest.chain.gz"},
 }
 
+// TODO: finish writing unit test with a little bit more logic 
 func TestChainReader(t *testing.T) {
     for _, test := range readWriteTests {
         chain.Read(test.filename)
