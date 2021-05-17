@@ -58,3 +58,17 @@ func tabDelimAt(a []geneSeq.Attribute) *bytes.Buffer {
 	buf.WriteByte('\n')
 	return &buf
 }
+
+/*
+func BuildHashFromEnsembl(filename string) map[string][]geneSeq.Attribute {
+	reader := simpleio.NewReader(filename)
+	var col []string
+	hash := make(map[string][]geneSeq.Attribute)
+	for i, done := simpleio.ReadLine(reader); !done; i, done = simpleio.ReadLine(reader) {
+		col = strings.Split(i.String(), "\t")
+		//transcript_ID
+		hash[col[0]] = append(hash[col[0]], geneSeq.Attribute{"gene_id", col[1]})
+		hash[col[0]] = append(hash[col[0]], geneSeq.Attribute{"gene_name", col[8]})
+		hash[col[0]] = append(hash[col[0]], geneSeq.Attribute{"gene_biotype", col[8]})
+	}
+}*/

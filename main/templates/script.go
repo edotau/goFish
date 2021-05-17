@@ -1,6 +1,6 @@
 // Package templates contain golang template scripts for quick and easy golang programing
 package main
-
+/*
 import (
 	"flag"
 	"fmt"
@@ -14,7 +14,7 @@ func usage() {
 }
 
 func main() {
-	/*
+
 		var expectedNumArgs int = 1
 		flag.Usage = usage
 		log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
@@ -26,5 +26,7 @@ func main() {
 		}
 
 		file := flag.Arg(0)
-	*/
+	
 }
+
+*/

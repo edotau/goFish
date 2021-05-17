@@ -120,7 +120,7 @@ func concat(input []string) {
 		for i, err := bed.ToGenomeInfo(reader); !err; i, err = bed.ToGenomeInfo(reader) {
 			hashKey := bed.GetHashKey(i, keys)
 			if bed.CheckOverlapHash(hashKey, i, selectRegions) {
-			    fmt.Printf("%s\n", bed.GenomeInfoToString(*i))
+				fmt.Printf("%s\n", bed.GenomeInfoToString(*i))
 			}
 			//reader.Close()
 		}
