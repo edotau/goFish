@@ -38,7 +38,7 @@ func main() {
 	if results != nil {
 		panic(results)
 	}
-	//kmer := make(map[string]int)
+
 	err := filepath.Walk(dir, func(dirFile string, info os.FileInfo, err error) error {
 		if strings.HasSuffix(dirFile, ".fasta") || strings.HasSuffix(dirFile, ".fa") {
 			kmer := createKMerHash(ReadFasta(dirFile), *kmerLength)
@@ -51,7 +51,6 @@ func main() {
 				output.Write([]byte(fmt.Sprintf("%s\t%d\n", i.Seq, i.Count)))
 			}
 			output.Close()
-
 		}
 		return nil
 	})
@@ -74,7 +73,6 @@ func createKMerHash(fa []Fasta, k int) map[string]int {
 		}
 		for i := 0; i < len(scaffold.Seq)-k; i++ {
 			hash[DnaToString(scaffold.Seq[i:i+k])]++
-			//fmt.Printf("%s\t%d\n", DnaToString(scaffold.Seq[i:i+k]), hash[DnaToString(scaffold.Seq[i:i+k])])
 		}
 	}
 	return hash

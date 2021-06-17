@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-
 	"testing"
 )
 
@@ -15,29 +14,31 @@ func TestKmerValues(t *testing.T) {
 	kLessThanOne := func(k int) error {
 		if k < 1 {
 			return fmt.Errorf("Error: k=%d cannot be less than or equal to 0...", k)
+		} else {
+			createKMerHash([]Fasta{faTest}, k)
+			return nil
 		}
-		return nil
 	}
 	// Checkes for values of k that are greater than the test fasta:
 	kGreaterSeq := func(k int) error {
 		if k > len(faTest.Seq) {
 			return fmt.Errorf("Error: k cannot be greater than %d...", len(faTest.Seq))
+		} else {
+			createKMerHash([]Fasta{faTest}, k)
+			return nil
 		}
-		return nil
 	}
 
-	// Test cases
+	// Test cases that should fail
 	tests := [...]struct {
 		in    int
 		check checkFunc
 	}{
-		{0, kLessThanOne},
 		{-10, kLessThanOne},
-		{8, kGreaterSeq},
 		{1000, kGreaterSeq},
 	}
 
-	// SECTION 3: test logic
+	// Test logic
 	for _, tc := range tests {
 		t.Run(fmt.Sprintf("Unit tests to test values of k: %v", tc.in), func(t *testing.T) {
 			if err := tc.check(tc.in); err == nil {
