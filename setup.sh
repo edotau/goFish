@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eou pipefail
+#set -eou pipefail
 release_list=https://golang.org/dl/
 SOURCE=https://storage.googleapis.com/golang
 # TODO Refine logic for setting up GOPATH in other locations
@@ -68,6 +68,10 @@ URL=$SOURCE/$FILENAME
 # Download and decompress golang stable release
 wget $URL
 tar xf $FILENAME -C $HOME; rm $FILENAME
+
+if ! [ -e "/usr/local/go" ] ; then
+    mv go/ /usr/local/
+fi
 
 # Sets up bash profile for go root, path, and bin
 # Note that it is assumed your GOPATH will be placed in your home directory
