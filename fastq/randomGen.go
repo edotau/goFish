@@ -75,3 +75,17 @@ func GenerateFakeQual(length int) []byte {
 	}
 	return answer
 }
+
+func GenerateFakeBases(length int) []code.Dna {
+	answer := make([]code.Dna, length)
+
+	for i := 0; i < length; i++ {
+		answer[i] = code.NoMaskDnaArray[stats.RandIntInRange(0, len(code.NoMaskDnaArray))]
+	}
+	return answer
+}
+
+func CreateEmptyFq() Fastq {
+	fq := Fastq{Name: "null", Seq: nil}
+	return fq
+}

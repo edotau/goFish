@@ -92,7 +92,10 @@ func (fq *Fastq) ToString() string {
 func ToBytes(fq *Fastq) []byte {
 	var buffer bytes.Buffer
 
-	_, err := buffer.WriteString(fq.Name)
+	err := buffer.WriteByte('@')
+	simpleio.StdError(err)
+
+	_, err = buffer.WriteString(fq.Name)
 	simpleio.StdError(err)
 	err = buffer.WriteByte('\n')
 	simpleio.StdError(err)
@@ -234,4 +237,8 @@ func GetInfo(s string) Info {
 	ans.Index = parts[len(parts)-1]
 	return ans
 
+}
+
+func WriteFastq(fq *Fastq, writer *simpleio.SimpleWriter) {
+	writer.Write(ToBytes(fq))
 }
