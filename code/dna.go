@@ -20,6 +20,7 @@ const (
 	MaskT Dna = 't'
 	MaskN Dna = 'n'
 	Gap   Dna = '-'
+	Dot   Dna = '.'
 )
 
 var DnaArray []Dna = []Dna{A, C, G, T, N, MaskA, MaskC, MaskG, MaskT, MaskN, Gap}
@@ -52,6 +53,8 @@ func ByteToDnaNoMask(b byte) Dna {
 		return Gap
 	case '*':
 		return Gap
+	case '.':
+		return Dot
 	default:
 		log.Fatalf("Error: unexpected character in dna %c\n", b)
 		return N
@@ -84,6 +87,8 @@ func ByteToDna(b byte) Dna {
 		return Gap
 	case '*':
 		return Gap
+	case '.':
+		return Dot
 	default:
 		log.Fatalf("Error: unexpected character in dna %c\n", b)
 		return N
@@ -114,6 +119,8 @@ func DnaToByte(b Dna) byte {
 		return 'n'
 	case Gap:
 		return '-'
+	case Dot:
+		return '.'
 	default:
 		log.Fatalf("Error: unexpected character in dna %c\n", b)
 		return 'N'
@@ -194,6 +201,14 @@ func ToDna(b []byte) []Dna {
 		answer[i] = ByteToDna(byteValue)
 	}
 	return answer
+}
+
+func NNNs(n int) []Dna {
+	var ans []Dna = make([]Dna, n)
+	for i := 0; i < n; i++ {
+		ans[i] = N
+	}
+	return ans
 }
 
 func ToBytes(bases []Dna) []byte {
