@@ -7,12 +7,11 @@ on:
         branches: [ main ]
 
 jobs:
-
     build:
         runs-on: ubuntu-latest
         steps:
         - uses: actions/checkout@v2
-    - name: Build
+    -name: Build
       run:
         mkdir -p ~/go/src/github.com/edotau/goFish &&
         cp -r ../goFish ~/go/src/github.com/edotau/ &&
