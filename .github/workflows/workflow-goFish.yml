@@ -1,0 +1,20 @@
+name: goFish-actions
+
+on:
+    push:
+        branches: [ main ]
+    pull_request:
+        branches: [ main ]
+
+jobs:
+
+    build:
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/checkout@v2
+    - name: Build
+      run:
+        mkdir --parents /home/runner/go/src/github.com/vertgenlab/ &&
+        cp -r ../gonomics /home/runner/go/src/github.com/vertgenlab/ &&
+        cd /home/runner/go/src/github.com/vertgenlab/gonomics &&
+        go build ./...
