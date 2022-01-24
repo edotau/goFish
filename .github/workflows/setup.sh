@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -eou pipefail
-
 release_list=https://golang.org/dl/
 SOURCE=https://storage.googleapis.com/golang
 
@@ -74,48 +72,9 @@ tar xf $FILENAME -C $DIR; rm $FILENAME
 
 # Sets up bash profile for go root, path, and bin
 # Note that it is assumed your GOPATH will be placed in your home directory
-if [ "$SHELL" == "/bin/bash" ]; then
-    echo 'export GOROOT=~/go' >> ~/.bashrc
-    echo 'export GOPATH=$HOME' >> ~/.bashrc
-    echo 'export GOBIN=${GOPATH}/bin' >> ~/.bashrc
-    echo 'export PATH=$GOPATH/bin:$GOROOT/bin:$PATH' >> ~/.bashrc
-    source ~/.bashrc
-elif [ "$SHELL" == "*zsh*" ]; then
-# Sets up zsh profile for go root, path, and bin if your default shell is zsh
-    echo 'export GOROOT=~/go' >> ~/.zshrc
-    echo 'export GOPATH=$HOME' >> ~/.zshrc
-    echo 'export GOBIN=${GOPATH}/bin' >> ~/.zshrc
-    echo 'export PATH=$GOPATH/bin:$GOROOT/bin:$PATH' >> ~/.zshrc
-    source ~/.zshrc
-else
-    echo 'export GOROOT=~/go' >> ~/.env
-    echo 'export GOPATH=$HOME' >> ~/.env
-    echo 'export GOBIN=${GOPATH}/bin' >> ~/.env
-    echo 'export PATH=$GOPATH/bin:$GOROOT/bin:$PATH' >> ~/.env
-    source ~/.env
-fi
+echo 'export GOROOT=${DIR}/go' >> ~/.bashrc
+echo 'export GOPATH=$HOME' >> ~/.bashrc
+echo 'export GOBIN=${GOPATH}/bin' >> ~/.bashrc
+echo 'export PATH=$GOPATH/bin:$GOROOT/bin:$PATH' >> ~/.bashrc
+source ~/.bashrc
 
-GITHUB=~/src/github.com
-
-if ! [ -e "$GITHUB" ] ; then
-    echo "mkdir -p $GITHUB"
-    mkdir -p $GITHUB
-fi
-
-# Create GOBIN DIR for executables if it doesn't already exist
-if ! [ -e "$GOBIN" ] ; then
-    echo "mkdir -p $GOBIN"
-    mkdir -p $GOBIN
-fi
-
-# Set directories to install goFish
-goFishDir=${GITHUB}/edotau
-mkdir -p ${goFishDir}
-mv ${GITHUB}/goFish/ ${goFishDir}/
-
-cd $goFishDir
-# Contingent on passing all go tests, we finally install/build all goFish binary programs
-go mod init; go mod tidy
-go test ./...
-go install ./...
-ln -s $GOBIN
