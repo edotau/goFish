@@ -64,6 +64,6 @@ FILENAME=$label.tar.gz
 URL=$SOURCE/$FILENAME
 
 # Download and decompress golang stable release
-wget $URL
+wget -o golang-latest.tar.gz $URL
 
 
