@@ -1,9 +1,0 @@
-name: goFish
-
-channels:
-  - conda-forge
-  - bioconda
-  - defaults
-
-dependencies:
-  - golang=1.17.6
