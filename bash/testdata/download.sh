@@ -56,7 +56,7 @@ fetchUpdate() {
 }
 
 # Performs the function call to pull the latest stable release
-fetchUpdate
+fetchUpdate 2> /dev/null
 
 # Set our variables
 label=go$release.$os-$arch
@@ -64,6 +64,6 @@ FILENAME=$label.tar.gz
 URL=$SOURCE/$FILENAME
 
 # Download and decompress golang stable release
-wget -o golang-latest.tar.gz $URL
+wget $URL 2> /dev/null
 
-
+echo $URL
