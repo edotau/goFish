@@ -2,8 +2,6 @@ package bash
 
 import (
 	"testing"
-
-	"github.com/edotau/goFish/api"
 )
 
 func TestCut(t *testing.T) {
@@ -21,9 +19,9 @@ func TestCut(t *testing.T) {
 	}
 }
 
+/*
 func TestSetup(t *testing.T) {
 	LatestGoResource().Stdout()
 	rm := api.NewScript("rm go*.tar.gz")
 	rm.Run()
-
-}
+}*/
