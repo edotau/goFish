@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eou pipefail
+
 release_list=https://golang.org/dl/
 SOURCE=https://storage.googleapis.com/golang
 
