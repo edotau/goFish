@@ -1,6 +1,5 @@
 #!/bin/bash
 
-set -eou pipefail
 release_list=https://golang.org/dl/
 SOURCE=https://storage.googleapis.com/golang
 
@@ -10,6 +9,7 @@ os=$(uname -s | tr "[:upper:]" "[:lower:]")
 # Determines the arch distribution of your current machine using switch cases
 arch_probe="uname -m"
 arch=$($arch_probe)
+
 case "$arch" in
     i*)
         arch=386
@@ -37,7 +37,6 @@ queryReleaseList() {
         $fetch "$release_list" | grep -v -E 'go[0-9\.]+(beta|rc)' | grep -E -o 'go[0-9\.]+' | grep -E -o '[0-9]\.[0-9]+(\.[0-9]+)?' | sort -V | uniq
     fi
 }
-
 
 # From the query to fetch all golang releases, we pull the latest stable release
 fetchUpdate() {
@@ -73,5 +72,3 @@ wget $URL"
 wget $URL 2> /dev/null
 
 echo $URL
-
-
