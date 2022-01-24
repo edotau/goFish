@@ -256,6 +256,15 @@ func ReadFromFile(filename string) []string {
 	return ans
 }
 
+func (reader *SimpleReader) ToString() string {
+	var ans string
+	for i, err := ReadLine(reader); !err; i, err = ReadLine(reader) {
+		ans += i.String() + "\n"
+	}
+	reader.Close()
+	return ans
+}
+
 func WriteToFile(filename string, data []string) {
 	writer := NewWriter(filename)
 	for i := 0; i < len(data); i++ {

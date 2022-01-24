@@ -3,6 +3,8 @@ package bash
 import (
 	"fmt"
 	"testing"
+
+	"github.com/commander-cli/cmd"
 )
 
 func TestCut(t *testing.T) {
@@ -18,5 +20,10 @@ func TestCut(t *testing.T) {
 	if len(cut) != 2 {
 		t.Errorf("Error: cut function is not reading fields corrently...\n")
 	}
+}
+
+func TestSetup(t *testing.T) {
+	tarfile := LatestGoResource().Stdout()
+	cmd.NewCommand(fmt.Sprintf("rm %s ", tarfile), cmd.WithStandardStreams).Execute()
 
 }

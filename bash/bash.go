@@ -4,7 +4,6 @@ package bash
 import (
 	"bufio"
 	"errors"
-	"io"
 	"os"
 	"os/exec"
 	"strings"
@@ -46,6 +45,7 @@ type Cmd struct {
 	*exec.Cmd
 }
 
+/*
 // Command returns the Cmd struct to execute the command.
 // No need to split the path and arguments.
 // The error may be caused by unclosed quote.
@@ -55,67 +55,7 @@ func Command(name string) (*Cmd, error) {
 		return nil, err
 	}
 	return &Cmd{exec.Command(path, argv...)}, nil
-}
-
-// StdoutChannel returns a channel that will be connected to
-// the command's standard error when the command starts.
-// It closes when StdoutPipe closed.
-func (c *Cmd) StdoutChannel() (chan string, error) {
-	ch := make(chan string, 100)
-	pipe, err := c.StdoutPipe()
-	if err != nil {
-		return nil, err
-	}
-	reader := bufio.NewReader(pipe)
-	go func() {
-		for {
-			str, err := reader.ReadString('\n')
-			if err != nil {
-				if err == io.EOF {
-					if str != "" {
-						ch <- str
-					}
-				}
-				close(ch)
-				return
-			}
-			if str != "" {
-				ch <- str
-			}
-		}
-	}()
-	return ch, nil
-}
-
-// StderrChannel returns a channel that will be connected to
-// the command's standard error when the command starts.
-// It closes when StderrPipe closed.
-func (c *Cmd) StderrChannel() (chan string, error) {
-	ch := make(chan string, 100)
-	pipe, err := c.StderrPipe()
-	if err != nil {
-		return nil, err
-	}
-	reader := bufio.NewReader(pipe)
-	go func() {
-		for {
-			str, err := reader.ReadString('\n')
-			if err != nil {
-				if err == io.EOF {
-					if str != "" {
-						ch <- str
-					}
-				}
-				close(ch)
-				return
-			}
-			if str != "" {
-				ch <- str
-			}
-		}
-	}()
-	return ch, nil
-}
+}*/
 
 // StdinChannel returns a channel that will be connected to
 // the command's standard error when the command starts.
