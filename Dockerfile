@@ -36,8 +36,11 @@ ENV PATH=$PATH:/root/miniconda3/bin/
 # install "report" environment's dependencies
 RUN conda update -n base -c defaults conda
 
-WORKDIR /home
-RUN git clone https://github.com/edotau/goFish.git
+COPY . /home/edotau/goFish
 
-RUN bash goFish/.github/workflows/install.sh
+RUN bash /home/edotau/goFish/.github/workflows/install.sh
+ENV PATH=$PATH:/usr/local/go/bin
+
+WORKDIR /home/edotau/goFish
+RUN go test ./...
 

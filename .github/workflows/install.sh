@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -eou pipefail
-
 release_list=https://golang.org/dl/
 SOURCE=https://storage.googleapis.com/golang
 
@@ -72,26 +70,3 @@ URL=$SOURCE/$FILENAME
 wget $URL
 tar xf $FILENAME -C $DIR; rm $FILENAME
 
-GITHUB=~/src/github.com
-
-if ! [ -e "$GITHUB" ] ; then
-    echo "mkdir -p $GITHUB"
-    mkdir -p $GITHUB
-fi
-
-# Create GOBIN DIR for executables if it doesn't already exist
-if ! [ -e "$GOBIN" ] ; then
-    echo "mkdir -p $GOBIN"
-    mkdir -p $GOBIN
-fi
-
-# Set directories to install goFish
-goFishDir=${GITHUB}/edotau
-mkdir -p ${goFishDir}
-mv ${GITHUB}/goFish/ ${goFishDir}/
-
-cd $goFishDir
-# Contingent on passing all go tests, we finally install/build all goFish binary programs
-go mod init; go mod tidy
-go test ./...
-go install ./...
