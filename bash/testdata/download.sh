@@ -66,4 +66,4 @@ URL=$SOURCE/$FILENAME
 # Download and decompress golang stable release
 wget $URL 2> /dev/null
 
-echo $URL
+echo $FILENAME
