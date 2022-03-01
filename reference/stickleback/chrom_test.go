@@ -1,11 +1,11 @@
 package stickleback
 
-import(
-    "testing"
+import (
+	"testing"
 )
 
 func TestChromStdout(t *testing.T) {
-    for _, chr := range Chr {
-        GetChrom(chr)
-    }
+	for _, chr := range Chr {
+		GetChrom(chr)
+	}
 }

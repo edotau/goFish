@@ -50,7 +50,7 @@ func SelectGenomeHash(filename string, num int) (map[string][]*GenomeInfo, map[s
 	for i, err := ToGenomeInfo(selectRegions); !err; i, err = ToGenomeInfo(selectRegions) {
 		answer = buildreference(i, keys, answer)
 	}
-    selectRegions.Close()
+	selectRegions.Close()
 	return keys, answer
 }
 

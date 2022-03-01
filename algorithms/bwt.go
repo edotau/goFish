@@ -1,9 +1,9 @@
 package algorithms
 
-import(
-    "log"
-    "sort"
-    "bytes"
+import (
+	"bytes"
+	"log"
+	"sort"
 )
 
 func BurrowsWheelerTransform(s []byte, idx byte) []byte {
@@ -12,7 +12,6 @@ func BurrowsWheelerTransform(s []byte, idx byte) []byte {
 }
 
 // TODO: InverseBurrowsWheelerTransform(){}
-
 
 func GetSuffixArray(s []byte) []int {
 	sa := make([]int, len(s)+1)
@@ -26,8 +25,6 @@ func GetSuffixArray(s []byte) []int {
 	})
 	return sa
 }
-
-
 
 // ComputeSuffixArray computes BWT using a generated suffix array as input
 func ComputeSuffixArray(s []byte, sa []int, idx byte) []byte {

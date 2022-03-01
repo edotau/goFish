@@ -9,7 +9,7 @@ import (
 
 var gff_tests []string = []string{
 	"testdata/fish.gff3",
-    "bigGzipFish.gff3.gz",
+	"bigGzipFish.gff3.gz",
 }
 
 func TestGff3Reader(t *testing.T) {

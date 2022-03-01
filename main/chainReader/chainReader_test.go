@@ -1,21 +1,21 @@
 package main
 
-import(
-    "testing"
-    "github.com/edotau/goFish/chain"
+import (
+	"github.com/edotau/goFish/chain"
+	"testing"
 )
 
 var readWriteTests = []struct {
-    filename string // input
+	filename string // input
 }{
-    {"testdata/axtTest.chain.gz"},
+	{"testdata/axtTest.chain.gz"},
 }
 
-// TODO: finish writing unit test with a little bit more logic 
+// TODO: finish writing unit test with a little bit more logic
 func TestChainReader(t *testing.T) {
-    for _, test := range readWriteTests {
-        chain.Read(test.filename)
-    }
-    t.Logf("Chain file read without errors\n")
+	for _, test := range readWriteTests {
+		chain.Read(test.filename)
+	}
+	t.Logf("Chain file read without errors\n")
 
 }
