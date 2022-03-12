@@ -45,16 +45,17 @@ fetchUpdate() {
     local last=
     local fetch=
     if hash "wget" 2>/dev/null; then
-	    fetch="wget -qO-"
+        fetch="wget -qO-"
     elif hash "curl" 2>/dev/null; then
-	    fetch="curl --silent"
+        fetch="curl --silent"
     else
         echo "Error: local wget and/or curl is not functional..."
         exit 3
     fi
     last=$(queryReleaseList "$fetch" | tail -1)
+
     if echo "$last" | grep -q -E '[0-9]\.[0-9]+(\.[0-9]+)?'; then
-	    release=$last
+        release=$last
     fi
 }
 
@@ -68,5 +69,6 @@ URL=$SOURCE/$FILENAME
 
 # Download and decompress golang stable release
 wget $URL
-tar xf $FILENAME -C $DIR; rm $FILENAME
+
+tar xf $FILENAME -C $DIR && rm $FILENAME
 
