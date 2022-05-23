@@ -14,8 +14,8 @@ func usage() {
 	fmt.Print(
 		"vimBam - view option of samtools integrated with other features from goFish\n" +
 			"  Usage:\n" +
-			"./vimBam [options] align.bam\n" +
-			"options:\n")
+			"    ./vimBam [options] align.bam\n\n" +
+			"options:\n\n")
 	flag.PrintDefaults()
 }
 
