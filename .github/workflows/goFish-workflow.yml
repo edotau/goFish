@@ -65,20 +65,3 @@ jobs:
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
           git commit -am "Automated go fmt"
           git push
-
-  coverage:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 2
-      - uses: actions/setup-go@v3
-        with:
-          go-version: '1.18'
-      - name: Run coverage
-        run: 
-          mkdir --parents /home/runner/go/src/github.com/edotau/ &&
-          cp -r ../goFish /home/runner/go/src/github.com/edotau/ &&
-          cd /home/runner/go/src/github.com/edotau/goFish &&
-          go test -coverprofile=coverage.txt -covermode=atomic ./...
-          cat coverage.txt
