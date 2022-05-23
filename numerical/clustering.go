@@ -506,7 +506,7 @@ func (k *KMeans) OnlineLearn(errors chan error, dataset chan Datapoint, onUpdate
 				k.Centroids[c][i] = k.alpha*point.X[i] + oneMinusAlpha*k.Centroids[c][i]
 			}
 
-			go onUpdate([][]float64{[]float64{float64(c)}, k.Centroids[c]})
+			go onUpdate([][]float64{{float64(c)}, k.Centroids[c]})
 
 		} else {
 			fmt.Fprintf(k.Output, "Training Completed.\n%v\n\n", k)

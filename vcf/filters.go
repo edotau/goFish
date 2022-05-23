@@ -1,7 +1,5 @@
 package vcf
 
-import ()
-
 func ASFilter(v *Vcf, parentOne int, parentTwo int, F1 int) bool {
 	gtOne := ParseGt(v.Genotypes[parentOne])
 	gtTwo := ParseGt(v.Genotypes[parentTwo])

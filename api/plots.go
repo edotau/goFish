@@ -122,8 +122,8 @@ func ScatterChart(filename string, x, y []float64) {
 	pl.Data[last].Samples[6].DeltaY = 16
 	pl.Data[last].Samples[6].OffY = 2
 
-	pl.AddData("Points", []chart.EPoint{chart.EPoint{-4, 40, 0, 0, 0, 0}, chart.EPoint{-3, 45, 0, 0, 0, 0},
-		chart.EPoint{-2, 35, 0, 0, 0, 0}}, chart.PlotStylePoints,
+	pl.AddData("Points", []chart.EPoint{{-4, 40, 0, 0, 0, 0}, {-3, 45, 0, 0, 0, 0},
+		{-2, 35, 0, 0, 0, 0}}, chart.PlotStylePoints,
 		chart.Style{Symbol: '0', SymbolColor: color.NRGBA{0xff, 0x00, 0xff, 0xff}})
 	pl.AddFunc("Theory", func(x float64) float64 {
 		if x > 5.25 && x < 5.75 {

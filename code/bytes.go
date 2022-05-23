@@ -1,7 +1,5 @@
 package code
 
-import ()
-
 // The Slice interface reflects the built-in slice type behavior.
 type Slice interface {
 	Make(len, cap int) Slice

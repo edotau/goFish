@@ -5,13 +5,13 @@ package simpleio
 import (
 	"bufio"
 	"bytes"
+	"github.com/vertgenlab/gonomics/exception"
 	"io"
 	"log"
 	"os"
 	"os/exec"
 	"strings"
 	"sync"
-	"github.com/vertgenlab/gonomics/exception"
 
 	gzip "github.com/klauspost/pgzip"
 )
@@ -200,7 +200,7 @@ func WriteLine(writer *SimpleWriter, s string) {
 func BytesToBuffer(reader *SimpleReader) *bytes.Buffer {
 	var err error
 	_, err = reader.Buffer.Write(bytes.TrimSpace(reader.line))
-	
+
 	// if reader.line[len(reader.line)-2] == '\r' {
 	// 	reader.Buffer.Write(reader.line[:len(reader.line)-2])
 	// } else {
