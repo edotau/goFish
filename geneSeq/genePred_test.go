@@ -7,7 +7,7 @@ import (
 )
 
 var tests []string = []string{
-	"testdata/rna-seq.genes.mapped.ensembl.gp.gz",
+	"testdata/rabsTHREEspine.ensembl.mapped.gp.gz",
 }
 
 func TestGenePredRead(t *testing.T) {

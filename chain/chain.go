@@ -65,8 +65,12 @@ func chainingHelper(reader *simpleio.SimpleReader) []Bases {
 	var data []string
 	var answer []Bases
 	var curr Bases
+	var err bool
 	for nextBytes, done := reader.Peek(1); nextBytes[0] != 0 && done == nil; nextBytes, done = reader.Peek(1) {
-		line, _ = simpleio.ReadLine(reader)
+		line, err = simpleio.ReadLine(reader)
+		if err {
+			log.Fatalf("Error: simple reader is throwing an error trying to read this line:\n%s\n", line.Bytes())
+		}
 		data = strings.Split(line.String(), "\t")
 		if len(data) == 1 {
 			curr = Bases{

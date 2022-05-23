@@ -4,7 +4,6 @@ name: CI
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
   push:
     branches: [ main ]
   pull_request:
@@ -17,14 +16,31 @@ on:
 jobs:
   # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-
+    - uses: actions/checkout@v2
+    - uses: actions/setup-go@v3
+      with:
+        go-version: '1.18'
+    - name: Build
+      run:
+        mkdir --parents /home/runner/go/src/github.com/edotau/ &&
+        cp -r ../gonomics /home/runner/go/src/github.com/edotau/ &&
+        cd /home/runner/go/src/github.com/vertgenlab/goFish &&
+        go build ./...
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-go@v3
+      with:
+        go-version: '1.18'
+    - name: Test
+      run: 
+        mkdir --parents /home/runner/go/src/github.com/edotau/ &&
+        cp -r ../gonomics /home/runner/go/src/github.com/edotau/ &&
+        cd /home/runner/go/src/github.com/vertgenlab/goFish &&
+        go test ./...
       # Runs a single command using the runners shell
       - name: Run a one-line script
         run: mkdir -p ~/go/src/github.com/edotau/goFish &&
@@ -33,17 +49,18 @@ jobs:
              go test ./...
              
   format:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latestt
-    
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
         with:
           ref: ${{ github.head_ref }}
+      - uses: actions/setup-go@v3
+        with:
+          go-version: '1.18'
       - name: go fmt
         run: gofmt -s -w ./*/*.go
       - name: go fmt cmd
-        run: gofmt -s -w ./*/*/*.go
+        run: gofmt -s -w ./cmd/*/*.go
       - name: Check for modified files
         id: git-check
         run: echo ::set-output name=modified::$(if git diff-index --quiet HEAD --; then echo "false"; else echo "true"; fi)
@@ -55,4 +72,26 @@ jobs:
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
           git commit -am "Automated go fmt"
           git push
-          
+
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-go@v3
+        with:
+          go-version: '1.18'
+      - name: Run coverage
+        run: 
+          mkdir --parents /home/runner/go/src/github.com/edotau/ &&
+          cp -r ../gonomics /home/runner/go/src/github.com/edotau/ &&
+          cd /home/runner/go/src/github.com/edotau/goFish &&
+          go test -coverprofile=coverage.txt -covermode=atomic ./...
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
+          files: /home/runner/go/src/github.com/edotau/goFish/coverage.txt
+          verbose: true

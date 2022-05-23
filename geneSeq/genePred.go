@@ -70,7 +70,7 @@ func GenePredLine(reader *simpleio.SimpleReader) (*GenePred, bool) {
 				log.Fatalf("Error: ExonCount must equal length of ExonStart and ExonEnd...\n")
 			}
 		} else {
-			log.Fatalf("Error: line must contains %d, must be at least 10 columns in gene Prediction format...\n", len(columns))
+			log.Fatalf("Error: line must contains %d, must be at least 10 columns in gene Prediction format...\n\n %v\n", len(columns), columns)
 		}
 	}
 	return nil, true

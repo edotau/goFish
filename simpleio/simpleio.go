@@ -11,6 +11,7 @@ import (
 	"os/exec"
 	"strings"
 	"sync"
+	"github.com/vertgenlab/gonomics/exception"
 
 	gzip "github.com/klauspost/pgzip"
 )
@@ -197,8 +198,15 @@ func WriteLine(writer *SimpleWriter, s string) {
 
 // BytesToBuffer will parse []byte and return a pointer to the same underlying bytes.Buffer
 func BytesToBuffer(reader *SimpleReader) *bytes.Buffer {
-	_, err := reader.Buffer.Write(reader.line[:len(reader.line)-1])
-	StdError(err)
+	var err error
+	_, err = reader.Buffer.Write(bytes.TrimSpace(reader.line))
+	
+	// if reader.line[len(reader.line)-2] == '\r' {
+	// 	reader.Buffer.Write(reader.line[:len(reader.line)-2])
+	// } else {
+	// 	_, err = reader.Buffer.Write(reader.line[:len(reader.line)-1])
+	// }
+	exception.PanicOnErr(err)
 	return reader.Buffer
 }
 
