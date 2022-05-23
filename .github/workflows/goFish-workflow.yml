@@ -7,7 +7,6 @@ on:
   push:
     branches: [ main ]
   pull_request:
-    branches: [ main ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -25,10 +24,9 @@ jobs:
     - name: Build
       run:
         mkdir --parents /home/runner/go/src/github.com/edotau/ &&
-        cp -r ../gonomics /home/runner/go/src/github.com/edotau/ &&
+        cp -r ../goFish /home/runner/go/src/github.com/edotau/ &&
         cd /home/runner/go/src/github.com/edotau/goFish &&
         go build ./...
-
   test:
     runs-on: ubuntu-latest
     steps:
@@ -39,7 +37,7 @@ jobs:
     - name: Test
       run: 
         mkdir --parents /home/runner/go/src/github.com/edotau/ &&
-        cp -r ../gonomics /home/runner/go/src/github.com/edotau/ &&
+        cp -r ../goFish /home/runner/go/src/github.com/edotau/ &&
         cd /home/runner/go/src/github.com/edotau/goFish &&
         go test ./...
              
@@ -80,7 +78,7 @@ jobs:
       - name: Run coverage
         run: 
           mkdir --parents /home/runner/go/src/github.com/edotau/ &&
-          cp -r ../gonomics /home/runner/go/src/github.com/edotau/ &&
+          cp -r ../goFish /home/runner/go/src/github.com/edotau/ &&
           cd /home/runner/go/src/github.com/edotau/goFish &&
           go test -coverprofile=coverage.txt -covermode=atomic ./...
       - name: Upload coverage to Codecov
