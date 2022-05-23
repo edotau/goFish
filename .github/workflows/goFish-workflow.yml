@@ -41,12 +41,6 @@ jobs:
         cp -r ../gonomics /home/runner/go/src/github.com/edotau/ &&
         cd /home/runner/go/src/github.com/vertgenlab/goFish &&
         go test ./...
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: mkdir -p ~/go/src/github.com/edotau/goFish &&
-             cp -r ../goFish ~/go/src/github.com/edotau/ &&
-             cd ~/go/src/github.com/edotau/goFish &&
-             go test ./...
              
   format:
     runs-on: ubuntu-latest
