@@ -81,10 +81,4 @@ jobs:
           cp -r ../goFish /home/runner/go/src/github.com/edotau/ &&
           cd /home/runner/go/src/github.com/edotau/goFish &&
           go test -coverprofile=coverage.txt -covermode=atomic ./...
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          fail_ci_if_error: true
-          files: /home/runner/go/src/github.com/edotau/goFish/coverage.txt
-          verbose: true
+          cat coverage.txt
