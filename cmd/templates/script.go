@@ -2,6 +2,7 @@
 package main
 
 /*
+
 import (
 	"flag"
 	"fmt"
@@ -13,9 +14,9 @@ func usage() {
 		"")
 	flag.PrintDefaults()
 }
-
+*/
 func main() {
-
+	/*
 		var expectedNumArgs int = 1
 		flag.Usage = usage
 		log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
@@ -26,8 +27,6 @@ func main() {
 			log.Fatalf("Error: expecting %d arguments, but got %d\n", expectedNumArgs, len(flag.Args()))
 		}
 
-		file := flag.Arg(0)
-
+		//file := flag.Arg(0)
+	*/
 }
-
-*/
